@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "202407437568",
+    "firebase_url": "https://icy-tower-tal-v-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "icy-tower-tal-v",
+    "storage_bucket": "icy-tower-tal-v.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202407437568:android:9979d78a38a2bdc8f4ffe5",
+        "android_client_info": {
+          "package_name": "com.talv.icytower"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "202407437568-3811olcthubudthfjj3jno3rd15jkee5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-_WsvwV6irkjghy-nHWUodV9rBjbrqvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202407437568-3811olcthubudthfjj3jno3rd15jkee5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
