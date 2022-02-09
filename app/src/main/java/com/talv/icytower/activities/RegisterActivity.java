@@ -1,21 +1,14 @@
 package com.talv.icytower.activities;
 
-import static com.talv.icytower.firebase.AuthVerifier.isValidEmailAddress;
-import static com.talv.icytower.firebase.AuthVerifier.isValidPassword;
-import static com.talv.icytower.firebase.AuthVerifier.isValidUsername;
-
 import android.content.Intent;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,11 +18,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.talv.icytower.game.Engine;
-import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.R;
+import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.firebase.GameStats;
 import com.talv.icytower.firebase.UserProfileInfo;
+import com.talv.icytower.game.Engine;
+
+import static com.talv.icytower.firebase.AuthVerifier.isValidEmailAddress;
+import static com.talv.icytower.firebase.AuthVerifier.isValidPassword;
+import static com.talv.icytower.firebase.AuthVerifier.isValidUsername;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -64,6 +61,11 @@ public class RegisterActivity extends AppCompatActivity {
                 final String pass = password1Edt.getText().toString();
                 final String pass2 = password2Edt.getText().toString();
                 if (!verifyRegistrationInput(email, user, pass, pass2)) return;
+                if (!FirebaseHelper.hasInternetConnection(RegisterActivity.this)) {
+                    Toast.makeText(RegisterActivity.this, "No internet connection available", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(RegisterActivity.this, "Starting registration...", Toast.LENGTH_SHORT).show();
                 checkUsernameExists(email, user, pass);
             }
         });
@@ -91,6 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         return true;
     }
+
 
     private void checkUsernameExists(String email, String user, String pass) {
         FirebaseHelper.users.child(user).runTransaction(new Transaction.Handler() {
@@ -174,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-        
+
     }
 
     private void updateGameStatsFailed(String email, String user, String pass) {

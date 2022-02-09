@@ -1,21 +1,21 @@
 package com.talv.icytower.activities;
 
 import android.content.Intent;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.talv.icytower.game.Engine;
-import com.talv.icytower.firebase.FirebaseHelper;
-import com.talv.icytower.game.GameSettings;
 import com.talv.icytower.R;
+import com.talv.icytower.firebase.FirebaseHelper;
+import com.talv.icytower.game.Engine;
+import com.talv.icytower.game.GameSettings;
 
 import static com.talv.icytower.activities.SettingsActivity.SETTINGS_SP_FILE_NAME;
 
@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private boolean activityOnForeground = false;
-
 
 
     @Override
@@ -114,17 +113,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI() {
         FirebaseUser user = FirebaseHelper.auth.getCurrentUser();
-        try{
-            user.reload()
-        }
-        catch ()
+
         if (user == null) {
             userNameTxt.setText("Currently not logged in");
             logOutTxt.setVisibility(View.GONE);
         } else {
+
             userNameTxt.setText("Logged in as: " + user.getDisplayName());
             logOutTxt.setVisibility(View.VISIBLE);
-
+            user.reload().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    updateUI();
+                }
+            });
         }
     }
 }

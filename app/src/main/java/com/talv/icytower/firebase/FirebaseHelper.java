@@ -1,5 +1,9 @@
 package com.talv.icytower.firebase;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -10,7 +14,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.talv.icytower.scoreboard.ScoreboardData;
 import com.talv.icytower.scoreboard.ScoreboardResult;
@@ -33,6 +36,13 @@ public class FirebaseHelper {
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference();
         users = dbRef.child(USERS_REFERENCE_PATH);
+    }
+
+    public static boolean hasInternetConnection(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private static Task<Void> setBestGameStats(String user, GameStats bestGameStats) {
