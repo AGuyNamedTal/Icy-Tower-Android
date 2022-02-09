@@ -121,12 +121,14 @@ public class MainActivity extends AppCompatActivity {
 
             userNameTxt.setText("Logged in as: " + user.getDisplayName());
             logOutTxt.setVisibility(View.VISIBLE);
-            user.reload().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    updateUI();
-                }
-            });
+            if (FirebaseHelper.hasInternetConnection(MainActivity.this)) {
+                user.reload().addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        updateUI();
+                    }
+                });
+            }
         }
     }
 }

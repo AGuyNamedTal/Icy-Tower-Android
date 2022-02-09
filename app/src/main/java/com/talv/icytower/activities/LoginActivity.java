@@ -1,28 +1,27 @@
 package com.talv.icytower.activities;
 
-import static com.talv.icytower.firebase.AuthVerifier.isValidEmailAddress;
-import static com.talv.icytower.firebase.AuthVerifier.isValidPassword;
-
 import android.app.Activity;
 import android.content.Intent;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
-import com.talv.icytower.game.Engine;
-import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.R;
+import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.firebase.GameStats;
 import com.talv.icytower.firebase.UserProfileInfo;
+import com.talv.icytower.game.Engine;
+
+import static com.talv.icytower.firebase.AuthVerifier.isValidEmailAddress;
+import static com.talv.icytower.firebase.AuthVerifier.isValidPassword;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -47,7 +46,10 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEdt.getText().toString();
                 String pass = passwordEdt.getText().toString();
                 if (!verifyLoginInput(email, pass)) return;
-
+                if (!FirebaseHelper.hasInternetConnection(LoginActivity.this)) {
+                    Toast.makeText(LoginActivity.this, "No internet connection available", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 FirebaseHelper.auth.signInWithEmailAndPassword(email, pass)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override

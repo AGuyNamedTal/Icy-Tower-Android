@@ -32,7 +32,7 @@ public class UserProfileInfo {
     }
 
     public UserProfileInfo(Map<String, Object> map) {
-        this((long) map.get(CREATION_DATE_NAME), (int) map.get(GAMES_PLAYED_NAME), (String) map.get(COUNTRY_CODE_NAME));
+        this((long) map.get(CREATION_DATE_NAME), ((Long) map.get(GAMES_PLAYED_NAME)).intValue(), (String) map.get(COUNTRY_CODE_NAME));
     }
 
     public static UserProfileInfo createNew(Activity context) {

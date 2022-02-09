@@ -29,6 +29,7 @@ public class GameStats {
     }
 
     public GameStats(Map<String, Object> map) {
-        this((int) map.get(HIGH_SCORE_NAME), (int) map.get(TOTAL_JUMPS_NAME), (long) map.get(TIME_TAKEN_NAME));
+
+        this(((Long) map.get(HIGH_SCORE_NAME)).intValue(), ((Long) map.get(TOTAL_JUMPS_NAME)).intValue(), (long) map.get(TIME_TAKEN_NAME));
     }
 }
