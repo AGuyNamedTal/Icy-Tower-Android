@@ -18,25 +18,22 @@ import java.util.HashMap;
 
 public class Platform {
     public enum PlatformTypes {
-        BASIC_0(R.drawable.platform_basic_0);
-        public final int resId;
+        BASIC_0(R.drawable.platform_basic_0, 0);
+        public final int middleResId;
+        private final int rightResId;
 
-        PlatformTypes(int resId) {
-            this.resId = resId;
+        PlatformTypes(int middleResId, int rightResId) {
+            this.middleResId = middleResId;
+            this.rightResId = rightResId;
         }
     }
 
-    private static final PlatformTypes[][] platformsByLevel = new PlatformTypes[][]{
-            new PlatformTypes[]{PlatformTypes.BASIC_0}
-    };
 
-
-    private static HashMap<PlatformTypes, Bitmap> basicTiles = new HashMap<>();
+    private static HashMap<PlatformTypes, PlatformImage> platformImages = new HashMap<>();
 
 
     public Rect rect;
     public Bitmap image;
-    public PlatformTypes type;
     public boolean enabled = true;
     public int platformNumber;
 
@@ -46,8 +43,9 @@ public class Platform {
     }
 
     public Platform(PlatformTypes type, int num, int x, int y, int width, int height, boolean drawNumberOnPlatform) {
+
         platformNumber = num;
-        image = ImageHelper.tileImageX(basicTiles.get(type), width, height, false);
+        image = platformImages.get(type).createPlatformImage(width, height);
         rect = RectHelper.rectFromWidthHeight(x, y, width, height);
         if (drawNumberOnPlatform) {
             Canvas canvas = new Canvas(image);
@@ -98,21 +96,24 @@ public class Platform {
         enabled = false;
     }
 
-    public static void loadBitmaps(Resources resources, int level) {
+    public static void loadBitmaps(Resources resources) {
         emptyLoadedPlatforms();
-        PlatformTypes[] platformTypes = platformsByLevel[level];
+        PlatformTypes[] platformTypes = PlatformTypes.values();
         for (PlatformTypes platformType : platformTypes) {
-            basicTiles.put(platformType, BitmapFactory.decodeResource(resources, platformType.resId));
+            platformImages.put(platformType, new PlatformImage(
+                    BitmapFactory.decodeResource(resources, platformType.middleResId),
+                    BitmapFactory.decodeResource(resources, platformType.rightResId)
+            ));
         }
     }
 
     public static void emptyLoadedPlatforms() {
-        for (Bitmap img : basicTiles.values()) {
-            if (img != null) {
-                img.recycle();
+        for (PlatformImage platformImage : platformImages.values()) {
+            if (platformImage != null) {
+                platformImage.recycle();
             }
         }
-        basicTiles.clear();
+        platformImages.clear();
     }
 
 

@@ -140,6 +140,7 @@ public class Engine implements OnClockTimeUpListener {
         cameraHeight = ScreenScaleManager.originalHeight;
         maxPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MAX_RATIO);
         minPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MIN_RATIO);
+        Platform.loadBitmaps(resources);
         random = new Random(123);
 
         backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
@@ -227,7 +228,6 @@ public class Engine implements OnClockTimeUpListener {
         for (Platform platform : platforms) {
             platform.render(bitmapCanvas, this);
         }
-
         //draw player
         player.render(bitmapCanvas, this);
 
@@ -356,7 +356,7 @@ public class Engine implements OnClockTimeUpListener {
         int score = player.getScore();
         gameCanvas.updateText(YOUR_SCORE_TXT, "Your Score: " + score);
         gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + player.totalJumps +
-                "   Time: " + formatMilisecondsToString(player.totalTime) + " (sec)");
+                "   Time: " + formatGameTimeToString(player.totalTime) + " (sec)");
 
         if (bestGameStats == null) {
             // feature disabled
@@ -395,7 +395,7 @@ public class Engine implements OnClockTimeUpListener {
         }
     }
 
-    private static String formatMilisecondsToString(long time) {
+    public static String formatGameTimeToString(long time) {
         return String.valueOf(time / 1000) + "." + String.valueOf(Math.round((time % 1000) / 100f));
 
     }
@@ -442,10 +442,9 @@ public class Engine implements OnClockTimeUpListener {
     }
 
 
-    public void resetLevel(Resources resources) {
+    public void resetLevel() {
         cameraY = 0;
         clearPlatforms();
-        Platform.loadBitmaps(resources, 0);
         int playerHeight = (int) (58 * player.playerSizeMultiple);
         int playerWidth = (int) (30 * player.playerSizeMultiple);
         platformHeight = (int) (playerHeight * 0.6f);

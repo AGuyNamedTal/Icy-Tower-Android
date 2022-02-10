@@ -307,7 +307,7 @@ public class GUI {
         controls.get(PLAY_AGAIN_BTN).onClick = new OnButtonClickListener() {
             @Override
             public void OnClick(Engine engine, Context context) {
-                engine.resetLevel(context.getResources());
+                engine.resetLevel();
                 engine.updateGameState(Engine.GameState.PLAYING);
                 engine.onResume();
             }

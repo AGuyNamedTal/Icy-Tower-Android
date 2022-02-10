@@ -47,7 +47,7 @@ public class GameActivity extends AppCompatActivity {
         engine = new Engine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas, this);
         engine.player = new CoolGuy(engine.soundPool, this, resources,
                 Engine.PLAYER_SIZE_MULTIPLE);
-        engine.resetLevel(resources);
+        engine.resetLevel();
 
 
         gameRun = true;
@@ -57,7 +57,6 @@ public class GameActivity extends AppCompatActivity {
             public void run() {
                 long lastTime = System.currentTimeMillis();
                 while (gameRun) {
-
                     long currentTime = System.currentTimeMillis();
                     int timeBetweenTicks = Math.min((int) (currentTime - lastTime), 750);
                     lastTime = currentTime;

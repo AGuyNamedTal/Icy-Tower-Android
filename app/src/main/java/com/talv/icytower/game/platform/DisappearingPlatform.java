@@ -18,6 +18,12 @@ public class DisappearingPlatform extends Platform {
         return paint;
     }
 
+    @Override
+    public void onPlayerFall() {
+        super.onPlayerFall();
+
+    }
+
     public void tick(int msPassed) {
         if (enabled) {
             paint.setAlpha(255 - (int) (255 * (msPassed / lifespan)));

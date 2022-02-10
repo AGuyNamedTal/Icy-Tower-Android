@@ -18,6 +18,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.talv.icytower.scoreboard.ScoreboardData;
 import com.talv.icytower.scoreboard.ScoreboardResult;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 
 public class FirebaseHelper {
@@ -92,6 +94,12 @@ public class FirebaseHelper {
                     scoreboardData[i] = new ScoreboardData(profileInfo, bestGameStats, username);
                     i++;
                 }
+                Arrays.sort(scoreboardData, new Comparator<ScoreboardData>() {
+                    @Override
+                    public int compare(ScoreboardData sd1, ScoreboardData sd2) {
+                        return sd2.bestGameStats.highscore - sd1.bestGameStats.highscore;
+                    }
+                });
                 onCompleteListener.onComplete(new ScoreboardResult(scoreboardData));
             }
 

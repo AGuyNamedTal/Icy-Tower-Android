@@ -7,7 +7,7 @@ public class ScoreboardResult {
     public ScoreboardData[] scoreboardData;
 
     public boolean isSuccess() {
-        return exception != null;
+        return exception == null;
     }
 
     public ScoreboardResult(DatabaseException exception) {

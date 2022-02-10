@@ -19,19 +19,26 @@
 
     <TextView
         android:id="@+id/aboutTxt"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:paddingBottom="100dp"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam semper quam eget arcu aliquam vehicula. Vestibulum porta massa"
+        android:layoutDirection="rtl"
+        android:text="שם: טל וינוקורוב\nתז: 325946846\nביה&quot;ס: העמית מקיף ג\nכיתה: יב'1\nמורה: אלי סיניאנסקי\nשנה: 2022"
         android:textSize="36sp" />
 
-    <Button
-        android:id="@+id/aboutBackBtn"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="30dp"
-        android:text="Back"
-        android:textSize="36sp" />
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/aboutBackBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:textSize="36sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>
