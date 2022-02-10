@@ -29,7 +29,7 @@ public class Platform {
     }
 
 
-    private static HashMap<PlatformTypes, PlatformImage> platformImages = new HashMap<>();
+    private static final HashMap<PlatformTypes, PlatformImage> platformImages = new HashMap<>();
 
 
     public Rect rect;
@@ -98,7 +98,7 @@ public class Platform {
 
     public enum PlatformTypes {
         BASIC_0(R.drawable.platform_0_mid, R.drawable.platform_0_left, R.drawable.platform_0_right);
-        
+
         private final int middleResId;
         private final int rightResId;
         private final int leftResId;

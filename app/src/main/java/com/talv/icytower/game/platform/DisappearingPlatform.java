@@ -21,7 +21,7 @@ public class DisappearingPlatform extends Platform {
     @Override
     public void onPlayerFall() {
         super.onPlayerFall();
-
+        enabled = true;
     }
 
     public void tick(int msPassed) {
