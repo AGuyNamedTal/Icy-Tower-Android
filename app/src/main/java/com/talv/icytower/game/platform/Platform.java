@@ -10,21 +10,21 @@ import android.graphics.Typeface;
 import android.util.Log;
 
 import com.talv.icytower.R;
-import com.talv.icytower.game.Engine;
-import com.talv.icytower.ImageHelper;
 import com.talv.icytower.RectHelper;
+import com.talv.icytower.game.Engine;
 
 import java.util.HashMap;
 
 public class Platform {
-    public enum PlatformTypes {
-        BASIC_0(R.drawable.platform_basic_0, 0);
-        public final int middleResId;
-        private final int rightResId;
-
-        PlatformTypes(int middleResId, int rightResId) {
-            this.middleResId = middleResId;
-            this.rightResId = rightResId;
+    public static void loadBitmaps(Resources resources) {
+        emptyLoadedPlatforms();
+        PlatformTypes[] platformTypes = PlatformTypes.values();
+        for (PlatformTypes platformType : platformTypes) {
+            platformImages.put(platformType, new PlatformImage(
+                    BitmapFactory.decodeResource(resources, platformType.middleResId),
+                    BitmapFactory.decodeResource(resources, platformType.leftResId),
+                    BitmapFactory.decodeResource(resources, platformType.rightResId)
+            ));
         }
     }
 
@@ -96,14 +96,17 @@ public class Platform {
         enabled = false;
     }
 
-    public static void loadBitmaps(Resources resources) {
-        emptyLoadedPlatforms();
-        PlatformTypes[] platformTypes = PlatformTypes.values();
-        for (PlatformTypes platformType : platformTypes) {
-            platformImages.put(platformType, new PlatformImage(
-                    BitmapFactory.decodeResource(resources, platformType.middleResId),
-                    BitmapFactory.decodeResource(resources, platformType.rightResId)
-            ));
+    public enum PlatformTypes {
+        BASIC_0(R.drawable.platform_0_mid, R.drawable.platform_0_left, R.drawable.platform_0_right);
+        
+        private final int middleResId;
+        private final int rightResId;
+        private final int leftResId;
+
+        PlatformTypes(int middleResId, int leftResId, int rightResId) {
+            this.middleResId = middleResId;
+            this.rightResId = rightResId;
+            this.leftResId = leftResId;
         }
     }
 

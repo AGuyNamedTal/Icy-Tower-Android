@@ -15,11 +15,11 @@ public class PlatformImage {
 
     private int sideBitmapsWidth;
 
-    public PlatformImage(Bitmap middleBitmap, Bitmap rightBitmap) {
+    public PlatformImage(Bitmap middleBitmap, Bitmap leftBitmap, Bitmap rightBitmap) {
         this.middleBitmap = middleBitmap;
         this.rightBitmap = rightBitmap;
         sideBitmapsWidth = rightBitmap.getWidth();
-        this.leftBitmap = ImageHelper.flipX(rightBitmap);
+        this.leftBitmap = leftBitmap;
     }
 
     public Bitmap createPlatformImage(int width, int height) {
@@ -29,6 +29,7 @@ public class PlatformImage {
         canvas.drawBitmap(ImageHelper.tileImageX(middleBitmap, width - sideBitmapsWidth * 2, height, false),
                 sideBitmapsWidth, 0, Engine.gamePaint);
         canvas.drawBitmap(rightBitmap, width - sideBitmapsWidth, 0, Engine.gamePaint);
+
         return platformBitmap;
     }
 
