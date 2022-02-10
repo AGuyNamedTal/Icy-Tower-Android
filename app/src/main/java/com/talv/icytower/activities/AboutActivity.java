@@ -1,8 +1,9 @@
 package com.talv.icytower.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.talv.icytower.R;
 
