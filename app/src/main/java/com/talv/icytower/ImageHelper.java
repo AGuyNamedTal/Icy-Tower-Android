@@ -3,27 +3,26 @@ package com.talv.icytower;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class ImageHelper {
 
     public static Bitmap stretch(Bitmap bitmap, int newWidth, int newHeight, boolean dispose) {
         Bitmap output = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);
-        if (dispose){
+        if (dispose) {
             bitmap.recycle();
         }
         return output;
     }
+
     public static Bitmap stretch(Bitmap bitmap, float multipleFactor, boolean dispose) {
-        int newWidth = (int)(bitmap.getWidth() * multipleFactor);
-        int newHeight = (int)(bitmap.getHeight() * multipleFactor);
+        int newWidth = (int) (bitmap.getWidth() * multipleFactor);
+        int newHeight = (int) (bitmap.getHeight() * multipleFactor);
         return stretch(bitmap, newWidth, newHeight, dispose);
     }
+
+
     public static Bitmap[] stretch(Bitmap[] bitmaps, float multipleFactor, boolean dispose) {
         Bitmap[] stretched = new Bitmap[bitmaps.length];
         for (int i = 0; i < stretched.length; i++) {
@@ -31,18 +30,25 @@ public class ImageHelper {
         }
         return stretched;
     }
+
+    public static Bitmap stretchToHeight(Bitmap bitmap, int height, boolean dispose) {
+        return stretch(bitmap, bitmap.getWidth(), height, dispose);
+    }
+
     public static Bitmap flipX(Bitmap bitmap) {
         Matrix matrix = new Matrix();
         matrix.postScale(-1, 1, bitmap.getWidth() / 2f, bitmap.getHeight() / 2f);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
+
     public static Bitmap[] flipX(Bitmap[] bitmaps) {
         Bitmap[] bitmapsFlip = new Bitmap[bitmaps.length];
-        for (int i = 0; i<bitmaps.length;i++){
+        for (int i = 0; i < bitmaps.length; i++) {
             bitmapsFlip[i] = flipX(bitmaps[i]);
         }
         return bitmapsFlip;
     }
+
     public static Bitmap[] decodeAnimations(Bitmap bitmap, boolean dispose) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -63,7 +69,7 @@ public class ImageHelper {
                 int endX = x;
                 output.add(Bitmap.createBitmap(bitmap, startingX, 0, endX - startingX - 1, height));
                 startingX = -1;
-            } else if (!emptyLine && startingX == -1){
+            } else if (!emptyLine && startingX == -1) {
                 startingX = x;
             }
         }
@@ -73,6 +79,7 @@ public class ImageHelper {
         }
         return output.toArray(new Bitmap[output.size()]);
     }
+
     public static Bitmap tileImageX(Bitmap bitmap, int newWidth, int newHeight, boolean dispose) {
         int oldWidth = bitmap.getWidth();
         int oldHeight = bitmap.getHeight();
@@ -82,8 +89,6 @@ public class ImageHelper {
         } else {
             bitmapStretched = stretch(bitmap, oldWidth, newHeight, false);
         }
-
-
         Bitmap newBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888, true);
         // use new bitmaps graphics
         Canvas canvas = new Canvas(newBitmap);
@@ -95,7 +100,9 @@ public class ImageHelper {
         if (dispose) {
             bitmap.recycle();
         }
-        bitmapStretched.recycle();
+        if (bitmapStretched != bitmap) {
+            bitmapStretched.recycle();
+        }
         return newBitmap;
     }
 

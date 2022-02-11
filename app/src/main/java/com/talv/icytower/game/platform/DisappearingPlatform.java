@@ -8,8 +8,8 @@ public class DisappearingPlatform extends Platform {
     public double lifespan;
 
 
-    public DisappearingPlatform(PlatformTypes type, int num, int x, int y, int width, int height, int lifespan) {
-        super(type, num, x, y, width, height);
+    public DisappearingPlatform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners, int lifespan) {
+        super(type, num, x, y, width, drawCorners);
         this.lifespan = lifespan;
     }
 

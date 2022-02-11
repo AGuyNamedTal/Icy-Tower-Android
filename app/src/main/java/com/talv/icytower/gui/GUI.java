@@ -8,12 +8,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 
-import com.talv.icytower.game.Engine;
 import com.talv.icytower.ImageHelper;
 import com.talv.icytower.R;
 import com.talv.icytower.RectHelper;
 import com.talv.icytower.activities.MainActivity;
 import com.talv.icytower.activities.SettingsActivity;
+import com.talv.icytower.game.Engine;
 import com.talv.icytower.gui.graphiccontrols.ClockControl;
 import com.talv.icytower.gui.graphiccontrols.Control;
 import com.talv.icytower.gui.graphiccontrols.HighscoreControl;
@@ -230,7 +230,7 @@ public class GUI {
 
 
         int scoresTextWidth = buttonWidth * 2;
-        int scoresTextHeight = TextControl.getTextSize(highScoreStr, scoresTextWidth);
+        int scoresTextHeight = TextSizeHelper.getTextSize(highScoreStr, scoresTextWidth);
         int paddingBetweenTexts = (int) (scoresTextHeight * 1.1f);
         Point personalHighScore = new Point(
                 renderWidth / 2,
@@ -246,7 +246,7 @@ public class GUI {
                 yourScoreStr, scoresTextHeight, SCORES_TEXT_COLOR, true));
 
         int gameOverWidth = (int) (scoresTextWidth * 1.25f);
-        int gameOverHeight = TextControl.getTextSize(gameOverStr, gameOverWidth);
+        int gameOverHeight = TextSizeHelper.getTextSize(gameOverStr, gameOverWidth);
         Point gameOver = new Point(
                 personalHighScore.x,
                 yourScore.y - gameOverHeight - paddingBetweenTexts
@@ -255,7 +255,7 @@ public class GUI {
                 gameOverStr, gameOverHeight, GAME_OVER_TEXT_COLOR, true));
 
         int gameStatsWidth = (int) (renderWidth * 0.8f);
-        int gameStatsHeight = TextControl.getTextSize(gameStatsStr, gameStatsWidth);
+        int gameStatsHeight = TextSizeHelper.getTextSize(gameStatsStr, gameStatsWidth);
         Point gameStats = new Point(
                 personalHighScore.x,
                 gameOver.y - gameStatsHeight - paddingBetweenTexts
@@ -267,7 +267,7 @@ public class GUI {
                 personalHighScore.x,
                 mainMenu.bottom + paddingBetweenTexts
         );
-        int newHighScoreHeight = TextControl.getTextSize(highScoreStr, scoresTextWidth);
+        int newHighScoreHeight = TextSizeHelper.getTextSize(highScoreStr, scoresTextWidth);
         controls.put(CONTROLS.NEW_HIGH_SCORE_TXT, new HighscoreControl(false, false, newHighScore,
                 newHighScoreStr, newHighScoreHeight, GAME_OVER_TEXT_COLOR, true));
 
@@ -326,4 +326,6 @@ public class GUI {
         };
 
     }
+
+
 }

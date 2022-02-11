@@ -12,25 +12,45 @@ public class PlatformImage {
     private Bitmap middleBitmap;
     private Bitmap leftBitmap;
     private Bitmap rightBitmap;
+    private int minWidth;
 
-    private int sideBitmapsWidth;
+    private int rightBitmapWidth;
+    private int leftBitmapWidth;
+    private int height;
+
 
     public PlatformImage(Bitmap middleBitmap, Bitmap leftBitmap, Bitmap rightBitmap) {
         this.middleBitmap = middleBitmap;
         this.rightBitmap = rightBitmap;
-        sideBitmapsWidth = rightBitmap.getWidth();
         this.leftBitmap = leftBitmap;
+
+        leftBitmapWidth = leftBitmap.getWidth();
+        rightBitmapWidth = rightBitmap.getWidth();
+        minWidth = leftBitmapWidth + rightBitmapWidth;
+        height = middleBitmap.getHeight();
     }
 
-    public Bitmap createPlatformImage(int width, int height) {
-        Bitmap platformBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(platformBitmap);
-        canvas.drawBitmap(leftBitmap, 0, 0, Engine.gamePaint);
-        canvas.drawBitmap(ImageHelper.tileImageX(middleBitmap, width - sideBitmapsWidth * 2, height, false),
-                sideBitmapsWidth, 0, Engine.gamePaint);
-        canvas.drawBitmap(rightBitmap, width - sideBitmapsWidth, 0, Engine.gamePaint);
-
-        return platformBitmap;
+    public Bitmap createPlatformImage(int width, boolean withCorners) {
+        if (withCorners) {
+            if (width < minWidth) {
+                return ImageHelper.stretch(createPlatformImage(minWidth, withCorners), width, height, true);
+            } else {
+                Bitmap platformBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(platformBitmap);
+                canvas.drawBitmap(leftBitmap, 0, 0, Engine.gamePaint);
+                int middleBitmapWidth = width - leftBitmapWidth - rightBitmapWidth;
+                if (middleBitmapWidth > 0) {
+                    Bitmap tiledMiddle = ImageHelper.tileImageX(middleBitmap, middleBitmapWidth, height, false);
+                    canvas.drawBitmap(tiledMiddle,
+                            leftBitmapWidth, 0, Engine.gamePaint);
+                    tiledMiddle.recycle();
+                }
+                canvas.drawBitmap(rightBitmap, width - rightBitmapWidth, 0, Engine.gamePaint);
+                return platformBitmap;
+            }
+        } else {
+            return ImageHelper.tileImageX(middleBitmap, width, height, false);
+        }
     }
 
     public void recycle() {

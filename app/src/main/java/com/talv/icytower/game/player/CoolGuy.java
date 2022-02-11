@@ -1,23 +1,21 @@
 package com.talv.icytower.game.player;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.SoundPool;
 import android.util.Log;
 
+import com.talv.icytower.ImageHelper;
 import com.talv.icytower.R;
 import com.talv.icytower.game.Debug;
-import com.talv.icytower.ImageHelper;
 
 import java.util.HashMap;
 
 public class CoolGuy extends Player {
 
 
-    public CoolGuy(SoundPool soundPool, Context context, Resources resources, float playerSizeMultiple) {
-        super(soundPool, context,  resources, playerSizeMultiple);
+    public CoolGuy(Resources resources, float playerSizeMultiple) {
+        super(resources, playerSizeMultiple);
     }
 
     @Override

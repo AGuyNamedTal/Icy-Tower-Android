@@ -9,18 +9,23 @@ import android.media.SoundPool;
 import android.util.Log;
 
 import com.talv.icytower.R;
+import com.talv.icytower.RectHelper;
 import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.Engine;
 import com.talv.icytower.game.GameCanvas;
-import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.PlayerPlatformsIntersection;
-import com.talv.icytower.RectHelper;
+import com.talv.icytower.game.platform.Platform;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import static com.talv.icytower.game.Engine.PLAYER_SIZE_MULTIPLE;
-import static com.talv.icytower.gui.GUI.CONTROLS.*;
+import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_LEFT;
+import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_RIGHT;
+import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_UP;
+import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.checkActive;
 
 public abstract class Player {
 
@@ -92,17 +97,16 @@ public abstract class Player {
     public int totalJumps;
     public long totalTime;
 
-    public Player(SoundPool soundPool, Context context, Resources resources, float playerSizeMultiple) {
+    public Player(Resources resources, float playerSizeMultiple) {
         this.playerSizeMultiple = playerSizeMultiple;
         initializeAnimations(resources);
-        initializeSounds(soundPool, context);
         updateStateAndAnimation(PlayerState.STANDING, 0);
         playerControls = new PlayerControls();
         resetPlayer();
 
     }
 
-    private void initializeSounds(SoundPool soundPool, Context context) {
+    public void initializeSounds(SoundPool soundPool, Context context) {
         jumpSoundID = soundPool.load(context, R.raw.jump_sound, 1);
     }
 

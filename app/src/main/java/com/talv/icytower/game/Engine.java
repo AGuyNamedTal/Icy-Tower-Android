@@ -37,7 +37,17 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
-import static com.talv.icytower.gui.GUI.CONTROLS.*;
+import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
+import static com.talv.icytower.gui.GUI.CONTROLS.GAMEPLAY_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.GAME_LOST_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.GAME_STATS_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.MAX_FLAGS;
+import static com.talv.icytower.gui.GUI.CONTROLS.NEW_HIGH_SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_BTN;
+import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_MENU_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.checkActive;
 
 public class Engine implements OnClockTimeUpListener {
 
@@ -51,7 +61,6 @@ public class Engine implements OnClockTimeUpListener {
     public static String user;
 
 
-    private int platformHeight;
     private final int maxPlatformWidth;
     private final int minPlatformWidth;
     private final float PLAT_CAMERA_MAX_RATIO = PLAYER_SIZE_MULTIPLE * 0.5f;
@@ -133,21 +142,31 @@ public class Engine implements OnClockTimeUpListener {
         pausePaint.setAlpha((int) (0.35f * 255f));
     }
 
-    public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context) {
+    public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Player player, Context context) {
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
         cameraWidth = ScreenScaleManager.originalWidth;
         cameraHeight = ScreenScaleManager.originalHeight;
         maxPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MAX_RATIO);
         minPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MIN_RATIO);
-        Platform.loadBitmaps(resources);
+        initializeMediaPlayerAndSounds(context);
+
+        this.player = player;
+        player.initializeSounds(soundPool, context);
+
+        int playerHeight = (int) (58 * player.playerSizeMultiple);
+        int playerWidth = (int) (30 * player.playerSizeMultiple);
+        int platformHeight = (int) (playerHeight * 0.6f);
+        player.rect = RectHelper.rectFromWidthHeight(0, 0, playerWidth, playerHeight);
+
+        Platform.loadBitmaps(resources, platformHeight);
         random = new Random(123);
 
         backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
         frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.RGB_565);
         this.gameCanvas = gameCanvas;
 
-        initializeMediaPlayerAndSounds(context);
+
         gameCanvas.initialize(resources, renderWidth, renderHeight);
 
         initializeClock();
@@ -413,22 +432,25 @@ public class Engine implements OnClockTimeUpListener {
             lastPlatformNum = last.platformNumber;
         }
         int distanceBetweenPlatforms = (int) (player.rect.height() * 0.9f);
-        int height = platformHeight;
+        int height = Platform.getPlatformHeight();
         for (int i = 0; i < count; i++) {
             int y = lastPlatformY - distanceBetweenPlatforms - height;
             lastPlatformNum++;
             int width;
+            boolean drawCorners;
             int x;
             if (lastPlatformNum != 0 && lastPlatformNum % PLATFORMS_BETWEEN_LEVELS == 0) {
                 width = cameraWidth;
+                drawCorners = false;
                 x = 0;
             } else {
                 width = random.nextInt(maxPlatformWidth - minPlatformWidth) + minPlatformWidth;
                 x = random.nextInt(cameraWidth - width);
-
+                drawCorners = true;
             }
+            Platform.PlatformTypes platformLevel = Platform.PLATFORM_TYPE_BY_LEVEL[Math.min(Platform.PLATFORM_TYPE_BY_LEVEL.length - 1, lastPlatformNum / PLATFORMS_BETWEEN_LEVELS)];
 
-            platforms.add(new Platform(Platform.PlatformTypes.BASIC_0, lastPlatformNum, x, y, width, height));
+            platforms.add(new Platform(platformLevel, lastPlatformNum, x, y, width, drawCorners));
             lastPlatformY = y;
         }
     }
@@ -445,15 +467,13 @@ public class Engine implements OnClockTimeUpListener {
     public void resetLevel() {
         cameraY = 0;
         clearPlatforms();
-        int playerHeight = (int) (58 * player.playerSizeMultiple);
-        int playerWidth = (int) (30 * player.playerSizeMultiple);
-        platformHeight = (int) (playerHeight * 0.6f);
-        Platform groundPlatform = new Platform(Platform.PlatformTypes.BASIC_0, 0,
-                0, cameraHeight - platformHeight - (int) (0.05f * cameraHeight), cameraWidth, platformHeight);
+        Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
+                0, cameraHeight - Platform.getPlatformHeight() - (int) (0.05f * cameraHeight), cameraWidth, false);
         platforms.add(groundPlatform);
-        player.rect = RectHelper.rectFromWidthHeight(cameraWidth / 2, groundPlatform.rect.top - playerHeight, playerWidth, playerHeight);
+        RectHelper.setRectPos(player.rect, (cameraWidth - player.rect.width()) / 2,
+                groundPlatform.rect.top - player.rect.height());
         player.resetPlayer();
-        generatePlatforms((int) Math.ceil(cameraHeight / (float) (playerHeight)) * 2);
+        generatePlatforms((int) Math.ceil(cameraHeight / (float) (player.rect.height())) * 2);
         externalCameraSpeed = 0f;
         constantCameraSpeed = 0f;
         player.updateScore(0, gameCanvas);
