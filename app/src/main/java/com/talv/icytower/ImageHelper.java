@@ -106,5 +106,23 @@ public class ImageHelper {
         return newBitmap;
     }
 
+    public static int measureLinesWithPixels(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int[] pixels = new int[width * height];
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+        int linesFilled = 0;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int index = y * width + x;
+                if (pixels[index] != 0) {
+                    linesFilled++;
+                    break;
+                }
+            }
+        }
+        return linesFilled;
+    }
+
 
 }

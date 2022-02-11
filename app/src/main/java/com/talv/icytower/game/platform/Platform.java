@@ -12,7 +12,6 @@ import com.talv.icytower.ImageHelper;
 import com.talv.icytower.R;
 import com.talv.icytower.RectHelper;
 import com.talv.icytower.game.Engine;
-import com.talv.icytower.gui.TextSizeHelper;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -21,9 +20,8 @@ import java.util.HashMap;
 public class Platform {
 
     public static final PlatformTypes[] PLATFORM_TYPE_BY_LEVEL;
-    private static final int NUMBER_COLOR = 0xFFf7a043;
-    private static final int NUMBER_STROKE_COLOR = 0xFF000000;
 
+    private static final int NUMBER_ON_EVERY_N_PLAT = 10;
 
     private static final HashMap<PlatformTypes, PlatformImage> platformImages = new HashMap<>();
     private static int platformHeight;
@@ -31,7 +29,6 @@ public class Platform {
 
     public Rect rect;
     public Bitmap image;
-    public boolean enabled = true;
     public int platformNumber;
 
     static {
@@ -44,19 +41,8 @@ public class Platform {
         });
     }
 
-    public Platform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners) {
-        this(type, num, x, y, width, num % 10 == 0 && num != 0, drawCorners);
-    }
-
-    public Platform(PlatformTypes type, int num, int x, int y, int width, boolean drawNumberOnPlatform, boolean drawCorners) {
-        platformNumber = num;
-        image = platformImages.get(type).createPlatformImage(width, drawCorners);
-        rect = RectHelper.rectFromWidthHeight(x, y, width, platformHeight);
-        if (drawNumberOnPlatform) {
-            Canvas canvas = new Canvas(image);
-            drawNumber(canvas, width, platformHeight / 2, num);
-        }
-    }
+    private static final int NUMBER_COLOR = 0xFFf7a043;
+    private static final int NUMBER_STROKE_COLOR = 0xFF000000;
 
     public static int getPlatformHeight() {
         return platformHeight;
@@ -80,22 +66,42 @@ public class Platform {
         }
     }
 
+    public Platform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners) {
+        this(type, num, x, y, width, num % NUMBER_ON_EVERY_N_PLAT == 0 && num != 0, drawCorners);
+    }
+
+    public Platform(PlatformTypes type, int num, int x, int y, int width, boolean drawNumberOnPlatform, boolean drawCorners) {
+        platformNumber = num;
+        PlatformImage platformImage = platformImages.get(type);
+        image = platformImage.createPlatformImage(width, drawCorners);
+        rect = RectHelper.rectFromWidthHeight(x, y, width, platformHeight);
+        if (drawNumberOnPlatform) {
+            Canvas canvas = new Canvas(image);
+            drawNumber(canvas, width, platformImage.linesFilled, num);
+        }
+    }
+
     private static void drawNumber(Canvas canvas, int width, int height, int num) {
         String text = String.valueOf(num);
         int verticalPadding = (int) (height * TEXT_Y_PADDING);
         int desiredTextHeight = height - verticalPadding * 2;
         Paint textPaint = new Paint();
-        // find fitting text size
-        int textSize = TextSizeHelper.getTextSize(text, width);
-        textPaint.setTextSize(textSize);
+        textPaint.setTextSize(desiredTextHeight);
         textPaint.setColor(NUMBER_COLOR);
         Rect bounds = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), bounds);
 
-        canvas.drawText(text,
-                (width - bounds.width()) / 2f - bounds.left,
-                verticalPadding + (desiredTextHeight - bounds.height()) / 2f - bounds.top,
-                textPaint);
+        Paint strokePaint = new Paint();
+        strokePaint.setTextSize(desiredTextHeight);
+        strokePaint.setColor(NUMBER_STROKE_COLOR);
+
+        strokePaint.setStyle(Paint.Style.STROKE);
+        strokePaint.setStrokeWidth(2);
+
+        float textX = (width - bounds.width()) / 2f - bounds.left;
+        float textY = verticalPadding + (desiredTextHeight - bounds.height()) / 2f - bounds.top;
+        canvas.drawText(text, textX, textY, strokePaint);
+        canvas.drawText(text, textX, textY, textPaint);
 
     }
 
@@ -131,7 +137,6 @@ public class Platform {
 
     public void recycle() {
         image.recycle();
-        enabled = false;
     }
 
 

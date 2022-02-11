@@ -142,36 +142,7 @@ public class Engine implements OnClockTimeUpListener {
         pausePaint.setAlpha((int) (0.35f * 255f));
     }
 
-    public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Player player, Context context) {
-        this.renderWidth = renderWidth;
-        this.renderHeight = renderHeight;
-        cameraWidth = ScreenScaleManager.originalWidth;
-        cameraHeight = ScreenScaleManager.originalHeight;
-        maxPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MAX_RATIO);
-        minPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MIN_RATIO);
-        initializeMediaPlayerAndSounds(context);
-
-        this.player = player;
-        player.initializeSounds(soundPool, context);
-
-        int playerHeight = (int) (58 * player.playerSizeMultiple);
-        int playerWidth = (int) (30 * player.playerSizeMultiple);
-        int platformHeight = (int) (playerHeight * 0.6f);
-        player.rect = RectHelper.rectFromWidthHeight(0, 0, playerWidth, playerHeight);
-
-        Platform.loadBitmaps(resources, platformHeight);
-        random = new Random(123);
-
-        backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
-        frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.RGB_565);
-        this.gameCanvas = gameCanvas;
-
-
-        gameCanvas.initialize(resources, renderWidth, renderHeight);
-
-        initializeClock();
-        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    }
+    private static final int REGULAR_TO_DISAPPEARING_PLATFORM_RATIO = 4;
 
     private void initializeClock() {
         clock = (ClockControl) gameCanvas.controls.get(CLOCK);
@@ -310,64 +281,35 @@ public class Engine implements OnClockTimeUpListener {
         }
     }
 
-    private void updateGameMechanics(int msPassed, Context context) {
-        // update and remove platforms
-        Iterator<Platform> iterator = platforms.descendingIterator();
-        int removed = 0;
-        while (iterator.hasNext()) {
-            Platform platform = iterator.next();
-            if (platform.rect.top > cameraY + cameraHeight) {
-                platform.recycle();
-                iterator.remove();
-                removed++;
-                continue;
-            }
-            if (platform instanceof DisappearingPlatform) {
-                ((DisappearingPlatform) platform).tick(msPassed);
-            }
-            if (!platform.enabled) {
-                iterator.remove();
-            }
-        }
-        generatePlatforms(removed);
+    public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Player player, Context context) {
+        this.renderWidth = renderWidth;
+        this.renderHeight = renderHeight;
+        cameraWidth = ScreenScaleManager.originalWidth;
+        cameraHeight = ScreenScaleManager.originalHeight;
+        maxPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MAX_RATIO);
+        minPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MIN_RATIO);
+        initializeMediaPlayerAndSounds(context);
 
-        // update player
-        player.updatePlayer(msPassed, this);
+        this.player = player;
+        player.initializeSounds(soundPool, context);
 
-        // update camera
-        int playerY = player.rect.top;
-        float playerRelativeToCamera = ((playerY - cameraY) / (float) cameraHeight);
-        // Log.d("hey", String.valueOf(playerRelativeToCamera));
-        if (player.rect.top < cameraY + cameraHeight * 0.25f) {
+        int playerHeight = (int) (58 * player.playerSizeMultiple);
+        int playerWidth = (int) (30 * player.playerSizeMultiple);
+        int platformHeight = (int) (playerHeight * 0.6f);
+        player.rect = RectHelper.rectFromWidthHeight(0, 0, playerWidth, playerHeight);
 
-            externalCameraSpeed = Math.min(externalCameraSpeed + CAMERA_SPEED_ACCELERATION * msPassed, CAMERA_CONSTANT_SPEED_INCREASE * 1.5f);
-        } else {
-            // decelerate external camera speed
-            //externalCameraSpeed /= 2f;
-            externalCameraSpeed = Math.min(0, externalCameraSpeed + msPassed * CAMERA_SPEED_DECELERATION);
+        Platform.loadBitmaps(resources, platformHeight);
+        random = new Random();
 
-        }
-
-        cameraY += (externalCameraSpeed + constantCameraSpeed) * msPassed;
+        backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
+        frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.RGB_565);
+        this.gameCanvas = gameCanvas;
 
 
-        if (constantCameraSpeed == 0 && player.rect.top < 0) {
-            clock.countTime = true;
-            constantCameraSpeed = CAMERA_CONSTANT_SPEED_INCREASE;
-        }
+        gameCanvas.initialize(resources, renderWidth, renderHeight);
 
-        clock.update(msPassed);
-        // check lost state
-        if (player.rect.top > cameraY + cameraHeight) {
-            // LOST!
-            updateGameState(GameState.LOST);
-            musicPlayer.pause();
-            musicPlayer.seekTo(0);
-            gameOverStreamId = playSound(gameOverSound, 1);
-            updateLostUI(context);
-        }
-
-
+        initializeClock();
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
 
@@ -421,6 +363,64 @@ public class Engine implements OnClockTimeUpListener {
 
     public static final int PLATFORMS_BETWEEN_LEVELS = 20;
 
+    private void updateGameMechanics(int msPassed, Context context) {
+        // update and remove platforms
+        Iterator<Platform> iterator = platforms.descendingIterator();
+        int removed = 0;
+        while (iterator.hasNext()) {
+            Platform platform = iterator.next();
+            boolean removePlat = false;
+            if (platform instanceof DisappearingPlatform) {
+                removePlat = ((DisappearingPlatform) platform).tick(msPassed);
+            }
+            if (removePlat || platform.rect.top > cameraY + cameraHeight) {
+                platform.recycle();
+                iterator.remove();
+                removed++;
+                continue;
+            }
+        }
+        generatePlatforms(removed);
+
+        // update player
+        player.updatePlayer(msPassed, this);
+
+        // update camera
+        int playerY = player.rect.top;
+        float playerRelativeToCamera = ((playerY - cameraY) / (float) cameraHeight);
+        // Log.d("hey", String.valueOf(playerRelativeToCamera));
+        if (player.rect.top < cameraY + cameraHeight * 0.25f) {
+
+            externalCameraSpeed = Math.min(externalCameraSpeed + CAMERA_SPEED_ACCELERATION * msPassed, CAMERA_CONSTANT_SPEED_INCREASE * 1.5f);
+        } else {
+            // decelerate external camera speed
+            //externalCameraSpeed /= 2f;
+            externalCameraSpeed = Math.min(0, externalCameraSpeed + msPassed * CAMERA_SPEED_DECELERATION);
+
+        }
+
+        cameraY += (externalCameraSpeed + constantCameraSpeed) * msPassed;
+
+
+        if (constantCameraSpeed == 0 && player.rect.top < 0) {
+            clock.countTime = true;
+            constantCameraSpeed = CAMERA_CONSTANT_SPEED_INCREASE;
+        }
+
+        clock.update(msPassed);
+        // check lost state
+        if (player.rect.top > cameraY + cameraHeight) {
+            // LOST!
+            updateGameState(GameState.LOST);
+            musicPlayer.pause();
+            musicPlayer.seekTo(0);
+            gameOverStreamId = playSound(gameOverSound, 1);
+            updateLostUI(context);
+        }
+
+
+    }
+
     public void generatePlatforms(int count) {
         int lastPlatformY = 0;
         int lastPlatformNum = 0;
@@ -450,7 +450,14 @@ public class Engine implements OnClockTimeUpListener {
             }
             Platform.PlatformTypes platformLevel = Platform.PLATFORM_TYPE_BY_LEVEL[Math.min(Platform.PLATFORM_TYPE_BY_LEVEL.length - 1, lastPlatformNum / PLATFORMS_BETWEEN_LEVELS)];
 
-            platforms.add(new Platform(platformLevel, lastPlatformNum, x, y, width, drawCorners));
+            Platform newPlatform;
+            if (random.nextInt(REGULAR_TO_DISAPPEARING_PLATFORM_RATIO) == 0) {
+                newPlatform = new DisappearingPlatform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
+            } else {
+                newPlatform = new Platform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
+            }
+
+            platforms.add(newPlatform);
             lastPlatformY = y;
         }
     }

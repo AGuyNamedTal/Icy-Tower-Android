@@ -12,7 +12,7 @@ public class TextSizeHelper {
         TEXT_HEIGHT_PAINT.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
     }
 
-    public static int getTextSize(String text, int width) {
+    public static int getTextSizeFromWidth(String text, int width) {
         setTextSizeFromWidth(width, text, TEXT_HEIGHT_PAINT);
         TEXT_HEIGHT_PAINT.getTextBounds(text, 0, text.length(), TEXT_HEIGHT_BOUNDS);
         return TEXT_HEIGHT_BOUNDS.height();

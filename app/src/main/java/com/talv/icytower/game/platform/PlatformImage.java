@@ -17,6 +17,7 @@ public class PlatformImage {
     private int rightBitmapWidth;
     private int leftBitmapWidth;
     private int height;
+    public int linesFilled;
 
 
     public PlatformImage(Bitmap middleBitmap, Bitmap leftBitmap, Bitmap rightBitmap) {
@@ -28,6 +29,7 @@ public class PlatformImage {
         rightBitmapWidth = rightBitmap.getWidth();
         minWidth = leftBitmapWidth + rightBitmapWidth;
         height = middleBitmap.getHeight();
+        linesFilled = ImageHelper.measureLinesWithPixels(leftBitmap);
     }
 
     public Bitmap createPlatformImage(int width, boolean withCorners) {

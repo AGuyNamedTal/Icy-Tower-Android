@@ -4,13 +4,25 @@ import android.graphics.Paint;
 
 public class DisappearingPlatform extends Platform {
 
+    private static final float STARTING_OPACITY = 0.85f;
+    private static final int STARTING_ALPHA = (int) (255 * STARTING_OPACITY);
+    private static final int DISAPPEARING_PLATFORM_LIFESPAN = 500;
+
     public Paint paint;
     public double lifespan;
+
+    private boolean disappearing = false;
 
 
     public DisappearingPlatform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners, int lifespan) {
         super(type, num, x, y, width, drawCorners);
         this.lifespan = lifespan;
+        paint = new Paint();
+        paint.setAlpha(STARTING_ALPHA);
+    }
+
+    public DisappearingPlatform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners) {
+        this(type, num, x, y, width, drawCorners, DISAPPEARING_PLATFORM_LIFESPAN);
     }
 
     @Override
@@ -21,16 +33,19 @@ public class DisappearingPlatform extends Platform {
     @Override
     public void onPlayerFall() {
         super.onPlayerFall();
-        enabled = true;
+        disappearing = true;
     }
 
-    public void tick(int msPassed) {
-        if (enabled) {
-            paint.setAlpha(255 - (int) (255 * (msPassed / lifespan)));
+    // returns true if the platform should be removed, false otherwise
+    public boolean tick(int msPassed) {
+        if (disappearing) {
+            int newAlpha = Math.max(STARTING_ALPHA - (int) (STARTING_ALPHA * (msPassed / lifespan)), 0);
+            paint.setAlpha(newAlpha);
             lifespan -= msPassed;
             if (lifespan <= 0) {
-                enabled = false;
+                return true;
             }
         }
+        return false;
     }
 }
