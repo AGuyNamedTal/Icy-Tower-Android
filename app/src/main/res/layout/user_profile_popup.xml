@@ -5,23 +5,6 @@
     android:background="#dbdbdb"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/up_close"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#9c9c9c"
-        android:text="Close Window"
-        android:textColor="#000000"></Button>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="10dp"
-        android:text="Best Game"
-        android:textColor="#000000"
-        android:textSize="24sp" />
-
     <TextView
         android:id="@+id/up_username"
         android:layout_width="match_parent"
@@ -32,6 +15,20 @@
         android:textColor="#000000"
         android:textSize="32sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:text="Best Game"
+        android:textColor="#000000"
+        android:textSize="24sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -149,9 +146,12 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <View
+    <Button
+        android:id="@+id/up_close"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray" />
+        android:layout_height="wrap_content"
+        android:background="#9c9c9c"
+        android:text="Close Window"
+        android:textColor="#000000"></Button>
 
 </LinearLayout>
