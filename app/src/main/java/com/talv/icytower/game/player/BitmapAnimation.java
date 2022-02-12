@@ -3,9 +3,9 @@ package com.talv.icytower.game.player;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.talv.icytower.ImageHelper;
 import com.talv.icytower.activities.GameActivity;
 import com.talv.icytower.game.Debug;
-import com.talv.icytower.ImageHelper;
 
 public class BitmapAnimation {
 
@@ -52,7 +52,7 @@ public class BitmapAnimation {
     }
 
 
-    public void increaseTime(int msPassed) {
+    public void updateTime(int msPassed) {
         if (Debug.LOG_ANIMATION)
             Log.d("animation", "current time = " + currentTime);
         currentTime += msPassed;

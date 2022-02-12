@@ -12,7 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.talv.icytower.game.Engine;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.ScreenScaleManager;
-import com.talv.icytower.game.player.CoolGuy;
+import com.talv.icytower.game.player.Characters;
+import com.talv.icytower.game.player.Player;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -44,7 +45,7 @@ public class GameActivity extends AppCompatActivity {
         Resources resources = getResources();
 
         engine = new Engine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas,
-                new CoolGuy(resources, Engine.PLAYER_SIZE_MULTIPLE), this);
+                new Player(Characters.loadPlayer2Animations(resources, Engine.PLAYER_SIZE_MULTIPLE)), this);
 
         engine.resetLevel();
 

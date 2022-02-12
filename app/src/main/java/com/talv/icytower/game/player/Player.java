@@ -1,7 +1,6 @@
 package com.talv.icytower.game.player;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -27,7 +26,7 @@ import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS;
 import static com.talv.icytower.gui.GUI.CONTROLS.SCORE_TXT;
 import static com.talv.icytower.gui.GUI.CONTROLS.checkActive;
 
-public abstract class Player {
+public class Player {
 
     public enum Direction {
         LEFT,
@@ -54,7 +53,6 @@ public abstract class Player {
         return score;
     }
 
-    public float playerSizeMultiple;
 
     protected int stateUpdateTime;
 
@@ -69,7 +67,6 @@ public abstract class Player {
     public static final float MIN_SPEED = MAX_SPEED / 10f;
     public static final float REACTION_FORCE_MULTIPLE = 0.8f;
 
-    //public static float JUMP_HEIGHT = 125f;
     public static final float VERTICAL_DECELERATION = DECELERATION_SPEED * 0.8f;
     public static final float MAX_FALL_SPEED = MIN_SPEED * 0.3f;
     public static final float MIN_JUMP_SPEED = -MAX_FALL_SPEED * 0.93f;
@@ -97,9 +94,8 @@ public abstract class Player {
     public int totalJumps;
     public long totalTime;
 
-    public Player(Resources resources, float playerSizeMultiple) {
-        this.playerSizeMultiple = playerSizeMultiple;
-        initializeAnimations(resources);
+    public Player(HashMap<PlayerState, BitmapAnimation> animations) {
+        this.animations = animations;
         updateStateAndAnimation(PlayerState.STANDING, 0);
         playerControls = new PlayerControls();
         resetPlayer();
@@ -110,13 +106,23 @@ public abstract class Player {
         jumpSoundID = soundPool.load(context, R.raw.jump_sound, 1);
     }
 
+    void updateStateAndAnimation(PlayerState newState, int msPassed) {
+        if (currentState == newState) {
+            animations.get(currentState).updateTime(msPassed);
+        } else {
+            currentState = newState;
+            animations.get(currentState).resetTime();
+            stateUpdateTime = (int) System.currentTimeMillis();
+        }
 
-    abstract void initializeAnimations(Resources resources);
-
-    abstract void updateStateAndAnimation(PlayerState newState, int msPassed);
+    }
 
 
-    abstract Bitmap getCurrentImage();
+    Bitmap getCurrentImage() {
+        if (Debug.LOG_ANIMATION)
+            Log.d("animation", currentState.toString());
+        return animations.get(currentState).getCurrentBitmap(currentDirection);
+    }
 
 
     public void render(Canvas canvas, Engine engine) {
@@ -193,33 +199,6 @@ public abstract class Player {
         if (newState != null)
             updateStateAndAnimation(newState, msPassed);
         RectHelper.setRectX(rect, newX);
-
-
-        //update camera:
-
-
-        // handle gravity
-        //check if should fall
-
-        /*
-        boolean shouldFall = !isPlatformBelow(engine.platforms) && !(isJumping());
-        if (!shouldFall) {
-            System.out.println("h");
-        }
-        if (Debug.LOG_JUMP)
-            Log.d("jump", "Should Fall: " + shouldFall);
-        if (shouldFall) {
-            int newY = (int) (rect.top + MAX_FALL_SPEED * msPassed);
-            fall(newY, engine.platforms, msPassed);
-        } else {
-            if (isFalling()) {
-                stopFalling(msPassed, rect.top);
-            }
-            if (isJumping()) {
-                jumpTick(engine.platforms, msPassed);
-            }
-        }
-        */
     }
 
     public void resetPlayer() {

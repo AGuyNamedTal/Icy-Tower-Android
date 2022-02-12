@@ -142,7 +142,9 @@ public class Engine implements OnClockTimeUpListener {
         pausePaint.setAlpha((int) (0.35f * 255f));
     }
 
-    private static final int REGULAR_TO_DISAPPEARING_PLATFORM_RATIO = 4;
+    public static final int PLATFORMS_BETWEEN_LEVELS = 20;
+    private static final int REGULAR_TO_DISAPPEARING_PLATFORM_RATIO = 7;
+
 
     private void initializeClock() {
         clock = (ClockControl) gameCanvas.controls.get(CLOCK);
@@ -191,50 +193,50 @@ public class Engine implements OnClockTimeUpListener {
         }
     }
 
-    public void onResume() {
-        processingClick = false;
-        if (currentGameState == GameState.PLAYING && GameSettings.BACKG_MUSIC && !musicPlayer.isPlaying()) {
-            musicPlayer.start();
-        }
+    public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas
+            gameCanvas, Player player, Context context) {
+        this.renderWidth = renderWidth;
+        this.renderHeight = renderHeight;
+        cameraWidth = ScreenScaleManager.originalWidth;
+        cameraHeight = ScreenScaleManager.originalHeight;
+        maxPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MAX_RATIO);
+        minPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MIN_RATIO);
+        initializeMediaPlayerAndSounds(context);
+
+        this.player = player;
+        player.initializeSounds(soundPool, context);
+
+        int playerHeight = (int) (58 * Engine.PLAYER_SIZE_MULTIPLE);
+        int playerWidth = (int) (30 * Engine.PLAYER_SIZE_MULTIPLE);
+        int platformHeight = (int) (playerHeight * 0.6f);
+        player.rect = RectHelper.rectFromWidthHeight(0, 0, playerWidth, playerHeight);
+
+        Platform.loadBitmaps(resources, platformHeight);
+        random = new Random();
+
+        backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
+        frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.RGB_565);
+        this.gameCanvas = gameCanvas;
+
+
+        gameCanvas.initialize(resources, renderWidth, renderHeight);
+
+        initializeClock();
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public void render(Canvas canvas) {
         canvas.drawBitmap(frameScaled, 0, 0, gamePaint);
     }
 
-    public void updateFrame() {
-        // draw on frame
-        Canvas bitmapCanvas = new Canvas(frame);
-
-        /*if (isPaused) {
-            gamePaint.setAlpha((int) (0.8f * 255));
-        } else {
-            gamePaint.setAlpha(255);
-        }*/
-
-        // draw background
-        bitmapCanvas.drawBitmap(backgroundImg, 0, 0, gamePaint);
-        // draw platforms
-        for (Platform platform : platforms) {
-            platform.render(bitmapCanvas, this);
+    public void onResume() {
+        processingClick = false;
+        if (currentGameState == GameState.PLAYING) {
+            if (GameSettings.BACKG_MUSIC && !musicPlayer.isPlaying()) {
+                musicPlayer.start();
+            }
+            activateClockIfNeeded();
         }
-        //draw player
-        player.render(bitmapCanvas, this);
-
-
-        // final render (stretch)
-        frameScaled = ImageHelper.stretch(frame, renderWidth, renderHeight, false);
-
-        // add controls
-
-        Canvas finalFrameCanvas = new Canvas(frameScaled);
-
-        if (currentGameState != GameState.PLAYING) {
-            finalFrameCanvas.drawRect(0, 0, renderWidth, renderHeight, pausePaint);
-        }
-
-
-        gameCanvas.renderControls(finalFrameCanvas);
     }
 
     public void updateGame(int msPassed, Context context) {
@@ -281,36 +283,6 @@ public class Engine implements OnClockTimeUpListener {
         }
     }
 
-    public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Player player, Context context) {
-        this.renderWidth = renderWidth;
-        this.renderHeight = renderHeight;
-        cameraWidth = ScreenScaleManager.originalWidth;
-        cameraHeight = ScreenScaleManager.originalHeight;
-        maxPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MAX_RATIO);
-        minPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MIN_RATIO);
-        initializeMediaPlayerAndSounds(context);
-
-        this.player = player;
-        player.initializeSounds(soundPool, context);
-
-        int playerHeight = (int) (58 * player.playerSizeMultiple);
-        int playerWidth = (int) (30 * player.playerSizeMultiple);
-        int platformHeight = (int) (playerHeight * 0.6f);
-        player.rect = RectHelper.rectFromWidthHeight(0, 0, playerWidth, playerHeight);
-
-        Platform.loadBitmaps(resources, platformHeight);
-        random = new Random();
-
-        backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
-        frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.RGB_565);
-        this.gameCanvas = gameCanvas;
-
-
-        gameCanvas.initialize(resources, renderWidth, renderHeight);
-
-        initializeClock();
-        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    }
 
 
     private void updateLostUI(Context context) {
@@ -358,10 +330,31 @@ public class Engine implements OnClockTimeUpListener {
 
     public static String formatGameTimeToString(long time) {
         return String.valueOf(time / 1000) + "." + String.valueOf(Math.round((time % 1000) / 100f));
-
     }
 
-    public static final int PLATFORMS_BETWEEN_LEVELS = 20;
+    public void updateFrame() {
+        // draw on frame
+        Canvas bitmapCanvas = new Canvas(frame);
+        // draw background
+        bitmapCanvas.drawBitmap(backgroundImg, 0, 0, gamePaint);
+        // draw platforms
+        for (Platform platform : platforms) {
+            platform.render(bitmapCanvas, this);
+        }
+        //draw player
+        player.render(bitmapCanvas, this);
+
+        // final render (stretch)
+        frameScaled = ImageHelper.stretch(frame, renderWidth, renderHeight, false);
+
+        // add controls
+        Canvas finalFrameCanvas = new Canvas(frameScaled);
+        if (currentGameState != GameState.PLAYING) {
+            // reduce brightness of background game
+            finalFrameCanvas.drawRect(0, 0, renderWidth, renderHeight, pausePaint);
+        }
+        gameCanvas.renderControls(finalFrameCanvas);
+    }
 
     private void updateGameMechanics(int msPassed, Context context) {
         // update and remove platforms
@@ -400,13 +393,7 @@ public class Engine implements OnClockTimeUpListener {
         }
 
         cameraY += (externalCameraSpeed + constantCameraSpeed) * msPassed;
-
-
-        if (constantCameraSpeed == 0 && player.rect.top < 0) {
-            clock.countTime = true;
-            constantCameraSpeed = CAMERA_CONSTANT_SPEED_INCREASE;
-        }
-
+        activateClockIfNeeded();
         clock.update(msPassed);
         // check lost state
         if (player.rect.top > cameraY + cameraHeight) {
@@ -417,8 +404,13 @@ public class Engine implements OnClockTimeUpListener {
             gameOverStreamId = playSound(gameOverSound, 1);
             updateLostUI(context);
         }
+    }
 
-
+    private void activateClockIfNeeded() {
+        if (player.rect.top < 0) {
+            clock.countTime = true;
+            constantCameraSpeed = Math.min(CAMERA_CONSTANT_SPEED_INCREASE, constantCameraSpeed);
+        }
     }
 
     public void generatePlatforms(int count) {
@@ -439,7 +431,8 @@ public class Engine implements OnClockTimeUpListener {
             int width;
             boolean drawCorners;
             int x;
-            if (lastPlatformNum != 0 && lastPlatformNum % PLATFORMS_BETWEEN_LEVELS == 0) {
+            boolean fullLevel = lastPlatformNum % PLATFORMS_BETWEEN_LEVELS == 0;
+            if (lastPlatformNum != 0 && fullLevel) {
                 width = cameraWidth;
                 drawCorners = false;
                 x = 0;
@@ -451,10 +444,10 @@ public class Engine implements OnClockTimeUpListener {
             Platform.PlatformTypes platformLevel = Platform.PLATFORM_TYPE_BY_LEVEL[Math.min(Platform.PLATFORM_TYPE_BY_LEVEL.length - 1, lastPlatformNum / PLATFORMS_BETWEEN_LEVELS)];
 
             Platform newPlatform;
-            if (random.nextInt(REGULAR_TO_DISAPPEARING_PLATFORM_RATIO) == 0) {
-                newPlatform = new DisappearingPlatform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
-            } else {
+            if (fullLevel || random.nextInt(REGULAR_TO_DISAPPEARING_PLATFORM_RATIO) != 0) {
                 newPlatform = new Platform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
+            } else {
+                newPlatform = new DisappearingPlatform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
             }
 
             platforms.add(newPlatform);
