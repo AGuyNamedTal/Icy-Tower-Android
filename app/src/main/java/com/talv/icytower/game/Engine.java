@@ -215,7 +215,7 @@ public class Engine implements OnClockTimeUpListener {
         random = new Random();
 
         backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
-        frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.RGB_565);
+        frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.ARGB_8888);
         this.gameCanvas = gameCanvas;
 
 

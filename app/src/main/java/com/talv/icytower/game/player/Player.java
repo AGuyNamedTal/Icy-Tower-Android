@@ -106,7 +106,7 @@ public class Player {
         jumpSoundID = soundPool.load(context, R.raw.jump_sound, 1);
     }
 
-    void updateStateAndAnimation(PlayerState newState, int msPassed) {
+    private void updateStateAndAnimation(PlayerState newState, int msPassed) {
         if (currentState == newState) {
             animations.get(currentState).updateTime(msPassed);
         } else {
@@ -118,7 +118,7 @@ public class Player {
     }
 
 
-    Bitmap getCurrentImage() {
+    private Bitmap getCurrentImage() {
         if (Debug.LOG_ANIMATION)
             Log.d("animation", currentState.toString());
         return animations.get(currentState).getCurrentBitmap(currentDirection);

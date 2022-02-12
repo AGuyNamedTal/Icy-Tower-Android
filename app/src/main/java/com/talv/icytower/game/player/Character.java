@@ -9,7 +9,12 @@ import com.talv.icytower.R;
 
 import java.util.HashMap;
 
-public class Characters {
+public class Character {
+
+    public HashMap<Player.PlayerState, BitmapAnimation> animations;
+    public int animationWidth;
+    public int animationHeight;
+
 
     public static HashMap<Player.PlayerState, BitmapAnimation> loadPlayer1Animations(Resources resources, float playerSizeMultiple) {
         Bitmap[] bitmaps = ImageHelper.stretch(
@@ -22,6 +27,11 @@ public class Characters {
         Bitmap[] bitmaps = ImageHelper.stretch(
                 ImageHelper.decodeAnimations(BitmapFactory.decodeResource(resources, R.drawable.player_2_animations), true),
                 playerSizeMultiple, true);
+        Bitmap[] bitmaps2 = ImageHelper.stretch(
+                ImageHelper.decodeAnimations(BitmapFactory.decodeResource(resources, R.drawable.player_1_animations), true),
+                playerSizeMultiple, true);
+
+
         // add missing 4th image
         Bitmap[] newBitmaps = new Bitmap[bitmaps.length + 1];
         for (int i = 0; i < 3; i++) {

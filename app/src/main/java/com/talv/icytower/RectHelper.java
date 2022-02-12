@@ -20,11 +20,12 @@ public class RectHelper {
     }
 
     public static void setRectPos(Rect rect, int x, int y) {
-        if (Debug.LOG_JUMP)
-            Log.d("jump", "Y = " + y);
         rect.set(x, y, x + rect.width(), y + rect.height());
     }
 
+    public static void setRectSize(Rect rect, int width, int height) {
+        rect.set(rect.left, rect.top, rect.left + width, rect.top + height);
+    }
 
     public static boolean doRectsIntersect(Rect rect1, Rect rect2) {
         return rect2.left < rect1.right && rect2.right > rect1.left && rect2.top < rect1.bottom && rect2.bottom > rect1.top;
