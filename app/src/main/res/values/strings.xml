@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IcyTower</string>
+    <string name="app_name">Icy Tower</string>
     <string name="want_register">Need an account? <u>SIGN UP</u></string>
     <string name="want_login">Have an account? <u>SIGN IN</u></string>
     <string name="want_logout"><u>Click here to sign out</u></string>

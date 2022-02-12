@@ -3,13 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/drawable/ic_launcher_background.xml" value="0.313" />
+        <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.313" />
         <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/layout/activity_about.xml" value="0.17239583333333333" />
         <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/layout/activity_login.xml" value="0.3242753623188406" />
-        <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/layout/activity_register.xml" value="0.3242753623188406" />
         <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/layout/activity_scoreboard.xml" value="0.33" />
         <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/layout/activity_settings.xml" value="0.25" />
         <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/layout/scoreboard_item.xml" value="0.33" />
+        <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.181" />
+        <entry key="..\:/Downloads/Compressed/IcyTower0.014/IcyTower/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.181" />
         <entry key="..\:/Users/student/Downloads/IcyTower0.013/IcyTower/app/src/main/res/layout/activity_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/student/Downloads/IcyTower0.013/IcyTower/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
       </map>
