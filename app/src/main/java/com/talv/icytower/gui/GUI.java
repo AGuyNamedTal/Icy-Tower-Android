@@ -14,23 +14,20 @@ import com.talv.icytower.RectHelper;
 import com.talv.icytower.activities.MainActivity;
 import com.talv.icytower.activities.SettingsActivity;
 import com.talv.icytower.game.Engine;
+import com.talv.icytower.game.player.Character;
+import com.talv.icytower.game.player.Player;
 import com.talv.icytower.gui.graphiccontrols.ClockControl;
 import com.talv.icytower.gui.graphiccontrols.Control;
 import com.talv.icytower.gui.graphiccontrols.HighscoreControl;
 import com.talv.icytower.gui.graphiccontrols.ImageControl;
 import com.talv.icytower.gui.graphiccontrols.OnButtonClickListener;
+import com.talv.icytower.gui.graphiccontrols.RectControl;
 import com.talv.icytower.gui.graphiccontrols.TextControl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.talv.icytower.gui.GUI.CONTROLS.CHOOSE_PLAYER_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
-import static com.talv.icytower.gui.GUI.CONTROLS.MAIN_MENU_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAY_AGAIN_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.RESUME_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.SETTINGS_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.SHARE_BTN;
+import static com.talv.icytower.gui.GUI.CONTROLS.*;
 
 public class GUI {
     public static class CONTROLS {
@@ -283,23 +280,62 @@ public class GUI {
 
     }
 
+    private static final int CHOOSE_CHARACTER_COLOR = 0xFF000000;
+    private static final int CHARACTER_RECT_COLOR = 0xFF444444;
+    private static final int CHARACTER_RECT_THICKNESS = 5;
+
     private static void buildChoosePlayerControls(Map<Integer, Control> controls, int renderWidth, int renderHeight) {
 
         final String chooseCharacterStr = "CHOOSE CHARACTER";
-        int textWidth = (int)(renderWidth * 0.8f);
+        int textWidth = (int) (renderWidth * 0.8f);
         int textSize = TextSizeHelper.getTextSizeFromWidth(chooseCharacterStr, textWidth);
-        int textY = (int)(renderHeight * 0.2f);
-        Point txtPoint = new Point((renderWidth - textWidth) / 2,  textY);
+        int textY = (int) (renderHeight * 0.2f);
+        Point txtPoint = new Point((renderWidth - textWidth) / 2, textY);
+        controls.put(CHOOSE_PLAYER_TXT, new TextControl(false, false, txtPoint, chooseCharacterStr, textSize,
+                CHOOSE_CHARACTER_COLOR));
 
+        int paddingBetweenTextAndRect = (int) (renderHeight * 0.1f);
         // side padding - char width - paddingbetween - char width - side padding
         int paddingBetweenChars = renderWidth / 5;
         int sidePadding = renderWidth / 8;
         int charRectWidth = (renderWidth - paddingBetweenChars - sidePadding * 2) / 2;
-        int charRectHeight = (int)(charRectWidth * ((float)Engine.character1.height / Engine.character1.width));
-        int rectPaddingX = (int)(charRectWidth * 0.2f);
-        int rectPaddingY = (int)(charRectHeight * 0.2f);
+        int charRectHeight = (int) (charRectWidth * ((float) Engine.character1.height / Engine.character1.width));
 
-        //controls.put(CHOOSE_PLAYER_TXT, new TextControl(false, false, txtPoint, chooseCharacterStr, textSize, 0));
+        Rect player1Rect = RectHelper.rectFromWidthHeight(
+                sidePadding,
+                textY + textSize + paddingBetweenTextAndRect,
+                charRectWidth,
+                charRectHeight
+        );
+        controls.put(PLAYER_1_RECT, new RectControl(player1Rect, CHARACTER_RECT_COLOR, CHARACTER_RECT_THICKNESS));
+        Rect player2Rect = RectHelper.rectFromWidthHeight(
+                player1Rect.right + paddingBetweenChars,
+                player1Rect.top,
+                charRectWidth,
+                charRectHeight
+        );
+        controls.put(PLAYER_2_RECT, new RectControl(player2Rect, CHARACTER_RECT_COLOR, CHARACTER_RECT_THICKNESS));
+
+        int rectPaddingX = (int) (charRectWidth * 0.1f);
+        int rectPaddingY = (int) (charRectHeight * 0.1f);
+        Rect player1ImgRect = new Rect(
+                player1Rect.left + rectPaddingX,
+                player1Rect.top + rectPaddingY,
+                player1Rect.right - rectPaddingX,
+                player1Rect.bottom - rectPaddingY
+        );
+        Rect player2ImgRect = new Rect(
+                player2Rect.left + rectPaddingX,
+                player2Rect.top + rectPaddingY,
+                player2Rect.right - rectPaddingX,
+                player2Rect.bottom - rectPaddingY
+        );
+        Bitmap char1Img = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
+        controls.put(PLAYER_1_IMG, new ImageControl(player1ImgRect,
+                ImageHelper.stretch(char1Img, player1ImgRect.width(), player1ImgRect.height(), false)));
+        Bitmap char2Img = Engine.character2.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
+        controls.put(PLAYER_2_IMG, new ImageControl(player2ImgRect,
+                ImageHelper.stretch(char2Img, player2ImgRect.width(), player2ImgRect.height(), false)));
 
     }
 
@@ -336,7 +372,7 @@ public class GUI {
         controls.get(PLAY_AGAIN_BTN).onClick = new OnButtonClickListener() {
             @Override
             public void OnClick(Engine engine, Context context) {
-                engine.resetLevel();
+                engine.resetLevel(context, context.getResources());
                 engine.updateGameState(Engine.GameState.PLAYING);
                 engine.onResume();
             }
@@ -353,7 +389,24 @@ public class GUI {
 
             }
         };
+        controls.get(PLAYER_1_RECT).onClick = new OnButtonClickListener() {
+            @Override
+            public void OnClick(Engine engine, Context context) {
+                setPlayer(Engine.character1, engine, context);
+            }
+        };
+        controls.get(PLAYER_2_RECT).onClick = new OnButtonClickListener() {
+            @Override
+            public void OnClick(Engine engine, Context context) {
+                setPlayer(Engine.character2, engine, context);
+            }
+        };
+    }
 
+    private static void setPlayer(Character character, Engine engine, Context context){
+        Resources resources = context.getResources();
+        engine.setPlayer(new Player(character), context, resources);
+        engine.resetLevel(context, resources);
     }
 
 

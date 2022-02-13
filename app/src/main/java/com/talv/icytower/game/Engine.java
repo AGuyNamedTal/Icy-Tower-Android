@@ -151,13 +151,13 @@ public class Engine implements OnClockTimeUpListener {
     public static final int PLATFORMS_BETWEEN_LEVELS = 20;
     private static final int REGULAR_TO_DISAPPEARING_PLATFORM_RATIO = 7;
 
-    public static void loadCharacters(Resources resources){
+    public static void loadCharacters(Resources resources) {
         character1 = Character.loadPlayer1(resources, Engine.PLAYER_SIZE_MULTIPLE);
         character2 = Character.loadPlayer2(resources, Engine.PLAYER_SIZE_MULTIPLE);
     }
 
     public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas
-            gameCanvas, Player player, Context context) {
+            gameCanvas, Context context) {
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
         cameraWidth = ScreenScaleManager.originalWidth;
@@ -166,12 +166,7 @@ public class Engine implements OnClockTimeUpListener {
         minPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MIN_RATIO);
         initializeMediaPlayerAndSounds(context);
 
-        this.player = player;
-        player.initializeSounds(soundPool, context);
 
-        int platformHeight = (int) (player.rect.height() * 0.6f);
-
-        Platform.loadBitmaps(resources, platformHeight);
         random = new Random();
 
         backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
@@ -185,16 +180,10 @@ public class Engine implements OnClockTimeUpListener {
     }
 
 
-    public void resetLevel() {
+    public void resetLevel(Context context, Resources resources) {
+        setPlayer(new Player(Character.loadPlayer1(resources, Engine.PLAYER_SIZE_MULTIPLE)), context, resources);
         cameraY = 0;
-        clearPlatforms();
-        Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
-                0, cameraHeight - Platform.getPlatformHeight() - (int) (0.05f * cameraHeight), cameraWidth, false);
-        platforms.add(groundPlatform);
-        RectHelper.setRectPos(player.rect, (cameraWidth - player.rect.width()) / 2,
-                groundPlatform.rect.top - player.rect.height());
         player.resetPlayer();
-        generatePlatforms((int) Math.ceil(cameraHeight / (float) (player.rect.height())) * 2);
         externalCameraSpeed = 0f;
         constantCameraSpeed = 0f;
         player.updateScore(0, gameCanvas);
@@ -205,6 +194,19 @@ public class Engine implements OnClockTimeUpListener {
         musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(1f));
     }
 
+    public void setPlayer(Player player, Context context, Resources resources) {
+        this.player = player;
+        player.initializeSounds(soundPool, context);
+        int platformHeight = (int) (player.rect.height() * 0.6f);
+        Platform.loadBitmaps(resources, platformHeight);
+        clearPlatforms();
+        Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
+                0, cameraHeight - Platform.getPlatformHeight() - (int) (0.05f * cameraHeight), cameraWidth, false);
+        platforms.add(groundPlatform);
+        RectHelper.setRectPos(player.rect, (cameraWidth - player.rect.width()) / 2,
+                groundPlatform.rect.top - player.rect.height());
+        generatePlatforms((int) Math.ceil(cameraHeight / (float) (player.rect.height())) * 2);
+    }
 
     private void initializeMediaPlayerAndSounds(Context context) {
         musicPlayer = MediaPlayer.create(context, R.raw.background_music);
@@ -416,7 +418,6 @@ public class Engine implements OnClockTimeUpListener {
             });
         }
     }
-
 
     public void generatePlatforms(int count) {
         int lastPlatformY = 0;
