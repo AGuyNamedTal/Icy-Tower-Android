@@ -18,7 +18,6 @@ public class RectControl extends Control {
 
     @Override
     public void render(Canvas canvas) {
-        System.out.println("a");
         canvas.drawRect(rect, paint);
     }
 }
