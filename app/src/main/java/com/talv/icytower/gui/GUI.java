@@ -49,6 +49,11 @@ public class GUI {
         public static final int NEW_HIGH_SCORE_TXT = 1 << 13;
         public static final int CLOCK = 1 << 14;
         public static final int GAME_STATS_TXT = 1 << 15;
+        public static final int CHOOSE_PLAYER_TXT = 1 << 16;
+        public static final int PLAYER_1_IMG = 1 << 17;
+        public static final int PLAYER_1_RECT = 1 << 18;
+        public static final int PLAYER_2_IMG = 1 << 19;
+        public static final int PLAYER_2_RECT = 1 << 20;
 
         public static final int MAX_FLAGS = GAME_STATS_TXT << 1;
         public static final int PLAYER_MOVEMENT_CONTROLS = (ARROW_LEFT
@@ -61,8 +66,10 @@ public class GUI {
         public static final int GAME_LOST_CONTROLS = GAME_OVER_TXT | NEW_HIGH_SCORE_TXT | YOUR_SCORE_TXT | PERSONAL_HIGH_SCORE_TXT
                 | PLAY_AGAIN_BTN | SHARE_BTN | SETTINGS_BTN | MAIN_MENU_BTN | GAME_STATS_TXT;
 
+        public static final int CHOOSE_PLAYER_CONTROLS = CHOOSE_PLAYER_TXT | PLAYER_1_IMG | PLAYER_1_RECT | PLAYER_2_IMG | PLAYER_2_RECT;
+
         public static final int[] CONTROL_GROUPS = new int[]{
-                GAMEPLAY_CONTROLS, PAUSE_MENU_CONTROLS, GAME_LOST_CONTROLS
+                GAMEPLAY_CONTROLS, PAUSE_MENU_CONTROLS, GAME_LOST_CONTROLS, CHOOSE_PLAYER_CONTROLS
         };
 
         // first key is the control group, seconds key is the specific control, and the value is the location of the control
@@ -78,6 +85,7 @@ public class GUI {
         buildGameControls(controls, resources, renderWidth, renderHeight);
         buildPauseMenuControls(controls, renderWidth, renderHeight);
         buildLostMenuControls(controls, renderWidth, renderHeight);
+        buildChoosePlayerControls(controls, renderWidth, renderHeight);
         addOnClickListeners(controls);
     }
 
@@ -272,6 +280,10 @@ public class GUI {
                 newHighScoreStr, newHighScoreHeight, GAME_OVER_TEXT_COLOR, true));
 
 
+    }
+
+    private static void buildChoosePlayerControls(Map<Integer, Control> controlMap, int renderWidth, int renderHeight) {
+        int paddingBetweenChars = renderWidth / 5;
     }
 
     private static void addOnClickListeners(Map<Integer, Control> controls) {

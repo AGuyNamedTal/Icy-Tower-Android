@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
+import static com.talv.icytower.gui.GUI.CONTROLS.CHOOSE_PLAYER_CONTROLS;
 import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
 import static com.talv.icytower.gui.GUI.CONTROLS.GAMEPLAY_CONTROLS;
 import static com.talv.icytower.gui.GUI.CONTROLS.GAME_LOST_CONTROLS;
@@ -98,6 +99,7 @@ public class Engine implements OnClockTimeUpListener {
     public enum GameState {
         PLAYING(GAMEPLAY_CONTROLS),
         PAUSED(PAUSE_MENU_CONTROLS),
+        CHOOSING_CHAR(CHOOSE_PLAYER_CONTROLS),
         LOST(GAME_LOST_CONTROLS);
 
         public int controlGroup;
@@ -206,10 +208,7 @@ public class Engine implements OnClockTimeUpListener {
         this.player = player;
         player.initializeSounds(soundPool, context);
 
-        int playerHeight = (int) (58 * Engine.PLAYER_SIZE_MULTIPLE);
-        int playerWidth = (int) (30 * Engine.PLAYER_SIZE_MULTIPLE);
-        int platformHeight = (int) (playerHeight * 0.6f);
-        player.rect = RectHelper.rectFromWidthHeight(0, 0, playerWidth, playerHeight);
+        int platformHeight = (int) (player.rect.height() * 0.6f);
 
         Platform.loadBitmaps(resources, platformHeight);
         random = new Random();
@@ -218,8 +217,7 @@ public class Engine implements OnClockTimeUpListener {
         frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.ARGB_8888);
         this.gameCanvas = gameCanvas;
 
-
-        gameCanvas.initialize(resources, renderWidth, renderHeight);
+        gameCanvas.initializeGUI(resources, renderWidth, renderHeight);
 
         initializeClock();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -282,7 +280,6 @@ public class Engine implements OnClockTimeUpListener {
             }
         }
     }
-
 
 
     private void updateLostUI(Context context) {

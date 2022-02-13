@@ -43,9 +43,9 @@ public class GameActivity extends AppCompatActivity {
 
 
         Resources resources = getResources();
-
+        
         engine = new Engine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas,
-                new Player(Character.loadPlayer2Animations(resources, Engine.PLAYER_SIZE_MULTIPLE)), this);
+                new Player(Character.loadPlayer2(resources, Engine.PLAYER_SIZE_MULTIPLE)), this);
 
         engine.resetLevel();
 

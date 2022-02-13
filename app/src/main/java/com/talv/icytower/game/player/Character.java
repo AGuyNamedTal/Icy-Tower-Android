@@ -12,25 +12,29 @@ import java.util.HashMap;
 public class Character {
 
     public HashMap<Player.PlayerState, BitmapAnimation> animations;
-    public int animationWidth;
-    public int animationHeight;
+    public int width;
+    public int height;
 
-
-    public static HashMap<Player.PlayerState, BitmapAnimation> loadPlayer1Animations(Resources resources, float playerSizeMultiple) {
-        Bitmap[] bitmaps = ImageHelper.stretch(
-                ImageHelper.decodeAnimations(BitmapFactory.decodeResource(resources, R.drawable.player_1_animations), true),
-                playerSizeMultiple, true);
-        return loadPlayerAnimations(bitmaps);
+    private Character(HashMap<Player.PlayerState, BitmapAnimation> animations, int width, int height) {
+        this.animations = animations;
+        this.width = width;
+        this.height = height;
     }
 
-    public static HashMap<Player.PlayerState, BitmapAnimation> loadPlayer2Animations(Resources resources, float playerSizeMultiple) {
+    public static Character loadPlayer1(Resources resources, float playerSizeMultiple) {
+        Bitmap animationSheet = BitmapFactory.decodeResource(resources, R.drawable.player_1_animations);
         Bitmap[] bitmaps = ImageHelper.stretch(
-                ImageHelper.decodeAnimations(BitmapFactory.decodeResource(resources, R.drawable.player_2_animations), true),
+                ImageHelper.decodeAnimations(animationSheet, true),
                 playerSizeMultiple, true);
-        Bitmap[] bitmaps2 = ImageHelper.stretch(
-                ImageHelper.decodeAnimations(BitmapFactory.decodeResource(resources, R.drawable.player_1_animations), true),
-                playerSizeMultiple, true);
+        return new Character(loadPlayerAnimations(bitmaps), bitmaps[0].getWidth(), animationSheet.getHeight());
+    }
 
+    public static Character loadPlayer2(Resources resources, float playerSizeMultiple) {
+        Bitmap animationSheet = BitmapFactory.decodeResource(resources, R.drawable.player_2_animations);
+
+        Bitmap[] bitmaps = ImageHelper.stretch(
+                ImageHelper.decodeAnimations(animationSheet, true),
+                playerSizeMultiple, true);
 
         // add missing 4th image
         Bitmap[] newBitmaps = new Bitmap[bitmaps.length + 1];
@@ -41,8 +45,10 @@ public class Character {
         for (int i = 4; i < newBitmaps.length; i++) {
             newBitmaps[i] = bitmaps[i - 1];
         }
-        return loadPlayerAnimations(newBitmaps);
+        return new Character(loadPlayerAnimations(newBitmaps), newBitmaps[0].getWidth(), animationSheet.getHeight());
+
     }
+
 
     private static HashMap<Player.PlayerState, BitmapAnimation> loadPlayerAnimations(Bitmap[] bitmaps) {
         HashMap<Player.PlayerState, BitmapAnimation> animations = new HashMap<>(bitmaps.length);
@@ -51,7 +57,7 @@ public class Character {
                 bitmaps[1],
                 bitmaps[2],
                 // bitmaps[1]
-        }, false, 400));
+        }, false, 300));
         animations.put(Player.PlayerState.SIDE_STAND, new BitmapAnimation(new Bitmap[]{
                 bitmaps[3]
         }, true));

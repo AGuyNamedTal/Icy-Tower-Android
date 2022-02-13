@@ -37,7 +37,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    public void initialize(Resources resources, int renderWidth, int renderHeight) {
+    public void initializeGUI(Resources resources, int renderWidth, int renderHeight) {
         GUI.buildControls(controls, resources, renderWidth, renderHeight);
     }
 

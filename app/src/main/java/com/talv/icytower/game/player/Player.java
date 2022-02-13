@@ -94,8 +94,9 @@ public class Player {
     public int totalJumps;
     public long totalTime;
 
-    public Player(HashMap<PlayerState, BitmapAnimation> animations) {
-        this.animations = animations;
+    public Player(Character character) {
+        this.animations = character.animations;
+        RectHelper.setRectSize(rect, character.width, character.height);
         updateStateAndAnimation(PlayerState.STANDING, 0);
         playerControls = new PlayerControls();
         resetPlayer();
