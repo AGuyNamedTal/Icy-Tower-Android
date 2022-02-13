@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.talv.icytower.game.Engine;
 
-public interface  OnButtonClickListener{
+public interface OnControlTouchListener {
 
-    void OnClick(Engine engine, Context context);
+    void onTouch(Engine engine, Context context);
 
 }

@@ -9,6 +9,8 @@ public class RectControl extends Control {
     private Paint paint;
 
     public RectControl(Rect rect, int color, int thickness) {
+        isEnabled = false;
+        isVisible = false;
         this.rect = rect;
         paint = new Paint();
         paint.setColor(color);

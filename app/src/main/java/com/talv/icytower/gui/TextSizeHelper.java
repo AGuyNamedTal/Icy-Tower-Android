@@ -1,28 +1,20 @@
 package com.talv.icytower.gui;
 
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 
 public class TextSizeHelper {
-    private static final Paint TEXT_HEIGHT_PAINT = new Paint();
-    private static final Rect TEXT_HEIGHT_BOUNDS = new Rect();
+    private static final Paint PAINT = new Paint();
+
+    private static final int PAINT_TXT_SIZE = 10;
 
     static {
-        TEXT_HEIGHT_PAINT.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        PAINT.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        PAINT.setTextSize(PAINT_TXT_SIZE);
     }
 
-    public static int getTextSizeFromWidth(String text, int width) {
-        setTextSizeFromWidth(width, text, TEXT_HEIGHT_PAINT);
-        TEXT_HEIGHT_PAINT.getTextBounds(text, 0, text.length(), TEXT_HEIGHT_BOUNDS);
-        return TEXT_HEIGHT_BOUNDS.height();
+    public static int getTextSizeFromWidth(String text, float width) {
+        return (int) Math.round(PAINT_TXT_SIZE * width / PAINT.measureText(text));
     }
 
-    private static void setTextSizeFromWidth(int desiredWidth, String text, Paint paint) {
-        int textSize = 10;
-        paint.setTextSize(textSize);
-        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        textSize = (int) (textSize * desiredWidth / paint.measureText(text));
-        paint.setTextSize(textSize);
-    }
 }

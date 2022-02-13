@@ -8,7 +8,7 @@ public abstract class Control {
     public boolean isEnabled;
     public boolean isVisible;
     public Rect rect;
-    public OnButtonClickListener onClick;
+    public OnControlTouchListener onTouch;
 
 
     public abstract void render(Canvas canvas);

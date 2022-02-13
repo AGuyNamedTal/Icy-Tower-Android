@@ -22,7 +22,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="6dp"
         android:text="PLAY"
-        android:textSize="29sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <TextView
@@ -50,7 +50,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:text="SETTINGS"
-        android:textSize="29sp" />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/scoreboardBtn"
@@ -59,7 +59,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:text="SCOREBOARD"
-        android:textSize="29sp" />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/aboutDevBtn"
@@ -68,7 +68,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:text="ABOUT DEVELEPOR"
-        android:textSize="29sp" />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/aboutGameBtn"
@@ -77,5 +77,5 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:text="ABOUT GAME"
-        android:textSize="29sp" />
+        android:textSize="20sp" />
 </LinearLayout>

@@ -17,17 +17,27 @@ import com.talv.icytower.game.Engine;
 import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;
 import com.talv.icytower.gui.graphiccontrols.ClockControl;
+import com.talv.icytower.gui.graphiccontrols.ColorWheelTxtControl;
 import com.talv.icytower.gui.graphiccontrols.Control;
-import com.talv.icytower.gui.graphiccontrols.HighscoreControl;
 import com.talv.icytower.gui.graphiccontrols.ImageControl;
-import com.talv.icytower.gui.graphiccontrols.OnButtonClickListener;
+import com.talv.icytower.gui.graphiccontrols.OnControlTouchListener;
 import com.talv.icytower.gui.graphiccontrols.RectControl;
 import com.talv.icytower.gui.graphiccontrols.TextControl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.talv.icytower.gui.GUI.CONTROLS.*;
+import static com.talv.icytower.gui.GUI.CONTROLS.CHOOSE_PLAYER_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
+import static com.talv.icytower.gui.GUI.CONTROLS.MAIN_MENU_BTN;
+import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_1_IMG;
+import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_1_RECT;
+import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_2_IMG;
+import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_2_RECT;
+import static com.talv.icytower.gui.GUI.CONTROLS.PLAY_AGAIN_BTN;
+import static com.talv.icytower.gui.GUI.CONTROLS.RESUME_BTN;
+import static com.talv.icytower.gui.GUI.CONTROLS.SETTINGS_BTN;
+import static com.talv.icytower.gui.GUI.CONTROLS.SHARE_BTN;
 
 public class GUI {
     public static class CONTROLS {
@@ -53,7 +63,7 @@ public class GUI {
         public static final int PLAYER_2_IMG = 1 << 19;
         public static final int PLAYER_2_RECT = 1 << 20;
 
-        public static final int MAX_FLAGS = GAME_STATS_TXT << 1;
+        public static final int MAX_FLAGS = PLAYER_2_RECT << 1;
         public static final int PLAYER_MOVEMENT_CONTROLS = (ARROW_LEFT
                 | ARROW_UP | ARROW_RIGHT);
         public static final int GAMEPLAY_CONTROLS = PLAYER_MOVEMENT_CONTROLS |
@@ -274,25 +284,24 @@ public class GUI {
                 mainMenu.bottom + paddingBetweenTexts
         );
         int newHighScoreHeight = TextSizeHelper.getTextSizeFromWidth(highScoreStr, scoresTextWidth);
-        controls.put(CONTROLS.NEW_HIGH_SCORE_TXT, new HighscoreControl(false, false, newHighScore,
-                newHighScoreStr, newHighScoreHeight, GAME_OVER_TEXT_COLOR, true));
+        controls.put(CONTROLS.NEW_HIGH_SCORE_TXT, new ColorWheelTxtControl(false, false, newHighScore,
+                newHighScoreStr, newHighScoreHeight, GAME_OVER_TEXT_COLOR, true, 2500));
 
 
     }
 
     private static final int CHOOSE_CHARACTER_COLOR = 0xFF000000;
     private static final int CHARACTER_RECT_COLOR = 0xFF444444;
-    private static final int CHARACTER_RECT_THICKNESS = 5;
 
     private static void buildChoosePlayerControls(Map<Integer, Control> controls, int renderWidth, int renderHeight) {
 
         final String chooseCharacterStr = "CHOOSE CHARACTER";
-        int textWidth = (int) (renderWidth * 0.8f);
+        int textWidth = (int) (renderWidth * 0.95f);
         int textSize = TextSizeHelper.getTextSizeFromWidth(chooseCharacterStr, textWidth);
         int textY = (int) (renderHeight * 0.2f);
-        Point txtPoint = new Point((renderWidth - textWidth) / 2, textY);
-        controls.put(CHOOSE_PLAYER_TXT, new TextControl(false, false, txtPoint, chooseCharacterStr, textSize,
-                CHOOSE_CHARACTER_COLOR));
+        Point txtPoint = new Point((renderWidth) / 2, textY);
+        controls.put(CHOOSE_PLAYER_TXT, new ColorWheelTxtControl(false, false, txtPoint, chooseCharacterStr, textSize,
+                CHOOSE_CHARACTER_COLOR, true, 5000));
 
         int paddingBetweenTextAndRect = (int) (renderHeight * 0.1f);
         // side padding - char width - paddingbetween - char width - side padding
@@ -301,20 +310,22 @@ public class GUI {
         int charRectWidth = (renderWidth - paddingBetweenChars - sidePadding * 2) / 2;
         int charRectHeight = (int) (charRectWidth * ((float) Engine.character1.height / Engine.character1.width));
 
+        int rectThickness = (int) (renderWidth * 0.01f);
+
         Rect player1Rect = RectHelper.rectFromWidthHeight(
                 sidePadding,
                 textY + textSize + paddingBetweenTextAndRect,
                 charRectWidth,
                 charRectHeight
         );
-        controls.put(PLAYER_1_RECT, new RectControl(player1Rect, CHARACTER_RECT_COLOR, CHARACTER_RECT_THICKNESS));
+        controls.put(PLAYER_1_RECT, new RectControl(player1Rect, CHARACTER_RECT_COLOR, rectThickness));
         Rect player2Rect = RectHelper.rectFromWidthHeight(
                 player1Rect.right + paddingBetweenChars,
                 player1Rect.top,
                 charRectWidth,
                 charRectHeight
         );
-        controls.put(PLAYER_2_RECT, new RectControl(player2Rect, CHARACTER_RECT_COLOR, CHARACTER_RECT_THICKNESS));
+        controls.put(PLAYER_2_RECT, new RectControl(player2Rect, CHARACTER_RECT_COLOR, rectThickness));
 
         int rectPaddingX = (int) (charRectWidth * 0.1f);
         int rectPaddingY = (int) (charRectHeight * 0.1f);
@@ -331,10 +342,10 @@ public class GUI {
                 player2Rect.bottom - rectPaddingY
         );
         Bitmap char1Img = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
-        controls.put(PLAYER_1_IMG, new ImageControl(player1ImgRect,
+        controls.put(PLAYER_1_IMG, new ImageControl(false, false, player1ImgRect,
                 ImageHelper.stretch(char1Img, player1ImgRect.width(), player1ImgRect.height(), false)));
         Bitmap char2Img = Engine.character2.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
-        controls.put(PLAYER_2_IMG, new ImageControl(player2ImgRect,
+        controls.put(PLAYER_2_IMG, new ImageControl(false, false, player2ImgRect,
                 ImageHelper.stretch(char2Img, player2ImgRect.width(), player2ImgRect.height(), false)));
 
     }
@@ -343,23 +354,23 @@ public class GUI {
 
         // pause controls
 
-        controls.get(MAIN_MENU_BTN).onClick = new OnButtonClickListener() {
+        controls.get(MAIN_MENU_BTN).onTouch = new OnControlTouchListener() {
             @Override
-            public void OnClick(Engine engine, Context context) {
+            public void onTouch(Engine engine, Context context) {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 context.startActivity(intent);
             }
         };
-        controls.get(SETTINGS_BTN).onClick = new OnButtonClickListener() {
+        controls.get(SETTINGS_BTN).onTouch = new OnControlTouchListener() {
             @Override
-            public void OnClick(Engine engine, Context context) {
+            public void onTouch(Engine engine, Context context) {
                 context.startActivity(new Intent(context, SettingsActivity.class));
             }
         };
-        controls.get(RESUME_BTN).onClick = new OnButtonClickListener() {
+        controls.get(RESUME_BTN).onTouch = new OnControlTouchListener() {
             @Override
-            public void OnClick(Engine engine, Context context) {
+            public void onTouch(Engine engine, Context context) {
                 if (engine.currentGameState == Engine.GameState.PAUSED) {
                     engine.updateGameState(Engine.GameState.PLAYING);
                 }
@@ -369,17 +380,19 @@ public class GUI {
 
         // lost controls
 
-        controls.get(PLAY_AGAIN_BTN).onClick = new OnButtonClickListener() {
+        controls.get(PLAY_AGAIN_BTN).onTouch = new OnControlTouchListener() {
             @Override
-            public void OnClick(Engine engine, Context context) {
+            public void onTouch(Engine engine, Context context) {
+                engine.player = null;
                 engine.resetLevel(context, context.getResources());
-                engine.updateGameState(Engine.GameState.PLAYING);
+                engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
                 engine.onResume();
+                engine.stopBackgroundMusic();
             }
         };
-        controls.get(SHARE_BTN).onClick = new OnButtonClickListener() {
+        controls.get(SHARE_BTN).onTouch = new OnControlTouchListener() {
             @Override
-            public void OnClick(Engine engine, Context context) {
+            public void onTouch(Engine engine, Context context) {
                 Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "MY AWESOME SCORE!!!");
@@ -389,24 +402,26 @@ public class GUI {
 
             }
         };
-        controls.get(PLAYER_1_RECT).onClick = new OnButtonClickListener() {
+
+        // choose character controls
+        controls.get(PLAYER_1_RECT).onTouch = new OnControlTouchListener() {
             @Override
-            public void OnClick(Engine engine, Context context) {
+            public void onTouch(Engine engine, Context context) {
                 setPlayer(Engine.character1, engine, context);
             }
         };
-        controls.get(PLAYER_2_RECT).onClick = new OnButtonClickListener() {
+        controls.get(PLAYER_2_RECT).onTouch = new OnControlTouchListener() {
             @Override
-            public void OnClick(Engine engine, Context context) {
+            public void onTouch(Engine engine, Context context) {
                 setPlayer(Engine.character2, engine, context);
             }
         };
     }
 
-    private static void setPlayer(Character character, Engine engine, Context context){
+    private static void setPlayer(Character character, Engine engine, Context context) {
         Resources resources = context.getResources();
         engine.setPlayer(new Player(character), context, resources);
-        engine.resetLevel(context, resources);
+        engine.updateGameState(Engine.GameState.PLAYING);
     }
 
 

@@ -10,6 +10,7 @@ import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 import android.media.SoundPool;
+import android.os.AsyncTask;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
@@ -37,6 +38,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.talv.icytower.gui.GUI.CONTROLS.CHOOSE_PLAYER_CONTROLS;
 import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
@@ -99,6 +101,7 @@ public class Engine implements OnClockTimeUpListener {
 
     public GameCanvas gameCanvas;
 
+    public AtomicBoolean touchRestricted = new AtomicBoolean(false);
 
     public enum GameState {
         PLAYING(GAMEPLAY_CONTROLS),
@@ -118,11 +121,13 @@ public class Engine implements OnClockTimeUpListener {
 
     public void updateGameState(GameState newGameState) {
         if (currentGameState != newGameState) {
-            processingClick = false;
             gameCanvas.setEnabledAndVisible(currentGameState.controlGroup, false);
             gameCanvas.setEnabledAndVisible(newGameState.controlGroup, true);
             currentGameState = newGameState;
             gameCanvas.updateControlsPositions(currentGameState.controlGroup);
+            if (newGameState != GameState.PLAYING) {
+                restrictTouch(400);
+            }
         }
     }
 
@@ -165,41 +170,54 @@ public class Engine implements OnClockTimeUpListener {
         maxPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MAX_RATIO);
         minPlatformWidth = (int) (cameraWidth * PLAT_CAMERA_MIN_RATIO);
         initializeMediaPlayerAndSounds(context);
-
-
         random = new Random();
-
         backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), cameraWidth, cameraHeight, true);
         frame = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.ARGB_8888);
         this.gameCanvas = gameCanvas;
-
         gameCanvas.initializeGUI(resources, renderWidth, renderHeight);
-
         initializeClock();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        updateGameState(GameState.CHOOSING_CHAR);
     }
 
+    public void restrictTouch(int ms) {
+        touchRestricted.set(true);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(ms);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    touchRestricted.set(false);
+                }
+            }
+        });
+    }
 
     public void resetLevel(Context context, Resources resources) {
-        setPlayer(new Player(Character.loadPlayer1(resources, Engine.PLAYER_SIZE_MULTIPLE)), context, resources);
         cameraY = 0;
-        player.resetPlayer();
         externalCameraSpeed = 0f;
         constantCameraSpeed = 0f;
-        player.updateScore(0, gameCanvas);
+        if (player != null) {
+            player.resetPlayer();
+            player.updateScore(0, gameCanvas);
+        }
         soundPool.stop(gameOverStreamId);
         clock.currentTime = 0;
         clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
         clock.countTime = false;
         musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(1f));
+        clearPlatforms();
     }
 
     public void setPlayer(Player player, Context context, Resources resources) {
         this.player = player;
         player.initializeSounds(soundPool, context);
+        resetLevel(context, resources);
         int platformHeight = (int) (player.rect.height() * 0.6f);
         Platform.loadBitmaps(resources, platformHeight);
-        clearPlatforms();
         Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
                 0, cameraHeight - Platform.getPlatformHeight() - (int) (0.05f * cameraHeight), cameraWidth, false);
         platforms.add(groundPlatform);
@@ -239,6 +257,11 @@ public class Engine implements OnClockTimeUpListener {
         }
     }
 
+    public void stopBackgroundMusic() {
+        musicPlayer.pause();
+        musicPlayer.seekTo(0);
+    }
+
     @Override
     public long clockTimeUp(long time) {
         constantCameraSpeed += CAMERA_CONSTANT_SPEED_INCREASE;
@@ -257,14 +280,15 @@ public class Engine implements OnClockTimeUpListener {
             platform.render(bitmapCanvas, this);
         }
         //draw player
-        player.render(bitmapCanvas, this);
+        if (player != null)
+            player.render(bitmapCanvas, this);
 
         // final render (stretch)
         frameScaled = ImageHelper.stretch(frame, renderWidth, renderHeight, false);
 
         // add controls
         Canvas finalFrameCanvas = new Canvas(frameScaled);
-        if (currentGameState != GameState.PLAYING) {
+        if (currentGameState == GameState.PAUSED || currentGameState == GameState.LOST) {
             // reduce brightness of background game
             finalFrameCanvas.drawRect(0, 0, renderWidth, renderHeight, pausePaint);
         }
@@ -302,8 +326,13 @@ public class Engine implements OnClockTimeUpListener {
         if (currentGameState == GameState.PLAYING) {
             updateGameMechanics(msPassed, context);
         } else {
-            if (!processingClick) {
+            if (!processingClick && !touchRestricted.get()) {
+                GameState old = currentGameState;
                 processingClick = processClick(context);
+                GameState newGameState = currentGameState;
+                if (newGameState != old) {
+                    processingClick = false;
+                }
             }
             updateNonGamingControls(msPassed);
         }
@@ -369,8 +398,7 @@ public class Engine implements OnClockTimeUpListener {
         if (player.rect.top > cameraY + cameraHeight) {
             // LOST!
             updateGameState(GameState.LOST);
-            musicPlayer.pause();
-            musicPlayer.seekTo(0);
+            stopBackgroundMusic();
             gameOverStreamId = playSound(gameOverSound, 1);
             updateLostUI(context);
         }
@@ -476,8 +504,8 @@ public class Engine implements OnClockTimeUpListener {
         while (currentBit < MAX_FLAGS) {
             if ((activeControls & currentBit) == currentBit) {
                 Control activeControl = gameCanvas.getControl(currentBit);
-                if (activeControl.onClick != null) {
-                    activeControl.onClick.OnClick(this, context);
+                if (activeControl.onTouch != null) {
+                    activeControl.onTouch.onTouch(this, context);
                     return true;
                 }
             }
