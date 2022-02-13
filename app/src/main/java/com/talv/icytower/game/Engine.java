@@ -26,6 +26,7 @@ import com.talv.icytower.firebase.GameStats;
 import com.talv.icytower.firebase.UserProfileInfo;
 import com.talv.icytower.game.platform.DisappearingPlatform;
 import com.talv.icytower.game.platform.Platform;
+import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;
 import com.talv.icytower.gui.graphiccontrols.ClockControl;
 import com.talv.icytower.gui.graphiccontrols.Control;
@@ -51,6 +52,9 @@ import static com.talv.icytower.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
 import static com.talv.icytower.gui.GUI.CONTROLS.checkActive;
 
 public class Engine implements OnClockTimeUpListener {
+
+    public static Character character1;
+    public static Character character2;
 
     public static final float PLAYER_SIZE_MULTIPLE = 0.7f;
 
@@ -147,52 +151,9 @@ public class Engine implements OnClockTimeUpListener {
     public static final int PLATFORMS_BETWEEN_LEVELS = 20;
     private static final int REGULAR_TO_DISAPPEARING_PLATFORM_RATIO = 7;
 
-
-    private void initializeClock() {
-        clock = (ClockControl) gameCanvas.controls.get(CLOCK);
-        clock.onClockTimeUpListener = this;
-        clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
-    }
-
-    @Override
-    public long clockTimeUp(long time) {
-        constantCameraSpeed += CAMERA_CONSTANT_SPEED_INCREASE;
-        musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(musicPlayer.getPlaybackParams().getSpeed() * 1.1f));
-        vibrate(CLOCK_VIBRATION);
-        return CAMERA_SPEED_INCREASE_TIME;
-    }
-
-    private void vibrate(VibrationEffect vibrationEffect) {
-        if (GameSettings.VIBRATE) {
-            vibrator.vibrate(vibrationEffect);
-        }
-    }
-
-    private void initializeMediaPlayerAndSounds(Context context) {
-        musicPlayer = MediaPlayer.create(context, R.raw.background_music);
-        AudioAttributes attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME) // set the sound scene
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build(); // set the type of sound effec
-        musicPlayer.setAudioAttributes(attr);
-        musicPlayer.setLooping(true);
-        musicPlayer.setVolume(0.4f, 0.4f);
-
-        soundPool = new SoundPool.Builder().setAudioAttributes(attr).setMaxStreams(2).build();
-        gameOverSound = soundPool.load(context, R.raw.game_over, 1);
-    }
-
-    public int playSound(int soundID, float rate) {
-        if (GameSettings.SFX) {
-            return soundPool.play(soundID, 1, 1, 0, 0, rate);
-        }
-        return -1;
-    }
-
-    public void onPause() {
-        if (currentGameState == GameState.PLAYING) {
-            musicPlayer.pause();
-            updateGameState(GameState.PAUSED);
-            clock.countTime = false;
-        }
+    public static void loadCharacters(Resources resources){
+        character1 = Character.loadPlayer1(resources, Engine.PLAYER_SIZE_MULTIPLE);
+        character2 = Character.loadPlayer2(resources, Engine.PLAYER_SIZE_MULTIPLE);
     }
 
     public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas
@@ -223,110 +184,65 @@ public class Engine implements OnClockTimeUpListener {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
-    public void render(Canvas canvas) {
-        canvas.drawBitmap(frameScaled, 0, 0, gamePaint);
-    }
 
-    public void onResume() {
-        processingClick = false;
-        if (currentGameState == GameState.PLAYING) {
-            if (GameSettings.BACKG_MUSIC && !musicPlayer.isPlaying()) {
-                musicPlayer.start();
-            }
-            activateClockIfNeeded();
-        }
-    }
-
-    public void updateGame(int msPassed, Context context) {
-        if (Debug.LOG_MSPASSED)
-            Log.d("MS PASSED", String.valueOf(msPassed));
-        if (checkActive(gameCanvas.getActiveControls(), PAUSE_BTN)) {
-            onPause();
-        }
-        if (currentGameState == GameState.PLAYING) {
-            updateGameMechanics(msPassed, context);
-        } else {
-            if (!processingClick) {
-                processingClick = processClick(context);
-            }
-            updateNonGamingControls(msPassed);
-        }
+    public void resetLevel() {
+        cameraY = 0;
+        clearPlatforms();
+        Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
+                0, cameraHeight - Platform.getPlatformHeight() - (int) (0.05f * cameraHeight), cameraWidth, false);
+        platforms.add(groundPlatform);
+        RectHelper.setRectPos(player.rect, (cameraWidth - player.rect.width()) / 2,
+                groundPlatform.rect.top - player.rect.height());
+        player.resetPlayer();
+        generatePlatforms((int) Math.ceil(cameraHeight / (float) (player.rect.height())) * 2);
+        externalCameraSpeed = 0f;
+        constantCameraSpeed = 0f;
+        player.updateScore(0, gameCanvas);
+        soundPool.stop(gameOverStreamId);
+        clock.currentTime = 0;
+        clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
+        clock.countTime = false;
+        musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(1f));
     }
 
 
-    // returns whether a button was clicked and lock out following clicks
-    private boolean processClick(Context context) {
-        int activeControls = gameCanvas.getActiveControls();
-        int currentBit = 1 << 1;
-        while (currentBit < MAX_FLAGS) {
-            if ((activeControls & currentBit) == currentBit) {
-                Control activeControl = gameCanvas.getControl(currentBit);
-                if (activeControl.onClick != null) {
-                    activeControl.onClick.OnClick(this, context);
-                    return true;
-                }
-            }
-            currentBit <<= 1;
-        }
-        return false;
+    private void initializeMediaPlayerAndSounds(Context context) {
+        musicPlayer = MediaPlayer.create(context, R.raw.background_music);
+        AudioAttributes attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
+        musicPlayer.setAudioAttributes(attr);
+        musicPlayer.setLooping(true);
+        musicPlayer.setVolume(0.4f, 0.4f);
+
+        soundPool = new SoundPool.Builder().setAudioAttributes(attr).setMaxStreams(2).build();
+        gameOverSound = soundPool.load(context, R.raw.game_over, 1);
     }
 
-    private void updateNonGamingControls(int msPassed) {
-        for (Map.Entry<Integer, Control> controlEntry : gameCanvas.controls.entrySet()) {
-            if ((controlEntry.getKey() & GAMEPLAY_CONTROLS) != 0) continue;
-            Control control = controlEntry.getValue();
-            if (control.isVisible && control instanceof UpdatingControl) {
-                ((UpdatingControl) control).update(msPassed);
-            }
-        }
+    private void initializeClock() {
+        clock = (ClockControl) gameCanvas.controls.get(CLOCK);
+        clock.onClockTimeUpListener = this;
+        clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
     }
 
-
-    private void updateLostUI(Context context) {
-        int score = player.getScore();
-        gameCanvas.updateText(YOUR_SCORE_TXT, "Your Score: " + score);
-        gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + player.totalJumps +
-                "   Time: " + formatGameTimeToString(player.totalTime) + " (sec)");
-
-        if (bestGameStats == null) {
-            // feature disabled
-            gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, false);
-            gameCanvas.setEnabledAndVisible(PERSONAL_HIGH_SCORE_TXT, false);
-        } else {
-            gameCanvas.setEnabledAndVisible(PERSONAL_HIGH_SCORE_TXT, true);
-            if (score > bestGameStats.highscore) {
-                gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, true);
-                bestGameStats.highscore = score;
-                bestGameStats.timeTaken = player.totalTime;
-                bestGameStats.totalJumps = player.totalJumps;
-
-                FirebaseHelper.setBestGameStats(user, bestGameStats, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(context, "Game stats update failed - " + exception.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, false);
-            }
-            gameCanvas.updateText(PERSONAL_HIGH_SCORE_TXT, "Highscore: " + bestGameStats.highscore);
+    public int playSound(int soundID, float rate) {
+        if (GameSettings.SFX) {
+            return soundPool.play(soundID, 1, 1, 0, 0, rate);
         }
-        if (userProfileInfo != null) {
-            // feature enabled
-            userProfileInfo.gamesPlayed++;
-            FirebaseHelper.setUserProfileInfo(user, userProfileInfo, new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(context, "User profile info update failed - " + exception.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+        return -1;
+    }
+
+    private void vibrate(VibrationEffect vibrationEffect) {
+        if (GameSettings.VIBRATE) {
+            vibrator.vibrate(vibrationEffect);
         }
     }
 
-    public static String formatGameTimeToString(long time) {
-        return String.valueOf(time / 1000) + "." + String.valueOf(Math.round((time % 1000) / 100f));
+    @Override
+    public long clockTimeUp(long time) {
+        constantCameraSpeed += CAMERA_CONSTANT_SPEED_INCREASE;
+        musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(musicPlayer.getPlaybackParams().getSpeed() * 1.1f));
+        vibrate(CLOCK_VIBRATION);
+        return CAMERA_SPEED_INCREASE_TIME;
     }
 
     public void updateFrame() {
@@ -351,6 +267,61 @@ public class Engine implements OnClockTimeUpListener {
             finalFrameCanvas.drawRect(0, 0, renderWidth, renderHeight, pausePaint);
         }
         gameCanvas.renderControls(finalFrameCanvas);
+    }
+
+    public void render(Canvas canvas) {
+        canvas.drawBitmap(frameScaled, 0, 0, gamePaint);
+    }
+
+    public void onResume() {
+        processingClick = false;
+        if (currentGameState == GameState.PLAYING) {
+            if (GameSettings.BACKG_MUSIC && !musicPlayer.isPlaying()) {
+                musicPlayer.start();
+            }
+            activateClockIfNeeded();
+        }
+    }
+
+    public void onPause() {
+        if (currentGameState == GameState.PLAYING) {
+            musicPlayer.pause();
+            updateGameState(GameState.PAUSED);
+            clock.countTime = false;
+        }
+    }
+
+    public void updateGame(int msPassed, Context context) {
+        if (Debug.LOG_MSPASSED)
+            Log.d("MS PASSED", String.valueOf(msPassed));
+        if (checkActive(gameCanvas.getActiveControls(), PAUSE_BTN)) {
+            onPause();
+        }
+        if (currentGameState == GameState.PLAYING) {
+            updateGameMechanics(msPassed, context);
+        } else {
+            if (!processingClick) {
+                processingClick = processClick(context);
+            }
+            updateNonGamingControls(msPassed);
+        }
+    }
+
+    private void activateClockIfNeeded() {
+        if (player.rect.top < 0) {
+            clock.countTime = true;
+            constantCameraSpeed = Math.min(CAMERA_CONSTANT_SPEED_INCREASE, constantCameraSpeed);
+        }
+    }
+
+    private void updateNonGamingControls(int msPassed) {
+        for (Map.Entry<Integer, Control> controlEntry : gameCanvas.controls.entrySet()) {
+            if ((controlEntry.getKey() & GAMEPLAY_CONTROLS) != 0) continue;
+            Control control = controlEntry.getValue();
+            if (control.isVisible && control instanceof UpdatingControl) {
+                ((UpdatingControl) control).update(msPassed);
+            }
+        }
     }
 
     private void updateGameMechanics(int msPassed, Context context) {
@@ -403,12 +374,49 @@ public class Engine implements OnClockTimeUpListener {
         }
     }
 
-    private void activateClockIfNeeded() {
-        if (player.rect.top < 0) {
-            clock.countTime = true;
-            constantCameraSpeed = Math.min(CAMERA_CONSTANT_SPEED_INCREASE, constantCameraSpeed);
+    private void updateLostUI(Context context) {
+        int score = player.getScore();
+        gameCanvas.updateText(YOUR_SCORE_TXT, "Your Score: " + score);
+        gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + player.totalJumps +
+                "   Time: " + formatGameTimeToString(player.totalTime) + " (sec)");
+
+        if (bestGameStats == null) {
+            // feature disabled
+            gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, false);
+            gameCanvas.setEnabledAndVisible(PERSONAL_HIGH_SCORE_TXT, false);
+        } else {
+            gameCanvas.setEnabledAndVisible(PERSONAL_HIGH_SCORE_TXT, true);
+            if (score > bestGameStats.highscore) {
+                gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, true);
+                bestGameStats.highscore = score;
+                bestGameStats.timeTaken = player.totalTime;
+                bestGameStats.totalJumps = player.totalJumps;
+
+                FirebaseHelper.setBestGameStats(user, bestGameStats, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(context, "Game stats update failed - " + exception.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, false);
+            }
+            gameCanvas.updateText(PERSONAL_HIGH_SCORE_TXT, "Highscore: " + bestGameStats.highscore);
+        }
+        if (userProfileInfo != null) {
+            // feature enabled
+            userProfileInfo.gamesPlayed++;
+            FirebaseHelper.setUserProfileInfo(user, userProfileInfo, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(context, "User profile info update failed - " + exception.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
+
 
     public void generatePlatforms(int count) {
         int lastPlatformY = 0;
@@ -460,25 +468,26 @@ public class Engine implements OnClockTimeUpListener {
         }
     }
 
+    // returns whether a button was clicked and lock out following clicks
+    private boolean processClick(Context context) {
+        int activeControls = gameCanvas.getActiveControls();
+        int currentBit = 1 << 1;
+        while (currentBit < MAX_FLAGS) {
+            if ((activeControls & currentBit) == currentBit) {
+                Control activeControl = gameCanvas.getControl(currentBit);
+                if (activeControl.onClick != null) {
+                    activeControl.onClick.OnClick(this, context);
+                    return true;
+                }
+            }
+            currentBit <<= 1;
+        }
+        return false;
+    }
 
-    public void resetLevel() {
-        cameraY = 0;
-        clearPlatforms();
-        Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
-                0, cameraHeight - Platform.getPlatformHeight() - (int) (0.05f * cameraHeight), cameraWidth, false);
-        platforms.add(groundPlatform);
-        RectHelper.setRectPos(player.rect, (cameraWidth - player.rect.width()) / 2,
-                groundPlatform.rect.top - player.rect.height());
-        player.resetPlayer();
-        generatePlatforms((int) Math.ceil(cameraHeight / (float) (player.rect.height())) * 2);
-        externalCameraSpeed = 0f;
-        constantCameraSpeed = 0f;
-        player.updateScore(0, gameCanvas);
-        soundPool.stop(gameOverStreamId);
-        clock.currentTime = 0;
-        clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
-        clock.countTime = false;
-        musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(1f));
+
+    public static String formatGameTimeToString(long time) {
+        return String.valueOf(time / 1000) + "." + String.valueOf(Math.round((time % 1000) / 100f));
     }
 
 

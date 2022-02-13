@@ -31,9 +31,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
 
         ScreenScaleManager.updateWidthHeight(getWindowManager().getDefaultDisplay());
 
@@ -43,9 +41,10 @@ public class GameActivity extends AppCompatActivity {
 
 
         Resources resources = getResources();
-        
+
+        Engine.loadCharacters(resources);
         engine = new Engine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas,
-                new Player(Character.loadPlayer2(resources, Engine.PLAYER_SIZE_MULTIPLE)), this);
+                new Player(Character.loadPlayer1(resources, Engine.PLAYER_SIZE_MULTIPLE)), this);
 
         engine.resetLevel();
 

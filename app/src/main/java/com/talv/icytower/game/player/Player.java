@@ -96,7 +96,9 @@ public class Player {
 
     public Player(Character character) {
         this.animations = character.animations;
-        RectHelper.setRectSize(rect, character.width, character.height);
+        rect = new Rect();
+        RectHelper.setRectSize(rect, (int)(character.width * Engine.PLAYER_SIZE_MULTIPLE),
+                (int)(character.height * Engine.PLAYER_SIZE_MULTIPLE));
         updateStateAndAnimation(PlayerState.STANDING, 0);
         playerControls = new PlayerControls();
         resetPlayer();

@@ -1,5 +1,7 @@
 package com.talv.icytower.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -51,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.aboutBtn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.aboutDevBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                startActivity(new Intent(MainActivity.this, AboutDevActivity.class));
             }
         });
         findViewById(R.id.settingsBtn).setOnClickListener(new View.OnClickListener() {
@@ -109,6 +111,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         activityOnForeground = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Application Exit")
+                .setMessage("Are you sure you want to quit?")
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(true)
+                .show();
     }
 
     private void updateUI() {

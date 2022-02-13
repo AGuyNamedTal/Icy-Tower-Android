@@ -1,0 +1,8 @@
+להוסיף menu אופציות שונות במסכים שונים
+חסר שני שחקנים
+להוסיף get set
+להוסיף סינון לfirebase
+splashscreen
+alertdialog
+broadcastreciever
+Mediaplayer לservice

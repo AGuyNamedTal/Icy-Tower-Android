@@ -24,6 +24,7 @@ import com.talv.icytower.gui.graphiccontrols.TextControl;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.talv.icytower.gui.GUI.CONTROLS.CHOOSE_PLAYER_TXT;
 import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
 import static com.talv.icytower.gui.GUI.CONTROLS.MAIN_MENU_BTN;
 import static com.talv.icytower.gui.GUI.CONTROLS.PLAY_AGAIN_BTN;
@@ -282,8 +283,24 @@ public class GUI {
 
     }
 
-    private static void buildChoosePlayerControls(Map<Integer, Control> controlMap, int renderWidth, int renderHeight) {
+    private static void buildChoosePlayerControls(Map<Integer, Control> controls, int renderWidth, int renderHeight) {
+
+        final String chooseCharacterStr = "CHOOSE CHARACTER";
+        int textWidth = (int)(renderWidth * 0.8f);
+        int textSize = TextSizeHelper.getTextSizeFromWidth(chooseCharacterStr, textWidth);
+        int textY = (int)(renderHeight * 0.2f);
+        Point txtPoint = new Point((renderWidth - textWidth) / 2,  textY);
+
+        // side padding - char width - paddingbetween - char width - side padding
         int paddingBetweenChars = renderWidth / 5;
+        int sidePadding = renderWidth / 8;
+        int charRectWidth = (renderWidth - paddingBetweenChars - sidePadding * 2) / 2;
+        int charRectHeight = (int)(charRectWidth * ((float)Engine.character1.height / Engine.character1.width));
+        int rectPaddingX = (int)(charRectWidth * 0.2f);
+        int rectPaddingY = (int)(charRectHeight * 0.2f);
+
+        //controls.put(CHOOSE_PLAYER_TXT, new TextControl(false, false, txtPoint, chooseCharacterStr, textSize, 0));
+
     }
 
     private static void addOnClickListeners(Map<Integer, Control> controls) {
