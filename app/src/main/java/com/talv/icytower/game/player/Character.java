@@ -26,7 +26,9 @@ public class Character {
         Bitmap[] bitmaps = ImageHelper.stretch(
                 ImageHelper.decodeAnimations(animationSheet, true),
                 playerSizeMultiple, true);
-        return new Character(loadPlayerAnimations(bitmaps), bitmaps[0].getWidth(), animationSheet.getHeight());
+        return new Character(loadPlayerAnimations(bitmaps),
+                (int)Math.round(bitmaps[0].getWidth() * playerSizeMultiple),
+                (int)Math.round(animationSheet.getHeight() * playerSizeMultiple));
     }
 
     public static Character loadPlayer2(Resources resources, float playerSizeMultiple) {

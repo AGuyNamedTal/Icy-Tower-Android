@@ -178,6 +178,9 @@ public class Engine implements OnClockTimeUpListener {
         initializeClock();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         updateGameState(GameState.CHOOSING_CHAR);
+        int platformHeight = (int) (character1.height * 0.6f);
+        Platform.loadBitmaps(resources, platformHeight);
+        player = new Player(soundPool, context);
     }
 
     public void restrictTouch(int ms) {
@@ -196,34 +199,29 @@ public class Engine implements OnClockTimeUpListener {
         });
     }
 
-    public void resetLevel(Context context, Resources resources) {
+    public void reset() {
         cameraY = 0;
         externalCameraSpeed = 0f;
         constantCameraSpeed = 0f;
-        if (player != null) {
-            player.resetPlayer();
-            player.updateScore(0, gameCanvas);
-        }
+        player.resetPlayer();
+        player.updateScore(0, gameCanvas);
         soundPool.stop(gameOverStreamId);
         clock.currentTime = 0;
         clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
         clock.countTime = false;
         musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(1f));
         clearPlatforms();
-    }
-
-    public void setPlayer(Player player, Context context, Resources resources) {
-        this.player = player;
-        player.initializeSounds(soundPool, context);
-        resetLevel(context, resources);
-        int platformHeight = (int) (player.rect.height() * 0.6f);
-        Platform.loadBitmaps(resources, platformHeight);
         Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
                 0, cameraHeight - Platform.getPlatformHeight() - (int) (0.05f * cameraHeight), cameraWidth, false);
         platforms.add(groundPlatform);
+        generatePlatforms((int) Math.ceil(cameraHeight / (float) (character1.height)) * 2);
+    }
+
+    public void setPlayerCharacter(Character character, Context context, Resources resources) {
+        reset();
+        player.setCharacter(character);
         RectHelper.setRectPos(player.rect, (cameraWidth - player.rect.width()) / 2,
-                groundPlatform.rect.top - player.rect.height());
-        generatePlatforms((int) Math.ceil(cameraHeight / (float) (player.rect.height())) * 2);
+                platforms.peekFirst().rect.top - player.rect.height());
     }
 
     private void initializeMediaPlayerAndSounds(Context context) {
@@ -280,8 +278,7 @@ public class Engine implements OnClockTimeUpListener {
             platform.render(bitmapCanvas, this);
         }
         //draw player
-        if (player != null)
-            player.render(bitmapCanvas, this);
+        player.render(bitmapCanvas, this);
 
         // final render (stretch)
         frameScaled = ImageHelper.stretch(frame, renderWidth, renderHeight, false);
@@ -457,7 +454,7 @@ public class Engine implements OnClockTimeUpListener {
             lastPlatformY = last.rect.top;
             lastPlatformNum = last.platformNumber;
         }
-        int distanceBetweenPlatforms = (int) (player.rect.height() * 0.9f);
+        int distanceBetweenPlatforms = (int) (character1.height * 0.9f);
         int height = Platform.getPlatformHeight();
         for (int i = 0; i < count; i++) {
             int y = lastPlatformY - distanceBetweenPlatforms - height;

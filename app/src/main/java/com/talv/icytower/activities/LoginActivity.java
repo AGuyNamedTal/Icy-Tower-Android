@@ -87,6 +87,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public static void loginWithUser(Activity context) {
+        Toast.makeText(context,
+                "Retrieving player profile...",
+                Toast.LENGTH_LONG).show();
         FirebaseHelper.getBestGameStats(Engine.user, new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {

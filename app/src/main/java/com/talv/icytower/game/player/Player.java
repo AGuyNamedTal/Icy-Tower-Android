@@ -94,15 +94,25 @@ public class Player {
     public int totalJumps;
     public long totalTime;
 
-    public Player(Character character) {
-        this.animations = character.animations;
+    public Player(SoundPool soundPool, Context context) {
         rect = new Rect();
-        RectHelper.setRectSize(rect, (int)(character.width * Engine.PLAYER_SIZE_MULTIPLE),
-                (int)(character.height * Engine.PLAYER_SIZE_MULTIPLE));
-        updateStateAndAnimation(PlayerState.STANDING, 0);
         playerControls = new PlayerControls();
         resetPlayer();
+        initializeSounds(soundPool, context);
+    }
 
+
+    public void setCharacter(Character character) {
+        if (character == null) {
+            this.animations = null;
+            RectHelper.setRectSize(rect, 0, 0);
+        } else {
+            this.animations = character.animations;
+            RectHelper.setRectSize(rect, character.width, character.height);
+        }
+    }
+    public boolean hasCharacter(){
+        return this.animations != null;
     }
 
     public void initializeSounds(SoundPool soundPool, Context context) {
@@ -111,10 +121,12 @@ public class Player {
 
     private void updateStateAndAnimation(PlayerState newState, int msPassed) {
         if (currentState == newState) {
-            animations.get(currentState).updateTime(msPassed);
+            if (animations != null)
+                animations.get(currentState).updateTime(msPassed);
         } else {
             currentState = newState;
-            animations.get(currentState).resetTime();
+            if (animations != null)
+                animations.get(currentState).resetTime();
             stateUpdateTime = (int) System.currentTimeMillis();
         }
 
@@ -129,6 +141,7 @@ public class Player {
 
 
     public void render(Canvas canvas, Engine engine) {
+        if (animations == null) return;
         canvas.drawBitmap(getCurrentImage(), rect.left, rect.top - engine.cameraY, Engine.gamePaint);
 
     }

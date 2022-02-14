@@ -383,8 +383,8 @@ public class GUI {
         controls.get(PLAY_AGAIN_BTN).onTouch = new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                engine.player = null;
-                engine.resetLevel(context, context.getResources());
+                engine.player.setCharacter(null);
+                engine.reset();
                 engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
                 engine.onResume();
                 engine.stopBackgroundMusic();
@@ -399,7 +399,6 @@ public class GUI {
                 intent.putExtra(android.content.Intent.EXTRA_TEXT,
                         "I just scored " + engine.player.getScore() + " points on Icy Tower!!!");
                 context.startActivity(Intent.createChooser(intent, "Share using..."));
-
             }
         };
 
@@ -420,7 +419,7 @@ public class GUI {
 
     private static void setPlayer(Character character, Engine engine, Context context) {
         Resources resources = context.getResources();
-        engine.setPlayer(new Player(character), context, resources);
+        engine.setPlayerCharacter(character, context, resources);
         engine.updateGameState(Engine.GameState.PLAYING);
     }
 

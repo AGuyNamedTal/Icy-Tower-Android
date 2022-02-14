@@ -19,6 +19,24 @@ import java.util.HashMap;
 
 public class Platform {
 
+    public enum PlatformTypes {
+        LEVEL_0(0, R.drawable.platform_0_left, R.drawable.platform_0_mid, R.drawable.platform_0_right),
+        LEVEL_1(1, R.drawable.platform_1_left, R.drawable.platform_1_mid, R.drawable.platform_1_right),
+        LEVEL_2(2, R.drawable.platform_2_left, R.drawable.platform_2_mid, R.drawable.platform_2_right);
+
+        private final int middleResId;
+        private final int rightResId;
+        private final int leftResId;
+        private final int level;
+
+        PlatformTypes(int level, int leftResId, int middleResId, int rightResId) {
+            this.level = level;
+            this.middleResId = middleResId;
+            this.rightResId = rightResId;
+            this.leftResId = leftResId;
+        }
+    }
+
     public static final PlatformTypes[] PLATFORM_TYPE_BY_LEVEL;
 
     private static final int NUMBER_ON_EVERY_N_PLAT = 10;
@@ -105,24 +123,6 @@ public class Platform {
 
     }
 
-    public enum PlatformTypes {
-        LEVEL_0(0, R.drawable.platform_0_left, R.drawable.platform_0_mid, R.drawable.platform_0_right),
-        LEVEL_1(1, R.drawable.platform_1_left, R.drawable.platform_1_mid, R.drawable.platform_1_right),
-        LEVEL_2(2, R.drawable.platform_2_left, R.drawable.platform_2_mid, R.drawable.platform_2_right);
-
-        private final int middleResId;
-        private final int rightResId;
-        private final int leftResId;
-        private final int level;
-
-        PlatformTypes(int level, int leftResId, int middleResId, int rightResId) {
-            this.level = level;
-            this.middleResId = middleResId;
-            this.rightResId = rightResId;
-            this.leftResId = leftResId;
-        }
-    }
-
     protected Paint getPaint() {
         return Engine.gamePaint;
     }
@@ -138,7 +138,6 @@ public class Platform {
     public void recycle() {
         image.recycle();
     }
-
 
     public static void emptyLoadedPlatforms() {
         for (PlatformImage platformImage : platformImages.values()) {
