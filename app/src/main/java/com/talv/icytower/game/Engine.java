@@ -211,14 +211,15 @@ public class Engine implements OnClockTimeUpListener {
         clock.countTime = false;
         musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(1f));
         clearPlatforms();
+
+    }
+
+    public void setPlayerCharacter(Character character) {
+        clearPlatforms();
         Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
                 0, cameraHeight - Platform.getPlatformHeight() - (int) (0.05f * cameraHeight), cameraWidth, false);
         platforms.add(groundPlatform);
         generatePlatforms((int) Math.ceil(cameraHeight / (float) (character1.height)) * 2);
-    }
-
-    public void setPlayerCharacter(Character character, Context context, Resources resources) {
-        reset();
         player.setCharacter(character);
         RectHelper.setRectPos(player.rect, (cameraWidth - player.rect.width()) / 2,
                 platforms.peekFirst().rect.top - player.rect.height());

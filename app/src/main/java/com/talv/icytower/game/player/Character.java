@@ -47,7 +47,9 @@ public class Character {
         for (int i = 4; i < newBitmaps.length; i++) {
             newBitmaps[i] = bitmaps[i - 1];
         }
-        return new Character(loadPlayerAnimations(newBitmaps), newBitmaps[0].getWidth(), animationSheet.getHeight());
+        return new Character(loadPlayerAnimations(newBitmaps),
+                (int) Math.round(bitmaps[0].getWidth() * playerSizeMultiple),
+                (int) Math.round(animationSheet.getHeight() * playerSizeMultiple));
 
     }
 

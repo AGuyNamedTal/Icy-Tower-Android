@@ -406,20 +406,19 @@ public class GUI {
         controls.get(PLAYER_1_RECT).onTouch = new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                setPlayer(Engine.character1, engine, context);
+                setPlayer(Engine.character1, engine);
             }
         };
         controls.get(PLAYER_2_RECT).onTouch = new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                setPlayer(Engine.character2, engine, context);
+                setPlayer(Engine.character2, engine);
             }
         };
     }
 
-    private static void setPlayer(Character character, Engine engine, Context context) {
-        Resources resources = context.getResources();
-        engine.setPlayerCharacter(character, context, resources);
+    private static void setPlayer(Character character, Engine engine) {
+        engine.setPlayerCharacter(character);
         engine.updateGameState(Engine.GameState.PLAYING);
     }
 
