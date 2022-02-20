@@ -51,7 +51,7 @@ import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_MENU_CONTROLS;
 import static com.talv.icytower.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
 import static com.talv.icytower.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
 
-public abstract class Engine implements OnClockTimeUpListener {
+public abstract class MultiplayerEngine implements OnClockTimeUpListener {
 
     public static Character character1;
     public static Character character2;
@@ -159,7 +159,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         character2 = Character.loadPlayer2(resources, Engine.PLAYER_SIZE_MULTIPLE);
     }
 
-    public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas
+    public MultiplayerEngine(int renderWidth, int renderHeight, Resources resources, GameCanvas
             gameCanvas, Context context) {
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
@@ -292,7 +292,6 @@ public abstract class Engine implements OnClockTimeUpListener {
             clock.countTime = false;
         }
     }
-
 
 
     private void activateClockIfNeeded() {
