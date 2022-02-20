@@ -15,7 +15,7 @@ public class ScreenScaleManager {
 
     public static void updateWidthHeight(Display display) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        display.getMetrics(displayMetrics);
+        display.getRealMetrics(displayMetrics);
         newWidth = displayMetrics.widthPixels;
         newHeight = displayMetrics.heightPixels;
         scaleX = newWidth / (double)originalWidth;

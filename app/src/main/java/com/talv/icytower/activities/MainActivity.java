@@ -23,7 +23,7 @@ import static com.talv.icytower.activities.SettingsActivity.SETTINGS_SP_FILE_NAM
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final boolean LOGIN_REQUIRED = true;
+    private static final boolean LOGIN_REQUIRED = false;
 
 
     private TextView userNameTxt;

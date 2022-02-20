@@ -47,11 +47,13 @@ import static com.talv.icytower.gui.GUI.CONTROLS.GAME_LOST_CONTROLS;
 import static com.talv.icytower.gui.GUI.CONTROLS.GAME_STATS_TXT;
 import static com.talv.icytower.gui.GUI.CONTROLS.MAX_FLAGS;
 import static com.talv.icytower.gui.GUI.CONTROLS.NEW_HIGH_SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_BTN;
 import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_MENU_CONTROLS;
 import static com.talv.icytower.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
 import static com.talv.icytower.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.checkActive;
 
-public abstract class Engine implements OnClockTimeUpListener {
+public class Engine implements OnClockTimeUpListener {
 
     public static Character character1;
     public static Character character2;
@@ -267,9 +269,51 @@ public abstract class Engine implements OnClockTimeUpListener {
         return CAMERA_SPEED_INCREASE_TIME;
     }
 
-    public abstract void updateFrame();
 
-    public abstract void updateGame(int msPassed, Context context);
+    public void updateFrame() {
+        // draw on frame
+        Canvas bitmapCanvas = new Canvas(frame);
+        // draw background
+        bitmapCanvas.drawBitmap(backgroundImg, 0, 0, gamePaint);
+        // draw platforms
+        for (Platform platform : platforms) {
+            platform.render(bitmapCanvas, this);
+        }
+        //draw player
+        player.render(bitmapCanvas, this);
+
+        // final render (stretch)
+        frameScaled = ImageHelper.stretch(frame, renderWidth, renderHeight, false);
+
+        // add controls
+        Canvas finalFrameCanvas = new Canvas(frameScaled);
+        if (currentGameState == GameState.PAUSED || currentGameState == GameState.LOST) {
+            // reduce brightness of background game
+            finalFrameCanvas.drawRect(0, 0, renderWidth, renderHeight, pausePaint);
+        }
+        gameCanvas.renderControls(finalFrameCanvas);
+    }
+
+    public void updateGame(int msPassed, Context context) {
+        if (Debug.LOG_MSPASSED)
+            Log.d("MS PASSED", String.valueOf(msPassed));
+        if (checkActive(gameCanvas.getActiveControls(), PAUSE_BTN)) {
+            onPause();
+        }
+        if (currentGameState == GameState.PLAYING) {
+            updateGameMechanics(msPassed, context);
+        } else {
+            if (!processingClick && !touchRestricted.get()) {
+                GameState old = currentGameState;
+                processingClick = processClick(context);
+                GameState newGameState = currentGameState;
+                if (newGameState != old) {
+                    processingClick = false;
+                }
+            }
+            updateNonGamingControls(msPassed);
+        }
+    }
 
     public void render(Canvas canvas) {
         canvas.drawBitmap(frameScaled, 0, 0, gamePaint);
