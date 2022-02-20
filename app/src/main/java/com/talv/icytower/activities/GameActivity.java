@@ -17,6 +17,8 @@ import com.talv.icytower.game.SingleplayerEngine;
 
 public class GameActivity extends AppCompatActivity {
 
+    private static boolean SINGLEPLAYER = true;
+
     private static final int FPS = 60;
     public static final int FRAME_WAIT = 1000 / FPS;
 
@@ -26,6 +28,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     private boolean gameRun;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,19 +46,20 @@ public class GameActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
 
-
         gameCanvas = new GameCanvas(this);
         gameCanvas.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         setContentView(gameCanvas);
         ScreenScaleManager.updateWidthHeight(getWindowManager().getDefaultDisplay());
 
 
-
         Resources resources = getResources();
 
         Engine.loadCharacters(resources);
-        engine = new SingleplayerEngine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas, this);
-
+        if (SINGLEPLAYER) {
+            engine = new SingleplayerEngine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas, this);
+        } else {
+            engine = new MultiplayerEngine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas, this);
+        }
         gameRun = true;
 
         gameThread = new Thread(new Runnable() {

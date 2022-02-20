@@ -277,7 +277,9 @@ public class Engine implements OnClockTimeUpListener {
         bitmapCanvas.drawBitmap(backgroundImg, 0, 0, gamePaint);
         // draw platforms
         for (Platform platform : platforms) {
-            platform.render(bitmapCanvas, this);
+            if (platform.rect.bottom >= cameraY) {
+                platform.render(bitmapCanvas, this);
+            }
         }
         //draw player
         player.render(bitmapCanvas, this);
