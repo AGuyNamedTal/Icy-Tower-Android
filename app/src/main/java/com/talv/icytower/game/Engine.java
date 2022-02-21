@@ -354,6 +354,15 @@ public class Engine implements OnClockTimeUpListener {
     }
 
     protected void updateGameMechanics(int msPassed, Context context) {
+        updatePlatforms(msPassed);
+        updatePlayer(msPassed);
+        updateCamera(msPassed);
+        activateClockIfNeeded();
+        clock.update(msPassed);
+        checkLost(context);
+    }
+
+    private void updatePlatforms(int msPassed) {
         // update and remove platforms
         Iterator<Platform> iterator = platforms.descendingIterator();
         int removed = 0;
@@ -371,8 +380,9 @@ public class Engine implements OnClockTimeUpListener {
             }
         }
         generatePlatforms(removed);
+    }
 
-
+    private void updatePlayer(int msPassed) {
         int activeControls = gameCanvas.getActiveControls() & PLAYER_MOVEMENT_CONTROLS;
         if (checkActive(activeControls, ARROW_LEFT) &&
                 checkActive(activeControls, ARROW_RIGHT)) {
@@ -381,25 +391,20 @@ public class Engine implements OnClockTimeUpListener {
         }
         // update player
         player.updatePlayer(msPassed, this, activeControls);
+    }
 
-        // update camera
-        int playerY = player.rect.top;
-        float playerRelativeToCamera = ((playerY - cameraY) / (float) CAMERA_HEIGHT);
-        // Log.d("hey", String.valueOf(playerRelativeToCamera));
+    private void updateCamera(int msPassed) {
         if (player.rect.top < cameraY + CAMERA_HEIGHT * 0.25f) {
-
             externalCameraSpeed = Math.min(externalCameraSpeed + CAMERA_SPEED_ACCELERATION * msPassed, CAMERA_CONSTANT_SPEED_INCREASE * 1.5f);
         } else {
             // decelerate external camera speed
-            //externalCameraSpeed /= 2f;
             externalCameraSpeed = Math.min(0, externalCameraSpeed + msPassed * CAMERA_SPEED_DECELERATION);
 
         }
-
         cameraY += (externalCameraSpeed + constantCameraSpeed) * msPassed;
-        activateClockIfNeeded();
-        clock.update(msPassed);
-        // check lost state
+    }
+
+    private void checkLost(Context context) {
         if (player.rect.top > cameraY + CAMERA_HEIGHT) {
             // LOST!
             updateGameState(GameState.LOST);
