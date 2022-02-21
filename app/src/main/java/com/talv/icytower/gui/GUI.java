@@ -62,12 +62,26 @@ public class GUI {
         public static final int PLAYER_1_RECT = 1 << 18;
         public static final int PLAYER_2_IMG = 1 << 19;
         public static final int PLAYER_2_RECT = 1 << 20;
+        public static final int PLAYER_MOVEMENT_CONTROLS_SHIFT = 21;
+        public static final int ARROW_UP_2 = ARROW_UP << PLAYER_MOVEMENT_CONTROLS_SHIFT;
+        public static final int ARROW_LEFT_2 = ARROW_LEFT << PLAYER_MOVEMENT_CONTROLS_SHIFT;
+        public static final int ARROW_RIGHT_2 = ARROW_RIGHT << PLAYER_MOVEMENT_CONTROLS_SHIFT;
+        public static final int PAUSE_MID_BTN = 1 << 25;
 
-        public static final int MAX_FLAGS = PLAYER_2_RECT << 1;
+
+        public static final int MAX_FLAGS = PAUSE_MID_BTN << 1;
+
         public static final int PLAYER_MOVEMENT_CONTROLS = (ARROW_LEFT
                 | ARROW_UP | ARROW_RIGHT);
+        public static final int PLAYER_2_MOVEMENT_CONTROLS = (ARROW_UP_2 |
+                ARROW_LEFT_2 | ARROW_RIGHT_2);
+
+
         public static final int GAMEPLAY_CONTROLS = PLAYER_MOVEMENT_CONTROLS |
                 PAUSE_BTN | SCORE_TXT | CLOCK;
+        public static final int MULTI_GAMEPLAY_CONTROLS = PLAYER_MOVEMENT_CONTROLS | PLAYER_2_MOVEMENT_CONTROLS |
+                PAUSE_MID_BTN;
+
 
         public static final int PAUSE_MENU_CONTROLS = RESUME_BTN | SETTINGS_BTN
                 | MAIN_MENU_BTN;
@@ -76,9 +90,6 @@ public class GUI {
 
         public static final int CHOOSE_PLAYER_CONTROLS = CHOOSE_PLAYER_TXT | PLAYER_1_IMG | PLAYER_1_RECT | PLAYER_2_IMG | PLAYER_2_RECT;
 
-        public static final int[] CONTROL_GROUPS = new int[]{
-                GAMEPLAY_CONTROLS, PAUSE_MENU_CONTROLS, GAME_LOST_CONTROLS, CHOOSE_PLAYER_CONTROLS
-        };
 
         // first key is the control group, seconds key is the specific control, and the value is the location of the control
         public static HashMap<Integer, HashMap<Integer, Rect>> CONTROL_POSITIONS_PER_GROUP = new HashMap<>();
@@ -150,12 +161,39 @@ public class GUI {
         Point score = new Point(clockControl.left, clockControl.bottom + (int) (0.02f * renderHeight));
         float scoreTextSize = renderHeight / 30f;
         int scoreTextColor = 0xffd4fffe;
-        controls.put(CONTROLS.SCORE_TXT, new TextControl(false, true,
+        controls.put(CONTROLS.SCORE_TXT, new TextControl(
                 score, "Score: XXX",
                 scoreTextSize, scoreTextColor));
 
 
+        controls.put(CONTROLS.ARROW_UP_2, new ImageControl(reflectRect(upArrow, renderWidth, renderHeight), resources,
+                R.drawable.up_arrow, controlSize, controlSize));
+        controls.put(CONTROLS.ARROW_LEFT_2, new ImageControl(reflectRect(leftArrow, renderWidth, renderHeight)
+                , resources, R.drawable.left_arrow, controlSize, controlSize));
+        controls.put(CONTROLS.ARROW_RIGHT_2, new ImageControl(reflectRect(rightArrow, renderWidth, renderHeight)
+                , resources, R.drawable.right_arrow, controlSize, controlSize));
+        controls.put(CONTROLS.PAUSE_MID_BTN, new ImageControl(centerRect(pauseBtnSize, pauseBtnSize, renderWidth, renderHeight),
+                resources, R.drawable.pause_btn, pauseBtnSize, pauseBtnSize));
     }
+
+    private static Rect reflectRect(Rect rect, int renderWidth, int renderHeight) {
+        return RectHelper.rectFromWidthHeight(
+                renderWidth - rect.right,
+                renderHeight - rect.bottom,
+                rect.width(),
+                rect.height()
+        );
+    }
+
+    public static Rect centerRect(int width, int height, int renderWidth, int renderHeight) {
+        return RectHelper.rectFromWidthHeight(
+                (renderWidth - width) / 2,
+                (renderHeight - height) / 2,
+                width,
+                height
+        );
+    }
+
 
     private static final float BUTTON_WIDTH_MULTIPLE = 1 / 2.5f;
     private static final float BUTTON_HEIGHT_MULTIPLE = 1 / 12f;
@@ -189,9 +227,9 @@ public class GUI {
                 buttonWidth,
                 buttonHeight
         );
-        controls.put(CONTROLS.RESUME_BTN, ImageControl.buildDisabledBtn(resumeBtn, "Resume", BUTTONS_BACKGROUND_COLOR, BUTTON_TEXT_COLOR));
-        controls.put(CONTROLS.SETTINGS_BTN, ImageControl.buildDisabledBtn(settingsBtn, "Settings", BUTTONS_BACKGROUND_COLOR, BUTTON_TEXT_COLOR));
-        controls.put(CONTROLS.MAIN_MENU_BTN, ImageControl.buildDisabledBtn(mainMenuBtn, "Main Menu", BUTTONS_BACKGROUND_COLOR, BUTTON_TEXT_COLOR));
+        controls.put(CONTROLS.RESUME_BTN, ImageControl.buildBtn(resumeBtn, "Resume", BUTTONS_BACKGROUND_COLOR, BUTTON_TEXT_COLOR));
+        controls.put(CONTROLS.SETTINGS_BTN, ImageControl.buildBtn(settingsBtn, "Settings", BUTTONS_BACKGROUND_COLOR, BUTTON_TEXT_COLOR));
+        controls.put(CONTROLS.MAIN_MENU_BTN, ImageControl.buildBtn(mainMenuBtn, "Main Menu", BUTTONS_BACKGROUND_COLOR, BUTTON_TEXT_COLOR));
         HashMap<Integer, Rect> changingControlsPositions = new HashMap<>();
         changingControlsPositions.put(CONTROLS.SETTINGS_BTN, settingsBtn);
         changingControlsPositions.put(CONTROLS.MAIN_MENU_BTN, mainMenuBtn);
@@ -227,9 +265,9 @@ public class GUI {
                 buttonHeight
         );
 
-        controls.put(CONTROLS.PLAY_AGAIN_BTN, ImageControl.buildDisabledBtn(playAgain, "Play Again",
+        controls.put(CONTROLS.PLAY_AGAIN_BTN, ImageControl.buildBtn(playAgain, "Play Again",
                 BUTTONS_BACKGROUND_COLOR, BUTTON_TEXT_COLOR));
-        controls.put(CONTROLS.SHARE_BTN, ImageControl.buildDisabledBtn(share, "Share",
+        controls.put(CONTROLS.SHARE_BTN, ImageControl.buildBtn(share, "Share",
                 BUTTONS_BACKGROUND_COLOR, BUTTON_TEXT_COLOR));
 
         HashMap<Integer, Rect> changingControlsPositions = new HashMap<>();
@@ -252,13 +290,13 @@ public class GUI {
                 renderWidth / 2,
                 playAgain.top - paddingBetweenTexts - scoresTextHeight
         );
-        controls.put(CONTROLS.PERSONAL_HIGH_SCORE_TXT, new TextControl(false, false, personalHighScore,
+        controls.put(CONTROLS.PERSONAL_HIGH_SCORE_TXT, new TextControl(personalHighScore,
                 highScoreStr, scoresTextHeight, SCORES_TEXT_COLOR, true));
         Point yourScore = new Point(
                 personalHighScore.x,
                 personalHighScore.y - scoresTextHeight - paddingBetweenTexts
         );
-        controls.put(CONTROLS.YOUR_SCORE_TXT, new TextControl(false, false, yourScore,
+        controls.put(CONTROLS.YOUR_SCORE_TXT, new TextControl( yourScore,
                 yourScoreStr, scoresTextHeight, SCORES_TEXT_COLOR, true));
 
         int gameOverWidth = (int) (scoresTextWidth * 1.25f);
@@ -267,7 +305,7 @@ public class GUI {
                 personalHighScore.x,
                 yourScore.y - gameOverHeight - paddingBetweenTexts
         );
-        controls.put(CONTROLS.GAME_OVER_TXT, new TextControl(false, false, gameOver,
+        controls.put(CONTROLS.GAME_OVER_TXT, new TextControl( gameOver,
                 gameOverStr, gameOverHeight, GAME_OVER_TEXT_COLOR, true));
 
         int gameStatsWidth = (int) (renderWidth * 0.8f);
@@ -276,7 +314,7 @@ public class GUI {
                 personalHighScore.x,
                 gameOver.y - gameStatsHeight - paddingBetweenTexts
         );
-        controls.put(CONTROLS.GAME_STATS_TXT, new TextControl(false, false, gameStats,
+        controls.put(CONTROLS.GAME_STATS_TXT, new TextControl( gameStats,
                 gameStatsStr, gameStatsHeight, SCORES_TEXT_COLOR, true));
 
         Point newHighScore = new Point(
@@ -284,7 +322,7 @@ public class GUI {
                 mainMenu.bottom + paddingBetweenTexts
         );
         int newHighScoreHeight = TextSizeHelper.getTextSizeFromWidth(highScoreStr, scoresTextWidth);
-        controls.put(CONTROLS.NEW_HIGH_SCORE_TXT, new ColorWheelTxtControl(false, false, newHighScore,
+        controls.put(CONTROLS.NEW_HIGH_SCORE_TXT, new ColorWheelTxtControl( newHighScore,
                 newHighScoreStr, newHighScoreHeight, GAME_OVER_TEXT_COLOR, true, 2500));
 
 
@@ -300,7 +338,7 @@ public class GUI {
         int textSize = TextSizeHelper.getTextSizeFromWidth(chooseCharacterStr, textWidth);
         int textY = (int) (renderHeight * 0.2f);
         Point txtPoint = new Point((renderWidth) / 2, textY);
-        controls.put(CHOOSE_PLAYER_TXT, new ColorWheelTxtControl(false, false, txtPoint, chooseCharacterStr, textSize,
+        controls.put(CHOOSE_PLAYER_TXT, new ColorWheelTxtControl( txtPoint, chooseCharacterStr, textSize,
                 CHOOSE_CHARACTER_COLOR, true, 5000));
 
         int paddingBetweenTextAndRect = (int) (renderHeight * 0.1f);
@@ -342,10 +380,10 @@ public class GUI {
                 player2Rect.bottom - rectPaddingY
         );
         Bitmap char1Img = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
-        controls.put(PLAYER_1_IMG, new ImageControl(false, false, player1ImgRect,
+        controls.put(PLAYER_1_IMG, new ImageControl(player1ImgRect,
                 ImageHelper.stretch(char1Img, player1ImgRect.width(), player1ImgRect.height(), false)));
         Bitmap char2Img = Engine.character2.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
-        controls.put(PLAYER_2_IMG, new ImageControl(false, false, player2ImgRect,
+        controls.put(PLAYER_2_IMG, new ImageControl(player2ImgRect,
                 ImageHelper.stretch(char2Img, player2ImgRect.width(), player2ImgRect.height(), false)));
 
     }

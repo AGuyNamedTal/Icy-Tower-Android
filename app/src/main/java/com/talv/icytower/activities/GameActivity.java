@@ -4,6 +4,8 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Size;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -12,12 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.talv.icytower.game.Engine;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.MultiplayerEngine;
-import com.talv.icytower.game.ScreenScaleManager;
 import com.talv.icytower.game.SingleplayerEngine;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static boolean SINGLEPLAYER = true;
+    private static boolean SINGLEPLAYER = false;
 
     private static final int FPS = 60;
     public static final int FRAME_WAIT = 1000 / FPS;
@@ -49,17 +50,20 @@ public class GameActivity extends AppCompatActivity {
         gameCanvas = new GameCanvas(this);
         gameCanvas.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         setContentView(gameCanvas);
-        ScreenScaleManager.updateWidthHeight(getWindowManager().getDefaultDisplay());
 
 
         Resources resources = getResources();
+        Size screenSize = getRealSize();
+        int renderWidth = screenSize.getWidth();
+        int renderHeight = screenSize.getHeight();
 
         Engine.loadCharacters(resources);
         if (SINGLEPLAYER) {
-            engine = new SingleplayerEngine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas, this);
+            engine = new SingleplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this);
         } else {
-            engine = new MultiplayerEngine(ScreenScaleManager.newWidth, ScreenScaleManager.newHeight, resources, gameCanvas, this);
+            engine = new MultiplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this);
         }
+        engine.initialize(renderWidth, renderHeight, resources, gameCanvas, this);
         gameRun = true;
 
         gameThread = new Thread(new Runnable() {
@@ -82,6 +86,12 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private Size getRealSize() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+        return new Size(displayMetrics.widthPixels, displayMetrics.heightPixels);
     }
 
     @Override

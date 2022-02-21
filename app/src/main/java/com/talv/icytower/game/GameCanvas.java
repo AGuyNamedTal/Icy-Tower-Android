@@ -12,6 +12,7 @@ import android.view.SurfaceView;
 
 import com.talv.icytower.RectHelper;
 import com.talv.icytower.gui.GUI;
+import com.talv.icytower.gui.graphiccontrols.ClockControl;
 import com.talv.icytower.gui.graphiccontrols.Control;
 import com.talv.icytower.gui.graphiccontrols.TextControl;
 
@@ -116,7 +117,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
             int bit = 1 << i;
             if ((controlsID & bit) == bit) {
                 Control control = controls.get(bit);
-                if (control == null){
+                if (control == null) {
                     System.out.println("h");
                 }
                 control.isVisible = val;
@@ -143,7 +144,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
                 controls.get(controlPosition.getKey()).rect = controlRect;
         }
     }
-    public Control getControl(int controlID){
+
+    public Control getControl(int controlID) {
         return controls.get(controlID);
     }
 }

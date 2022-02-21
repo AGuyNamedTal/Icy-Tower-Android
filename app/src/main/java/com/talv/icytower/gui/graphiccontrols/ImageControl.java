@@ -14,19 +14,11 @@ import com.talv.icytower.ImageHelper;
 public class ImageControl extends Control {
     public Bitmap image;
 
-    public ImageControl(boolean isEnabled, boolean isVisible, Rect rect, Bitmap image) {
-        this.isEnabled = isEnabled;
-        this.isVisible = isVisible;
+    public ImageControl(Rect rect, Bitmap image) {
+        this.isEnabled = false;
+        this.isVisible = false;
         this.rect = rect;
         this.image = image;
-    }
-
-    public ImageControl(Rect rect, Bitmap image) {
-        this(true, true, rect, image);
-    }
-
-    public ImageControl(boolean isEnabled, boolean isVisible, Rect rect, Resources resources, int resourceID, int width, int height) {
-        this(isEnabled, isVisible, rect, ImageHelper.stretch(BitmapFactory.decodeResource(resources, resourceID), width, height, true));
     }
 
     public ImageControl(Rect rect, Resources resources, int resourceID, int width, int height) {
@@ -38,14 +30,6 @@ public class ImageControl extends Control {
 
     public static ImageControl buildBtn(Rect rect, String text, int backgroundColor, int textColor) {
         return new ImageControl(rect, createBtnImage(rect, text, backgroundColor, textColor));
-    }
-
-    public static ImageControl buildBtn(Rect rect, String text, int backgroundColor, int textColor, boolean enabled, boolean visible) {
-        return new ImageControl(enabled, visible, rect, createBtnImage(rect, text, backgroundColor, textColor));
-    }
-
-    public static ImageControl buildDisabledBtn(Rect rect, String text, int backgroundColor, int textColor) {
-        return new ImageControl(false, false, rect, createBtnImage(rect, text, backgroundColor, textColor));
     }
 
     private static Bitmap createBtnImage(Rect rect, String text, int backgroundColor, int textColor) {

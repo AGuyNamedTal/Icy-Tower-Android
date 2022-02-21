@@ -23,7 +23,7 @@ public class ClockControl extends ImageControl implements UpdatingControl {
 
 
     public ClockControl(Rect rect, Bitmap clock, Bitmap arrow) {
-        super(false, true, rect, clock);
+        super(rect, clock);
         this.arrow = arrow;
         updateMatrix();
     }

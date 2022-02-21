@@ -7,17 +7,19 @@ import android.graphics.Matrix;
 
 import com.talv.icytower.ImageHelper;
 import com.talv.icytower.game.platform.Platform;
+import com.talv.icytower.gui.GUI;
+import static com.talv.icytower.gui.GUI.CONTROLS.*;
 
 public class MultiplayerEngine extends Engine {
 
     private Matrix topMatrix;
     private Matrix bottomMatrix;
-    private int halfRenderHeight;
 
 
     public MultiplayerEngine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context) {
         super(renderWidth, renderHeight, resources, gameCanvas, context);
-        halfRenderHeight = renderHeight / 2;
+        pauseBtnID = PAUSE_MID_BTN;
+        GameState.PLAYING.controlGroup = GUI.CONTROLS.MULTI_GAMEPLAY_CONTROLS;
         initializeMatrices();
     }
 
@@ -75,11 +77,10 @@ public class MultiplayerEngine extends Engine {
     private void initializeMatrices() {
         topMatrix = new Matrix();
         bottomMatrix = new Matrix();
-
         topMatrix.preScale(1, 0.5f);
         topMatrix.postRotate(180);
-        topMatrix.postTranslate(cameraWidth, cameraHeight / 2f);
+        topMatrix.postTranslate(CAMERA_WIDTH, CAMERA_HEIGHT / 2f); // rotation tilts on 0,0 so reverse that
         bottomMatrix.preScale(1, 0.5f);
-        bottomMatrix.postTranslate(0, cameraHeight / 2f);
+        bottomMatrix.postTranslate(0, CAMERA_HEIGHT / 2f);
     }
 }

@@ -24,7 +24,6 @@ import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_RIGHT;
 import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_UP;
 import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS;
 import static com.talv.icytower.gui.GUI.CONTROLS.SCORE_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.checkActive;
 
 public class Player {
 
@@ -146,14 +145,8 @@ public class Player {
 
     }
 
-    public void updatePlayer(int msPassed, Engine engine) {
+    public void updatePlayer(int msPassed, Engine engine, int activeControls) {
         totalTime += msPassed;
-        int activeControls = engine.gameCanvas.getActiveControls() & PLAYER_MOVEMENT_CONTROLS;
-        if (checkActive(activeControls, ARROW_LEFT) &&
-                checkActive(activeControls, ARROW_RIGHT)) {
-            activeControls &= ~ARROW_LEFT;
-            activeControls &= ~ARROW_RIGHT;
-        }
         playerControls.passParameters(msPassed, engine);
         playerControls.controlFunctions[activeControls].run();
 
@@ -173,8 +166,8 @@ public class Player {
             currentDirection = Direction.RIGHT;
             externalSpeed = currentSpeed * -REACTION_FORCE_MULTIPLE;
             currentSpeed = 0;
-        } else if (newX > engine.cameraWidth - rect.width()) {
-            newX = engine.cameraWidth - rect.width();
+        } else if (newX > engine.CAMERA_WIDTH - rect.width()) {
+            newX = engine.CAMERA_WIDTH - rect.width();
             currentDirection = Direction.LEFT;
             externalSpeed = currentSpeed * -REACTION_FORCE_MULTIPLE;
             currentSpeed = 0;
