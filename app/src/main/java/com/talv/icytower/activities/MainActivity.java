@@ -118,15 +118,11 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Application Exit")
                 .setMessage("Are you sure you want to quit?")
-
-                // Specifying a listener allows you to take an action before dismissing the dialog.
-                // The dialog is automatically dismissed when a dialog button is clicked.
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
                     }
                 })
-                // A null listener allows the button to dismiss the dialog and take no further action.
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(true)
@@ -135,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI() {
         FirebaseUser user = FirebaseHelper.auth.getCurrentUser();
-
         if (user == null) {
             userNameTxt.setText("Currently not logged in");
             logOutTxt.setVisibility(View.GONE);
@@ -153,4 +148,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }

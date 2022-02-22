@@ -71,7 +71,7 @@ public class Player {
     public static final float MIN_JUMP_SPEED = -MAX_FALL_SPEED * 0.93f;
     public static final float HORIZONTAL_TO_VERTICAL_JUMP_MULTIPLE = 0.053f;
 
-    public static float currentVerticalSpeed;
+    public float currentVerticalSpeed;
 
 
     private float currentSpeed;

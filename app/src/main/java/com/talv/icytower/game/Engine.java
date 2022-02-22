@@ -40,9 +40,23 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.talv.icytower.gui.GUI.CONTROLS.*;
+import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_LEFT;
+import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_RIGHT;
+import static com.talv.icytower.gui.GUI.CONTROLS.CHOOSE_PLAYER_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
+import static com.talv.icytower.gui.GUI.CONTROLS.GAMEPLAY_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.GAME_LOST_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.GAME_STATS_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.MAX_FLAGS;
+import static com.talv.icytower.gui.GUI.CONTROLS.NEW_HIGH_SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_BTN;
+import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_MENU_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS;
+import static com.talv.icytower.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
+import static com.talv.icytower.gui.GUI.CONTROLS.checkActive;
 
-public class Engine implements OnClockTimeUpListener {
+public abstract class Engine implements OnClockTimeUpListener {
 
     public static Character character1;
     public static Character character2;
@@ -199,15 +213,18 @@ public class Engine implements OnClockTimeUpListener {
         cameraY = 0;
         externalCameraSpeed = 0f;
         constantCameraSpeed = 0f;
-        player.resetPlayer();
-        player.updateScore(0, gameCanvas);
         soundPool.stop(gameOverStreamId);
         clock.currentTime = 0;
         clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
         clock.countTime = false;
         musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(1f));
         clearPlatforms();
+        player.resetPlayer();
+        player.updateScore(0, gameCanvas);
+    }
 
+    public void clearPlayerCharacter() {
+        player.setCharacter(null);
     }
 
     public void setPlayerCharacter(Character character) {
@@ -219,6 +236,7 @@ public class Engine implements OnClockTimeUpListener {
         player.setCharacter(character);
         RectHelper.setRectPos(player.rect, (CAMERA_WIDTH - player.rect.width()) / 2,
                 platforms.peekFirst().rect.top - player.rect.height());
+        onResume();
     }
 
     private void initializeMediaPlayerAndSounds(Context context) {
@@ -336,11 +354,15 @@ public class Engine implements OnClockTimeUpListener {
     }
 
 
-    private void activateClockIfNeeded() {
-        if (player.rect.top < 0) {
-            clock.countTime = true;
-            constantCameraSpeed = Math.min(CAMERA_CONSTANT_SPEED_INCREASE, constantCameraSpeed);
+    protected void activateClockIfNeeded() {
+        if (minPlayerY() < 0) {
+            activateClock();
         }
+    }
+
+    protected void activateClock() {
+        clock.countTime = true;
+        constantCameraSpeed = Math.min(CAMERA_CONSTANT_SPEED_INCREASE, constantCameraSpeed);
     }
 
     protected void updateNonGamingControls(int msPassed) {
@@ -382,30 +404,45 @@ public class Engine implements OnClockTimeUpListener {
         generatePlatforms(removed);
     }
 
-    private void updatePlayer(int msPassed) {
-        int activeControls = gameCanvas.getActiveControls() & PLAYER_MOVEMENT_CONTROLS;
+    protected void updatePlayer(int msPassed) {
+        int activeControls = getGameControls(gameCanvas.getActiveControls());
+        // update player
+        player.updatePlayer(msPassed, this, activeControls);
+    }
+
+    protected int getGameControls(int activeControls) {
+        activeControls = activeControls & PLAYER_MOVEMENT_CONTROLS;
         if (checkActive(activeControls, ARROW_LEFT) &&
                 checkActive(activeControls, ARROW_RIGHT)) {
             activeControls &= ~ARROW_LEFT;
             activeControls &= ~ARROW_RIGHT;
         }
-        // update player
-        player.updatePlayer(msPassed, this, activeControls);
+        return activeControls;
     }
 
-    private void updateCamera(int msPassed) {
-        if (player.rect.top < cameraY + CAMERA_HEIGHT * 0.25f) {
-            externalCameraSpeed = Math.min(externalCameraSpeed + CAMERA_SPEED_ACCELERATION * msPassed, CAMERA_CONSTANT_SPEED_INCREASE * 1.5f);
-        } else {
-            // decelerate external camera speed
-            externalCameraSpeed = Math.min(0, externalCameraSpeed + msPassed * CAMERA_SPEED_DECELERATION);
+    abstract int minPlayerY();
 
+    abstract int maxPlayerY();
+
+    protected void updateCamera(int msPassed) {
+        if (minPlayerY() < cameraY + CAMERA_HEIGHT * 0.25f) {
+            accelerateExternalCam(msPassed);
+        } else {
+            decelerateExternalCam(msPassed);
         }
         cameraY += (externalCameraSpeed + constantCameraSpeed) * msPassed;
     }
 
-    private void checkLost(Context context) {
-        if (player.rect.top > cameraY + CAMERA_HEIGHT) {
+    protected void accelerateExternalCam(int msPassed) {
+        externalCameraSpeed = Math.min(externalCameraSpeed + CAMERA_SPEED_ACCELERATION * msPassed, CAMERA_CONSTANT_SPEED_INCREASE * 1.5f);
+    }
+
+    protected void decelerateExternalCam(int msPassed) {
+        externalCameraSpeed = Math.min(0, externalCameraSpeed + msPassed * CAMERA_SPEED_DECELERATION);
+    }
+
+    protected void checkLost(Context context) {
+        if (maxPlayerY() > cameraY + CAMERA_HEIGHT) {
             // LOST!
             updateGameState(GameState.LOST);
             stopBackgroundMusic();
@@ -414,7 +451,7 @@ public class Engine implements OnClockTimeUpListener {
         }
     }
 
-    private void updateLostUI(Context context) {
+    protected void updateLostUI(Context context) {
         int score = player.getScore();
         gameCanvas.updateText(YOUR_SCORE_TXT, "Your Score: " + score);
         gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + player.totalJumps +

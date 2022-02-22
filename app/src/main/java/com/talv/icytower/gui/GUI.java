@@ -421,7 +421,7 @@ public class GUI {
         controls.get(PLAY_AGAIN_BTN).onTouch = new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                engine.player.setCharacter(null);
+                engine.clearPlayerCharacter();
                 engine.reset();
                 engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
                 engine.onResume();
@@ -458,6 +458,7 @@ public class GUI {
     private static void setPlayer(Character character, Engine engine) {
         engine.setPlayerCharacter(character);
         engine.updateGameState(Engine.GameState.PLAYING);
+        engine.onResume();
     }
 
 
