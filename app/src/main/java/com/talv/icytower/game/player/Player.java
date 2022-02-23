@@ -10,15 +10,15 @@ import android.util.Log;
 import com.talv.icytower.R;
 import com.talv.icytower.RectHelper;
 import com.talv.icytower.game.Debug;
-import com.talv.icytower.game.Engine;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.PlayerPlatformsIntersection;
+import com.talv.icytower.game.engine.Engine;
 import com.talv.icytower.game.platform.Platform;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import static com.talv.icytower.game.Engine.PLAYER_SIZE_MULTIPLE;
+import static com.talv.icytower.game.engine.Engine.PLAYER_SIZE_MULTIPLE;
 import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_LEFT;
 import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_RIGHT;
 import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_UP;

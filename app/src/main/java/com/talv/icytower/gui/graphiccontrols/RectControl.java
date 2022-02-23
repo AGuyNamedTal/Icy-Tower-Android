@@ -18,6 +18,15 @@ public class RectControl extends Control {
         paint.setStrokeWidth(thickness);
     }
 
+    public RectControl(Rect rect, int color) {
+        isEnabled = false;
+        isVisible = false;
+        this.rect = rect;
+        paint = new Paint();
+        paint.setColor(color);
+        paint.setStyle(Paint.Style.FILL);
+    }
+
     @Override
     public void render(Canvas canvas) {
         canvas.drawRect(rect, paint);

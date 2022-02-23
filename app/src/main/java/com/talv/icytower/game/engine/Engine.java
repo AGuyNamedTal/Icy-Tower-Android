@@ -1,4 +1,4 @@
-package com.talv.icytower.game;
+package com.talv.icytower.game.engine;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -25,6 +25,9 @@ import com.talv.icytower.RectHelper;
 import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.firebase.GameStats;
 import com.talv.icytower.firebase.UserProfileInfo;
+import com.talv.icytower.game.Debug;
+import com.talv.icytower.game.GameCanvas;
+import com.talv.icytower.game.GameSettings;
 import com.talv.icytower.game.platform.DisappearingPlatform;
 import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.player.Character;

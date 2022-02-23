@@ -18,7 +18,7 @@ import com.talv.icytower.R;
 import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.firebase.GameStats;
 import com.talv.icytower.firebase.UserProfileInfo;
-import com.talv.icytower.game.Engine;
+import com.talv.icytower.game.engine.Engine;
 
 import static com.talv.icytower.firebase.AuthVerifier.isValidEmailAddress;
 import static com.talv.icytower.firebase.AuthVerifier.isValidPassword;

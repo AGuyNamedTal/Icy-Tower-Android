@@ -8,8 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
-import com.talv.icytower.game.Engine;
 import com.talv.icytower.ImageHelper;
+import com.talv.icytower.game.engine.Engine;
 
 public class ImageControl extends Control {
     public Bitmap image;

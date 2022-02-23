@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 
-import com.talv.icytower.game.Engine;
+import com.talv.icytower.game.engine.Engine;
 
 public class ClockControl extends ImageControl implements UpdatingControl {
 

@@ -11,10 +11,10 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.talv.icytower.game.Engine;
 import com.talv.icytower.game.GameCanvas;
-import com.talv.icytower.game.MultiplayerEngine;
-import com.talv.icytower.game.SingleplayerEngine;
+import com.talv.icytower.game.engine.Engine;
+import com.talv.icytower.game.engine.MultiplayerEngine;
+import com.talv.icytower.game.engine.SingleplayerEngine;
 
 public class GameActivity extends AppCompatActivity {
 

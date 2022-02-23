@@ -11,7 +11,7 @@ import android.util.Log;
 import com.talv.icytower.ImageHelper;
 import com.talv.icytower.R;
 import com.talv.icytower.RectHelper;
-import com.talv.icytower.game.Engine;
+import com.talv.icytower.game.engine.Engine;
 
 import java.util.Arrays;
 import java.util.Comparator;

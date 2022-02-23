@@ -16,8 +16,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.talv.icytower.R;
 import com.talv.icytower.firebase.FirebaseHelper;
-import com.talv.icytower.game.Engine;
 import com.talv.icytower.game.GameSettings;
+import com.talv.icytower.game.engine.Engine;
 
 import static com.talv.icytower.activities.SettingsActivity.SETTINGS_SP_FILE_NAME;
 

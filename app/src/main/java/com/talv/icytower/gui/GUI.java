@@ -13,7 +13,7 @@ import com.talv.icytower.R;
 import com.talv.icytower.RectHelper;
 import com.talv.icytower.activities.MainActivity;
 import com.talv.icytower.activities.SettingsActivity;
-import com.talv.icytower.game.Engine;
+import com.talv.icytower.game.engine.Engine;
 import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;
 import com.talv.icytower.gui.graphiccontrols.ClockControl;
@@ -66,7 +66,8 @@ public class GUI {
         public static final int ARROW_UP_2 = ARROW_UP << PLAYER_MOVEMENT_CONTROLS_SHIFT;
         public static final int ARROW_LEFT_2 = ARROW_LEFT << PLAYER_MOVEMENT_CONTROLS_SHIFT;
         public static final int ARROW_RIGHT_2 = ARROW_RIGHT << PLAYER_MOVEMENT_CONTROLS_SHIFT;
-        public static final int PAUSE_MID_BTN = 1 << 25;
+        public static final int LINE_SEPARATOR = 1 << 25;
+        public static final int PAUSE_MID_BTN = 1 << 26;
 
 
         public static final int MAX_FLAGS = PAUSE_MID_BTN << 1;
@@ -80,7 +81,7 @@ public class GUI {
         public static final int GAMEPLAY_CONTROLS = PLAYER_MOVEMENT_CONTROLS |
                 PAUSE_BTN | SCORE_TXT | CLOCK;
         public static final int MULTI_GAMEPLAY_CONTROLS = PLAYER_MOVEMENT_CONTROLS | PLAYER_2_MOVEMENT_CONTROLS |
-                PAUSE_MID_BTN;
+                PAUSE_MID_BTN | LINE_SEPARATOR;
 
 
         public static final int PAUSE_MENU_CONTROLS = RESUME_BTN | SETTINGS_BTN
@@ -107,6 +108,9 @@ public class GUI {
         buildChoosePlayerControls(controls, renderWidth, renderHeight);
         addOnClickListeners(controls);
     }
+
+
+    private static final int LINE_SEPARATOR_COLOR = 0xFFFFFFFF;
 
     private static void buildGameControls(Map<Integer, Control> controls, Resources resources, int renderWidth, int renderHeight) {
         int controlSize = (int) (0.18 * renderWidth);
@@ -174,6 +178,8 @@ public class GUI {
                 , resources, R.drawable.right_arrow, controlSize, controlSize));
         controls.put(CONTROLS.PAUSE_MID_BTN, new ImageControl(centerRect(pauseBtnSize, pauseBtnSize, renderWidth, renderHeight),
                 resources, R.drawable.pause_btn, pauseBtnSize, pauseBtnSize));
+        controls.put(CONTROLS.LINE_SEPARATOR, new RectControl(centerRect(renderWidth, pauseBtnSize / 2, renderWidth, renderHeight),
+                LINE_SEPARATOR_COLOR));
     }
 
     private static Rect reflectRect(Rect rect, int renderWidth, int renderHeight) {

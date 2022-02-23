@@ -1,4 +1,4 @@
-package com.talv.icytower.game;
+package com.talv.icytower.game.engine;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.talv.icytower.ImageHelper;
 import com.talv.icytower.RectHelper;
 import com.talv.icytower.firebase.FirebaseHelper;
+import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;

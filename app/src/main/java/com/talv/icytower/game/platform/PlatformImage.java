@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import com.talv.icytower.ImageHelper;
-import com.talv.icytower.game.Engine;
+import com.talv.icytower.game.engine.Engine;
 
 public class PlatformImage {
 
