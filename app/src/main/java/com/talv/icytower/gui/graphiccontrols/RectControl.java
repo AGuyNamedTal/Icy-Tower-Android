@@ -6,7 +6,7 @@ import android.graphics.Rect;
 
 public class RectControl extends Control {
 
-    private Paint paint;
+    private final Paint paint;
 
     public RectControl(Rect rect, int color, int thickness) {
         isEnabled = false;

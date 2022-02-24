@@ -12,12 +12,12 @@ import android.view.SurfaceView;
 
 import com.talv.icytower.RectHelper;
 import com.talv.icytower.gui.GUI;
-import com.talv.icytower.gui.graphiccontrols.ClockControl;
 import com.talv.icytower.gui.graphiccontrols.Control;
 import com.talv.icytower.gui.graphiccontrols.TextControl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
@@ -30,6 +30,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     //public static PointF[] CLICK_FINGERS = new PointF[MAX_FINGERS];
     public SurfaceHolder holder;
 
+    public AtomicInteger activeControls = new AtomicInteger(0);
 
     public GameCanvas(Context context) {
         super(context);
@@ -61,7 +62,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int pointerCount = event.getPointerCount();
-        int cappedPointerCount = pointerCount > MAX_FINGERS ? MAX_FINGERS : pointerCount;
+        int cappedPointerCount = Math.min(pointerCount, MAX_FINGERS);
         int actionIndex = event.getActionIndex();
         int action = event.getActionMasked();
         int id = event.getPointerId(actionIndex);
@@ -72,17 +73,27 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
             FINGERS[id] = null;
 
         }
+        int activeControls = 0;
         for (int i = 0; i < cappedPointerCount; i++) {
             if (FINGERS[i] != null) {
                 int index = event.findPointerIndex(i);
                 try {
-                    FINGERS[index] = new PointF(event.getX(index), event.getY(index));
+                    PointF fingerPoint = new PointF(event.getX(index), event.getY(index));
+                    FINGERS[index] = fingerPoint;
+                    for (Map.Entry<Integer, Control> controlEntry : controls.entrySet()) {
+                        Control control = controlEntry.getValue();
+                        if (!control.isEnabled) continue;
+                        if (RectHelper.isPointInRect(control.rect, fingerPoint.x, fingerPoint.y)) {
+                            activeControls |= controlEntry.getKey();
+                        }
+                    }
+
                 } catch (IllegalArgumentException ex) {
                     Log.d("ERROR", "finger weird", ex);
-                    continue;
                 }
             }
         }
+        this.activeControls.set(activeControls);
         return true;
     }
 
@@ -92,24 +103,6 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
             if (!control.isVisible) continue;
             control.render(canvas);
         }
-    }
-
-    public int getActiveControls() {
-        int output = 0;
-        PointF[] fingers = FINGERS.clone();
-        for (int i = 0; i < GameCanvas.MAX_FINGERS; i++) {
-            PointF point = fingers[i];
-            if (point != null) {
-                for (Map.Entry<Integer, Control> controlEntry : controls.entrySet()) {
-                    Control control = controlEntry.getValue();
-                    if (!control.isEnabled) continue;
-                    if (RectHelper.isPointInRect(control.rect, (int) point.x, (int) point.y)) {
-                        output |= controlEntry.getKey();
-                    }
-                }
-            }
-        }
-        return output;
     }
 
     public void setEnabledAndVisible(int controlsID, boolean val) {

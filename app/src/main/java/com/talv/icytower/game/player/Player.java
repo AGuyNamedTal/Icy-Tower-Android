@@ -86,7 +86,7 @@ public class Player {
 
     protected HashMap<PlayerState, BitmapAnimation> animations;
 
-    private PlayerControls playerControls;
+    private final PlayerControls playerControls;
 
     private int jumpSoundID;
 
@@ -166,8 +166,8 @@ public class Player {
             currentDirection = Direction.RIGHT;
             externalSpeed = currentSpeed * -REACTION_FORCE_MULTIPLE;
             currentSpeed = 0;
-        } else if (newX > engine.CAMERA_WIDTH - rect.width()) {
-            newX = engine.CAMERA_WIDTH - rect.width();
+        } else if (newX > Engine.CAMERA_WIDTH - rect.width()) {
+            newX = Engine.CAMERA_WIDTH - rect.width();
             currentDirection = Direction.LEFT;
             externalSpeed = currentSpeed * -REACTION_FORCE_MULTIPLE;
             currentSpeed = 0;

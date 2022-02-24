@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 
 import com.talv.icytower.ImageHelper;
+import com.talv.icytower.RectHelper;
 import com.talv.icytower.game.engine.Engine;
 
 public class ImageControl extends Control {
@@ -25,6 +26,13 @@ public class ImageControl extends Control {
         this(rect, ImageHelper.stretch(BitmapFactory.decodeResource(resources, resourceID), width, height, true));
     }
 
+    public static ImageControl reflectControl(Rect rect, int renderWidth, int renderHeight, Bitmap image) {
+        return new ImageControl(RectHelper.reflectRect(rect, renderWidth, renderHeight), ImageHelper.reflectBitmap(image, false));
+    }
+
+    public static ImageControl reflectControl(ImageControl control, int renderWidth, int renderHeight) {
+        return new ImageControl(RectHelper.reflectRect(control.rect, renderWidth, renderHeight), ImageHelper.reflectBitmap(control.image, false));
+    }
 
     private static final float BTN_TEXT_PADDING_MULTIPLE = 0.05f;
 
@@ -60,8 +68,8 @@ public class ImageControl extends Control {
         textPaint.getTextBounds(text, 0, text.length(), bounds);
 
         canvas.drawText(text,
-                horizontalPadding + (desiredTextWidth - bounds.width()) / 2 - bounds.left,
-                (rect.height() - bounds.height()) / 2 - bounds.top,
+                horizontalPadding + (desiredTextWidth - bounds.width()) / 2f - bounds.left,
+                (rect.height() - bounds.height()) / 2f - bounds.top,
                 textPaint);
         return image;
     }

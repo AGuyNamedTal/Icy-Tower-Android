@@ -7,15 +7,15 @@ public class GameSettings {
     public static boolean SFX;
     public static boolean VIBRATE;
 
-    private static String BACKG_KEY = "BACKG_MUSIC";
-    private static String SFX_KEY = "SFX";
-    private static String VIBRATE_KEY = "VIBRATE";
+    private static final String BACKG_KEY = "BACKG_MUSIC";
+    private static final String SFX_KEY = "SFX";
+    private static final String VIBRATE_KEY = "VIBRATE";
 
     private static final boolean BACKG_MUSIC_DEFAULT = true;
     private static final boolean SFX_DEFAULT = true;
     private static final boolean VIBRATE_DEFAULT = true;
 
-    public static void loadSettingsFromSP(SharedPreferences sp){
+    public static void loadSettingsFromSP(SharedPreferences sp) {
         BACKG_MUSIC = sp.getBoolean(BACKG_KEY, BACKG_MUSIC_DEFAULT);
         SFX = sp.getBoolean(SFX_KEY, SFX_DEFAULT);
         VIBRATE = sp.getBoolean(VIBRATE_KEY, VIBRATE_DEFAULT);

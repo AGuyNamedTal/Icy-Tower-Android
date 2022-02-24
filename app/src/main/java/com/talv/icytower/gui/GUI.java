@@ -66,8 +66,7 @@ public class GUI {
         public static final int ARROW_UP_2 = ARROW_UP << PLAYER_MOVEMENT_CONTROLS_SHIFT;
         public static final int ARROW_LEFT_2 = ARROW_LEFT << PLAYER_MOVEMENT_CONTROLS_SHIFT;
         public static final int ARROW_RIGHT_2 = ARROW_RIGHT << PLAYER_MOVEMENT_CONTROLS_SHIFT;
-        public static final int LINE_SEPARATOR = 1 << 25;
-        public static final int PAUSE_MID_BTN = 1 << 26;
+        public static final int PAUSE_MID_BTN = 1 << 25;
 
 
         public static final int MAX_FLAGS = PAUSE_MID_BTN << 1;
@@ -81,7 +80,7 @@ public class GUI {
         public static final int GAMEPLAY_CONTROLS = PLAYER_MOVEMENT_CONTROLS |
                 PAUSE_BTN | SCORE_TXT | CLOCK;
         public static final int MULTI_GAMEPLAY_CONTROLS = PLAYER_MOVEMENT_CONTROLS | PLAYER_2_MOVEMENT_CONTROLS |
-                PAUSE_MID_BTN | LINE_SEPARATOR;
+                PAUSE_MID_BTN;
 
 
         public static final int PAUSE_MENU_CONTROLS = RESUME_BTN | SETTINGS_BTN
@@ -143,11 +142,14 @@ public class GUI {
                 pauseBtnSize,
                 pauseBtnSize
         );
-        controls.put(CONTROLS.ARROW_UP, new ImageControl(upArrow, resources, R.drawable.up_arrow, controlSize, controlSize));
-        controls.put(CONTROLS.ARROW_LEFT, new ImageControl(leftArrow, resources, R.drawable.left_arrow, controlSize, controlSize));
-        controls.put(CONTROLS.ARROW_RIGHT, new ImageControl(rightArrow, resources, R.drawable.right_arrow, controlSize, controlSize));
-        controls.put(CONTROLS.PAUSE_BTN, new ImageControl(pauseBtn, resources, R.drawable.pause_btn, pauseBtnSize, pauseBtnSize));
-
+        ImageControl arrowUpCtrl = new ImageControl(upArrow, resources, R.drawable.up_arrow, controlSize, controlSize);
+        ImageControl arrowLeftCtrl = new ImageControl(leftArrow, resources, R.drawable.left_arrow, controlSize, controlSize);
+        ImageControl arrowRightCtrl = new ImageControl(rightArrow, resources, R.drawable.right_arrow, controlSize, controlSize);
+        ImageControl pauseButtonCtrl = new ImageControl(pauseBtn, resources, R.drawable.pause_btn, pauseBtnSize, pauseBtnSize);
+        controls.put(CONTROLS.ARROW_UP, arrowUpCtrl);
+        controls.put(CONTROLS.ARROW_LEFT, arrowLeftCtrl);
+        controls.put(CONTROLS.ARROW_RIGHT, arrowRightCtrl);
+        controls.put(CONTROLS.PAUSE_BTN, pauseButtonCtrl);
 
         Rect clockControl = RectHelper.rectFromWidthHeight(
                 (int) (0.01f * renderWidth),
@@ -170,34 +172,11 @@ public class GUI {
                 scoreTextSize, scoreTextColor));
 
 
-        controls.put(CONTROLS.ARROW_UP_2, new ImageControl(reflectRect(upArrow, renderWidth, renderHeight), resources,
-                R.drawable.up_arrow, controlSize, controlSize));
-        controls.put(CONTROLS.ARROW_LEFT_2, new ImageControl(reflectRect(leftArrow, renderWidth, renderHeight)
-                , resources, R.drawable.left_arrow, controlSize, controlSize));
-        controls.put(CONTROLS.ARROW_RIGHT_2, new ImageControl(reflectRect(rightArrow, renderWidth, renderHeight)
-                , resources, R.drawable.right_arrow, controlSize, controlSize));
-        controls.put(CONTROLS.PAUSE_MID_BTN, new ImageControl(centerRect(pauseBtnSize, pauseBtnSize, renderWidth, renderHeight),
-                resources, R.drawable.pause_btn, pauseBtnSize, pauseBtnSize));
-        controls.put(CONTROLS.LINE_SEPARATOR, new RectControl(centerRect(renderWidth, pauseBtnSize / 2, renderWidth, renderHeight),
-                LINE_SEPARATOR_COLOR));
-    }
-
-    private static Rect reflectRect(Rect rect, int renderWidth, int renderHeight) {
-        return RectHelper.rectFromWidthHeight(
-                renderWidth - rect.right,
-                renderHeight - rect.bottom,
-                rect.width(),
-                rect.height()
-        );
-    }
-
-    public static Rect centerRect(int width, int height, int renderWidth, int renderHeight) {
-        return RectHelper.rectFromWidthHeight(
-                (renderWidth - width) / 2,
-                (renderHeight - height) / 2,
-                width,
-                height
-        );
+        controls.put(CONTROLS.ARROW_UP_2, ImageControl.reflectControl(arrowUpCtrl, renderWidth, renderHeight));
+        controls.put(CONTROLS.ARROW_LEFT_2, ImageControl.reflectControl(arrowLeftCtrl, renderWidth, renderHeight));
+        controls.put(CONTROLS.ARROW_RIGHT_2, ImageControl.reflectControl(arrowRightCtrl, renderWidth, renderHeight));
+        controls.put(CONTROLS.PAUSE_MID_BTN, new ImageControl(RectHelper.centerRect(pauseBtnSize, pauseBtnSize, renderWidth, renderHeight),
+                ImageHelper.reflectBitmap(pauseButtonCtrl.image, false)));
     }
 
 
@@ -302,7 +281,7 @@ public class GUI {
                 personalHighScore.x,
                 personalHighScore.y - scoresTextHeight - paddingBetweenTexts
         );
-        controls.put(CONTROLS.YOUR_SCORE_TXT, new TextControl( yourScore,
+        controls.put(CONTROLS.YOUR_SCORE_TXT, new TextControl(yourScore,
                 yourScoreStr, scoresTextHeight, SCORES_TEXT_COLOR, true));
 
         int gameOverWidth = (int) (scoresTextWidth * 1.25f);
@@ -311,7 +290,7 @@ public class GUI {
                 personalHighScore.x,
                 yourScore.y - gameOverHeight - paddingBetweenTexts
         );
-        controls.put(CONTROLS.GAME_OVER_TXT, new TextControl( gameOver,
+        controls.put(CONTROLS.GAME_OVER_TXT, new TextControl(gameOver,
                 gameOverStr, gameOverHeight, GAME_OVER_TEXT_COLOR, true));
 
         int gameStatsWidth = (int) (renderWidth * 0.8f);
@@ -320,7 +299,7 @@ public class GUI {
                 personalHighScore.x,
                 gameOver.y - gameStatsHeight - paddingBetweenTexts
         );
-        controls.put(CONTROLS.GAME_STATS_TXT, new TextControl( gameStats,
+        controls.put(CONTROLS.GAME_STATS_TXT, new TextControl(gameStats,
                 gameStatsStr, gameStatsHeight, SCORES_TEXT_COLOR, true));
 
         Point newHighScore = new Point(
@@ -328,7 +307,7 @@ public class GUI {
                 mainMenu.bottom + paddingBetweenTexts
         );
         int newHighScoreHeight = TextSizeHelper.getTextSizeFromWidth(highScoreStr, scoresTextWidth);
-        controls.put(CONTROLS.NEW_HIGH_SCORE_TXT, new ColorWheelTxtControl( newHighScore,
+        controls.put(CONTROLS.NEW_HIGH_SCORE_TXT, new ColorWheelTxtControl(newHighScore,
                 newHighScoreStr, newHighScoreHeight, GAME_OVER_TEXT_COLOR, true, 2500));
 
 
@@ -344,7 +323,7 @@ public class GUI {
         int textSize = TextSizeHelper.getTextSizeFromWidth(chooseCharacterStr, textWidth);
         int textY = (int) (renderHeight * 0.2f);
         Point txtPoint = new Point((renderWidth) / 2, textY);
-        controls.put(CHOOSE_PLAYER_TXT, new ColorWheelTxtControl( txtPoint, chooseCharacterStr, textSize,
+        controls.put(CHOOSE_PLAYER_TXT, new ColorWheelTxtControl(txtPoint, chooseCharacterStr, textSize,
                 CHOOSE_CHARACTER_COLOR, true, 5000));
 
         int paddingBetweenTextAndRect = (int) (renderHeight * 0.1f);

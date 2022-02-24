@@ -77,7 +77,7 @@ public class ImageHelper {
         if (dispose) {
             bitmap.recycle();
         }
-        return output.toArray(new Bitmap[output.size()]);
+        return output.toArray(new Bitmap[0]);
     }
 
     public static Bitmap tileImageX(Bitmap bitmap, int newWidth, int newHeight, boolean dispose) {
@@ -102,6 +102,20 @@ public class ImageHelper {
         }
         if (bitmapStretched != bitmap) {
             bitmapStretched.recycle();
+        }
+        return newBitmap;
+    }
+
+
+    public static Bitmap reflectBitmap(Bitmap bitmap, boolean dispose) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        Matrix reflectionMatrix = new Matrix();
+        reflectionMatrix.preRotate(180);
+        reflectionMatrix.postTranslate(width, height);
+        Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, reflectionMatrix, true);
+        if (dispose) {
+            bitmap.recycle();
         }
         return newBitmap;
     }

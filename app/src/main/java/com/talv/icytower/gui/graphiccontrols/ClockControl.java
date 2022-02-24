@@ -10,8 +10,8 @@ import com.talv.icytower.game.engine.Engine;
 public class ClockControl extends ImageControl implements UpdatingControl {
 
 
-    private Bitmap arrow;
-    private Matrix matrix = new Matrix();
+    private final Bitmap arrow;
+    private final Matrix matrix = new Matrix();
 
     public long currentTime = 0;
     public long timeTillSpeedIncrease = 1;
@@ -49,6 +49,6 @@ public class ClockControl extends ImageControl implements UpdatingControl {
     private void updateMatrix() {
         float angleOfRotation = ((360f * currentTime / timeTillSpeedIncrease) + STARTING_ANGLE) % 360;
         matrix.setRotate(angleOfRotation);
-        matrix.postTranslate(rect.exactCenterX() + (arrow.getWidth() / 2), rect.exactCenterY());
+        matrix.postTranslate(rect.exactCenterX() + (arrow.getWidth() / 2f), rect.exactCenterY());
     }
 }

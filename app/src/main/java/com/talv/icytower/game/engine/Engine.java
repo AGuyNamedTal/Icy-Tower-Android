@@ -314,17 +314,18 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     public void updateGame(int msPassed, Context context) {
+        int activeControls = gameCanvas.activeControls.get();
         if (Debug.LOG_MSPASSED)
             Log.d("MS PASSED", String.valueOf(msPassed));
-        if (checkActive(gameCanvas.getActiveControls(), pauseBtnID)) {
+        if (checkActive(activeControls, pauseBtnID)) {
             onPause();
         }
         if (currentGameState == GameState.PLAYING) {
-            updateGameMechanics(msPassed, context);
+            updateGameMechanics(msPassed, context, activeControls);
         } else {
             if (!processingClick && !touchRestricted.get()) {
                 GameState old = currentGameState;
-                processingClick = processClick(context);
+                processingClick = processClick(context, activeControls);
                 GameState newGameState = currentGameState;
                 if (newGameState != old) {
                     processingClick = false;
@@ -378,9 +379,9 @@ public abstract class Engine implements OnClockTimeUpListener {
         }
     }
 
-    protected void updateGameMechanics(int msPassed, Context context) {
+    protected void updateGameMechanics(int msPassed, Context context, int activeControls) {
         updatePlatforms(msPassed);
-        updatePlayer(msPassed);
+        updatePlayer(msPassed, activeControls);
         updateCamera(msPassed);
         activateClockIfNeeded();
         clock.update(msPassed);
@@ -401,16 +402,15 @@ public abstract class Engine implements OnClockTimeUpListener {
                 platform.recycle();
                 iterator.remove();
                 removed++;
-                continue;
             }
         }
         generatePlatforms(removed);
     }
 
-    protected void updatePlayer(int msPassed) {
-        int activeControls = getGameControls(gameCanvas.getActiveControls());
+    protected void updatePlayer(int msPassed, int activeControls) {
+        int gameControls = getGameControls(activeControls);
         // update player
-        player.updatePlayer(msPassed, this, activeControls);
+        player.updatePlayer(msPassed, this, gameControls);
     }
 
     protected int getGameControls(int activeControls) {
@@ -548,11 +548,10 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     // returns whether a button was clicked and lock out following clicks
-    protected boolean processClick(Context context) {
-        int activeControls = gameCanvas.getActiveControls();
+    protected boolean processClick(Context context, int activeControls) {
         int currentBit = 1 << 1;
         while (currentBit < MAX_FLAGS) {
-            if ((activeControls & currentBit) == currentBit) {
+            if (checkActive(activeControls, currentBit)) {
                 Control activeControl = gameCanvas.getControl(currentBit);
                 if (activeControl.onTouch != null) {
                     activeControl.onTouch.onTouch(this, context);
@@ -566,7 +565,7 @@ public abstract class Engine implements OnClockTimeUpListener {
 
 
     public static String formatGameTimeToString(long time) {
-        return String.valueOf(time / 1000) + "." + String.valueOf(Math.round((time % 1000) / 100f));
+        return time / 1000 + "." + Math.round((time % 1000) / 100f);
     }
 
 

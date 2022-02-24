@@ -9,12 +9,12 @@ import com.talv.icytower.game.Debug;
 
 public class BitmapAnimation {
 
-    public Bitmap[] bitmapsRight;
-    public Bitmap[] bitmapsLeft;
-    private int[] switchIndexes;
+    public final Bitmap[] bitmapsRight;
+    public final Bitmap[] bitmapsLeft;
+    private final int[] switchIndexes;
 
     private int currentTime = 0;
-    private int maxIndex;
+    private final int maxIndex;
 
     public BitmapAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection) {
         this(bitmapsRight, createLeftReflection, defaultSwitchIndexes(bitmapsRight.length));

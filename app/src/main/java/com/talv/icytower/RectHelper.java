@@ -43,7 +43,7 @@ public class RectHelper {
         return point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom;
     }
 
-    public static boolean isPointInRect(Rect rect, int x, int y) {
+    public static boolean isPointInRect(Rect rect, float x, float y) {
         return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
     }
 
@@ -71,4 +71,23 @@ public class RectHelper {
         }
         return new PlayerPlatformsIntersection(newY);
     }
+
+    public static Rect reflectRect(Rect rect, int renderWidth, int renderHeight) {
+        return RectHelper.rectFromWidthHeight(
+                renderWidth - rect.right,
+                renderHeight - rect.bottom,
+                rect.width(),
+                rect.height()
+        );
+    }
+
+    public static Rect centerRect(int width, int height, int renderWidth, int renderHeight) {
+        return RectHelper.rectFromWidthHeight(
+                (renderWidth - width) / 2,
+                (renderHeight - height) / 2,
+                width,
+                height
+        );
+    }
+
 }

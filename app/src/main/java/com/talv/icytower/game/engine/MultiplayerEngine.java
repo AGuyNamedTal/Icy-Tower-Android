@@ -131,9 +131,9 @@ public class MultiplayerEngine extends Engine {
     }
 
 
-    protected void updatePlayer(int msPassed) {
-        int player1Controls = getGameControls(gameCanvas.getActiveControls());
-        int player2Controls = getGameControls(gameCanvas.getActiveControls() >> PLAYER_MOVEMENT_CONTROLS_SHIFT);
+    protected void updatePlayer(int msPassed, int activeControls) {
+        int player1Controls = getGameControls(activeControls);
+        int player2Controls = getGameControls(activeControls >> PLAYER_MOVEMENT_CONTROLS_SHIFT);
         // update player
         player.updatePlayer(msPassed, this, player1Controls);
         player2.updatePlayer(msPassed, this, player2Controls);

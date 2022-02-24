@@ -24,7 +24,7 @@ class GetIPFromInternetTask extends AsyncTask<Void, Void, String>
             URLConnection urlConn = url.openConnection();
             bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
 
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null)
             {
@@ -43,7 +43,7 @@ class GetIPFromInternetTask extends AsyncTask<Void, Void, String>
             {
                 try {
                     bufferedReader.close();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             }
         }

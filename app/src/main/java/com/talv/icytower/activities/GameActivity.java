@@ -18,7 +18,7 @@ import com.talv.icytower.game.engine.SingleplayerEngine;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static boolean SINGLEPLAYER = false;
+    private static final boolean SINGLEPLAYER = false;
 
     private static final int FPS = 60;
     public static final int FRAME_WAIT = 1000 / FPS;

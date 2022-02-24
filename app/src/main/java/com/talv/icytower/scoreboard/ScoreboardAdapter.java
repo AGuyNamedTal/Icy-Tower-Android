@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.talv.icytower.R;
@@ -14,7 +15,7 @@ import com.talv.icytower.R;
 public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.ViewHolder> {
 
     public ScoreboardData[] data;
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
     private ItemClickListener onClickListener;
 
     // data is passed into the constructor
@@ -24,8 +25,9 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.Vi
     }
 
     // inflates the row layout from xml when needed
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.scoreboard_item, parent, false);
         return new ViewHolder(view);
     }
@@ -64,9 +66,9 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.Vi
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView countryTxt;
-        private TextView userTxt;
-        private TextView scoreTxt;
+        private final TextView countryTxt;
+        private final TextView userTxt;
+        private final TextView scoreTxt;
 
         public ViewHolder(View itemView) {
             super(itemView);

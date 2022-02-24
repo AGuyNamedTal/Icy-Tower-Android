@@ -9,14 +9,14 @@ import com.talv.icytower.game.engine.Engine;
 public class PlatformImage {
 
 
-    private Bitmap middleBitmap;
-    private Bitmap leftBitmap;
-    private Bitmap rightBitmap;
-    private int minWidth;
+    private final Bitmap middleBitmap;
+    private final Bitmap leftBitmap;
+    private final Bitmap rightBitmap;
+    private final int minWidth;
 
-    private int rightBitmapWidth;
-    private int leftBitmapWidth;
-    private int height;
+    private final int rightBitmapWidth;
+    private final int leftBitmapWidth;
+    private final int height;
     public int linesFilled;
 
 

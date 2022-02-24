@@ -40,9 +40,7 @@ public class UserProfileInfo {
         String countryCode = null;
         try {
             countryCode = new GetIPFromInternetTask().execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         if (countryCode == null) {

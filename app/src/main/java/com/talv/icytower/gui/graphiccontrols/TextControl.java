@@ -11,14 +11,14 @@ public class TextControl extends Control {
 
     private String text;
     protected Paint paint = new Paint();
-    private Rect bounds = new Rect();
-    private boolean centerX;
+    private final Rect bounds = new Rect();
+    private final boolean centerX;
 
-    public TextControl( Point point, String text, float textSize, int textColor) {
-        this( point, text, textSize, textColor, false);
+    public TextControl(Point point, String text, float textSize, int textColor) {
+        this(point, text, textSize, textColor, false);
     }
 
-    public TextControl( Point point, String text, float textSize, int textColor, boolean centerX) {
+    public TextControl(Point point, String text, float textSize, int textColor, boolean centerX) {
         paint.setTextSize(textSize);
         this.isEnabled = false;
         this.isVisible = false;

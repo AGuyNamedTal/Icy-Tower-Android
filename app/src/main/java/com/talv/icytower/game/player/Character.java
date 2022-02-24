@@ -11,9 +11,9 @@ import java.util.HashMap;
 
 public class Character {
 
-    public HashMap<Player.PlayerState, BitmapAnimation> animations;
-    public int width;
-    public int height;
+    public final HashMap<Player.PlayerState, BitmapAnimation> animations;
+    public final int width;
+    public final int height;
 
     private Character(HashMap<Player.PlayerState, BitmapAnimation> animations, int width, int height) {
         this.animations = animations;
@@ -40,13 +40,9 @@ public class Character {
 
         // add missing 4th image
         Bitmap[] newBitmaps = new Bitmap[bitmaps.length + 1];
-        for (int i = 0; i < 3; i++) {
-            newBitmaps[i] = bitmaps[i];
-        }
+        System.arraycopy(bitmaps, 0, newBitmaps, 0, 3);
         newBitmaps[3] = bitmaps[5];
-        for (int i = 4; i < newBitmaps.length; i++) {
-            newBitmaps[i] = bitmaps[i - 1];
-        }
+        System.arraycopy(bitmaps, 3, newBitmaps, 4, newBitmaps.length - 4);
         return new Character(loadPlayerAnimations(newBitmaps),
                 (int) Math.round(bitmaps[0].getWidth() * playerSizeMultiple),
                 (int) Math.round(animationSheet.getHeight() * playerSizeMultiple));
