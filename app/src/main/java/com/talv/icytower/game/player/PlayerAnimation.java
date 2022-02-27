@@ -7,7 +7,7 @@ import com.talv.icytower.activities.GameActivity;
 import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.utils.BitmapUtils;
 
-public class BitmapAnimation {
+public class PlayerAnimation {
 
     public final Bitmap[] bitmapsRight;
     public final Bitmap[] bitmapsLeft;
@@ -16,15 +16,15 @@ public class BitmapAnimation {
     private int currentTime = 0;
     private final int maxIndex;
 
-    public BitmapAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection) {
+    public PlayerAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection) {
         this(bitmapsRight, createLeftReflection, defaultSwitchIndexes(bitmapsRight.length));
     }
 
-    public BitmapAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection, int timeBetweenSwitch) {
+    public PlayerAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection, int timeBetweenSwitch) {
         this(bitmapsRight, createLeftReflection, switchIndexesConstantTime(timeBetweenSwitch, bitmapsRight.length));
     }
 
-    public BitmapAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection, int[] switchIndexes) {
+    public PlayerAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection, int[] switchIndexes) {
         this.bitmapsRight = bitmapsRight;
         if (createLeftReflection) {
             bitmapsLeft = BitmapUtils.flipX(bitmapsRight);

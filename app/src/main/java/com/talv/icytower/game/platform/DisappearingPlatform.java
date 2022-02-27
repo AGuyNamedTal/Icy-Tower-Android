@@ -4,7 +4,7 @@ import android.graphics.Paint;
 
 public class DisappearingPlatform extends Platform {
 
-    private static final float STARTING_OPACITY = 0.85f;
+    private static final float STARTING_OPACITY = 0.75f;
     private static final int STARTING_ALPHA = (int) (255 * STARTING_OPACITY);
     private static final int DISAPPEARING_PLATFORM_LIFESPAN = 500;
 

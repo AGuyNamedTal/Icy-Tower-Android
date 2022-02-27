@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Size;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,13 @@ public class GameActivity extends AppCompatActivity {
 
     private static final boolean SINGLEPLAYER = false;
 
+    private static final int UI_VISIBILITY_FLAGS = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
     private static final int FPS = 60;
     public static final int FRAME_WAIT = 1000 / FPS;
 
@@ -28,29 +36,16 @@ public class GameActivity extends AppCompatActivity {
     private Thread gameThread;
 
 
-    private boolean gameRun;
+    private boolean loopGame;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-
         gameCanvas = new GameCanvas(this);
-        gameCanvas.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        gameCanvas.setSystemUiVisibility(UI_VISIBILITY_FLAGS);
         setContentView(gameCanvas);
-
 
         Resources resources = getResources();
         Size screenSize = getRealSize();
@@ -63,29 +58,8 @@ public class GameActivity extends AppCompatActivity {
         } else {
             engine = new MultiplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this);
         }
-        engine.initialize(renderWidth, renderHeight, resources, gameCanvas, this);
-        gameRun = true;
-
-        gameThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                long lastTime = System.currentTimeMillis();
-                while (gameRun) {
-                    long currentTime = System.currentTimeMillis();
-                    int timeBetweenTicks = Math.min((int) (currentTime - lastTime), 750);
-                    lastTime = currentTime;
-                    gameTick(timeBetweenTicks);
-                    long timeToSleep = Math.max(750 - (System.currentTimeMillis() - lastTime), 0);
-                    if (timeToSleep != 0)
-                        try {
-                            Thread.sleep(FRAME_WAIT);
-                        } catch (InterruptedException e) {
-                            gameRun = false;
-                            break;
-                        }
-                }
-            }
-        });
+        engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
+        gameThread = new Thread(this::gameThread);
     }
 
     private Size getRealSize() {
@@ -104,26 +78,49 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    protected void onPause() {
+        super.onPause();
+        engine.onPause();
+        loopGame = false;
+        try {
+            gameThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            gameThread = new Thread(this::gameThread);
         }
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        engine.onPause();
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            Window window = getWindow();
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            window.setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            window.getDecorView().setSystemUiVisibility(UI_VISIBILITY_FLAGS);
+        }
+    }
+
+
+    private void gameThread() {
+        long lastTime = System.currentTimeMillis();
+        loopGame = true;
+        while (loopGame) {
+            long currentTime = System.currentTimeMillis();
+            int timeBetweenTicks = Math.min((int) (currentTime - lastTime), 750);
+            lastTime = currentTime;
+            gameTick(timeBetweenTicks);
+            long timeToSleep = Math.max(750 - (System.currentTimeMillis() - lastTime), 0);
+            if (timeToSleep != 0)
+                try {
+                    Thread.sleep(FRAME_WAIT);
+                } catch (InterruptedException e) {
+                    loopGame = false;
+                    break;
+                }
+        }
     }
 
     private void gameTick(int time) {

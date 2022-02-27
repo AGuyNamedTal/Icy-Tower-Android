@@ -26,9 +26,6 @@ public class ImageControl extends Control {
         this(rect, BitmapUtils.stretch(BitmapFactory.decodeResource(resources, resourceID), width, height, true));
     }
 
-    public static ImageControl reflectControl(Rect rect, int renderWidth, int renderHeight, Bitmap image) {
-        return new ImageControl(RectUtils.reflectRect(rect, renderWidth, renderHeight), BitmapUtils.reflectBitmap(image, false));
-    }
 
     public static ImageControl reflectControl(ImageControl control, int renderWidth, int renderHeight) {
         return new ImageControl(RectUtils.reflectRect(control.rect, renderWidth, renderHeight), BitmapUtils.reflectBitmap(control.image, false));

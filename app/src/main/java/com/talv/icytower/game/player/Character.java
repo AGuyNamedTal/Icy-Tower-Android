@@ -11,11 +11,11 @@ import java.util.HashMap;
 
 public class Character {
 
-    public final HashMap<Player.PlayerState, BitmapAnimation> animations;
+    public final HashMap<Player.PlayerState, PlayerAnimation> animations;
     public final int width;
     public final int height;
 
-    private Character(HashMap<Player.PlayerState, BitmapAnimation> animations, int width, int height) {
+    private Character(HashMap<Player.PlayerState, PlayerAnimation> animations, int width, int height) {
         this.animations = animations;
         this.width = width;
         this.height = height;
@@ -26,9 +26,9 @@ public class Character {
         Bitmap[] bitmaps = BitmapUtils.stretch(
                 BitmapUtils.decodeAnimations(animationSheet, true),
                 playerSizeMultiple, true);
-        return new Character(loadPlayerAnimations(bitmaps),
-                (int) Math.round(bitmaps[0].getWidth() * playerSizeMultiple),
-                (int) Math.round(animationSheet.getHeight() * playerSizeMultiple));
+        int width = Math.round(bitmaps[0].getWidth());
+        int height = Math.round(animationSheet.getHeight() * playerSizeMultiple);
+        return new Character(loadPlayerAnimations(bitmaps), width, height);
     }
 
     public static Character loadPlayer2(Resources resources, float playerSizeMultiple) {
@@ -50,32 +50,32 @@ public class Character {
     }
 
 
-    private static HashMap<Player.PlayerState, BitmapAnimation> loadPlayerAnimations(Bitmap[] bitmaps) {
-        HashMap<Player.PlayerState, BitmapAnimation> animations = new HashMap<>(bitmaps.length);
-        animations.put(Player.PlayerState.STANDING, new BitmapAnimation(new Bitmap[]{
+    private static HashMap<Player.PlayerState, PlayerAnimation> loadPlayerAnimations(Bitmap[] bitmaps) {
+        HashMap<Player.PlayerState, PlayerAnimation> animations = new HashMap<>(bitmaps.length);
+        animations.put(Player.PlayerState.STANDING, new PlayerAnimation(new Bitmap[]{
                 bitmaps[0],
                 bitmaps[1],
                 bitmaps[2],
                 // bitmaps[1]
         }, false, 300));
-        animations.put(Player.PlayerState.SIDE_STAND, new BitmapAnimation(new Bitmap[]{
+        animations.put(Player.PlayerState.SIDE_STAND, new PlayerAnimation(new Bitmap[]{
                 bitmaps[3]
         }, true));
-        animations.put(Player.PlayerState.MOVING, new BitmapAnimation(new Bitmap[]{
+        animations.put(Player.PlayerState.MOVING, new PlayerAnimation(new Bitmap[]{
                 bitmaps[3],
                 bitmaps[4],
                 bitmaps[5],
                 bitmaps[6]
         }, true, 100));
-        animations.put(Player.PlayerState.JUMPING, new BitmapAnimation(new Bitmap[]{
+        animations.put(Player.PlayerState.JUMPING, new PlayerAnimation(new Bitmap[]{
                 bitmaps[7]
         }, true));
-        animations.put(Player.PlayerState.JUMP_MOVE, new BitmapAnimation(new Bitmap[]{
+        animations.put(Player.PlayerState.JUMP_MOVE, new PlayerAnimation(new Bitmap[]{
                 bitmaps[8],
                 bitmaps[9],
                 bitmaps[10]
         }, true, 200));
-        animations.put(Player.PlayerState.STARRING, new BitmapAnimation(new Bitmap[]{
+        animations.put(Player.PlayerState.STARRING, new PlayerAnimation(new Bitmap[]{
                 bitmaps[11]
         }, true));
         return animations;

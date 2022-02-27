@@ -84,12 +84,6 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.Vi
         }
     }
 
-    // convenience method for getting data at click position
-    public ScoreboardData getItem(int id) {
-        return data[id];
-    }
-
-
 
     // allows clicks events to be caught
     public void setClickListener(ItemClickListener itemClickListener) {

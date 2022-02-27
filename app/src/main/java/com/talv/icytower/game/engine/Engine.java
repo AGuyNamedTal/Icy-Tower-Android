@@ -76,8 +76,8 @@ public abstract class Engine implements OnClockTimeUpListener {
 
     private final int maxPlatformWidth;
     private final int minPlatformWidth;
-    private final float PLAT_CAMERA_MAX_RATIO = PLAYER_SIZE_MULTIPLE * 0.5f;
-    private final float PLAT_CAMERA_MIN_RATIO = PLAYER_SIZE_MULTIPLE * 0.3f;
+    private final float PLAT_CAMERA_MAX_RATIO = PLAYER_SIZE_MULTIPLE * 0.55f;
+    private final float PLAT_CAMERA_MIN_RATIO = PLAYER_SIZE_MULTIPLE * 0.35f;
     public LinkedList<Platform> platforms = new LinkedList<>();
 
 
@@ -176,12 +176,6 @@ public abstract class Engine implements OnClockTimeUpListener {
         this.renderHeight = renderHeight;
         maxPlatformWidth = (int) (CAMERA_WIDTH * PLAT_CAMERA_MAX_RATIO);
         minPlatformWidth = (int) (CAMERA_WIDTH * PLAT_CAMERA_MIN_RATIO);
-
-    }
-
-    public void initialize(int renderWidth, int renderHeight, Resources resources, GameCanvas
-            gameCanvas, Context context) {
-
         initializeMediaPlayerAndSounds(context);
         random = new Random();
         backgroundImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), CAMERA_WIDTH, CAMERA_HEIGHT, true);
@@ -190,11 +184,12 @@ public abstract class Engine implements OnClockTimeUpListener {
         gameCanvas.initializeGUI(resources, renderWidth, renderHeight);
         initializeClock();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        updateGameState(GameState.CHOOSING_CHAR);
         int platformHeight = (int) (character1.height * 0.6f);
         Platform.loadBitmaps(resources, platformHeight);
         player = new Player(soundPool, context);
+
     }
+
 
     public void restrictTouch(int ms) {
         touchRestricted.set(true);
@@ -239,7 +234,6 @@ public abstract class Engine implements OnClockTimeUpListener {
         player.setCharacter(character);
         RectUtils.setRectPos(player.rect, (CAMERA_WIDTH - player.rect.width()) / 2,
                 platforms.peekFirst().rect.top - player.rect.height());
-        onResume();
     }
 
     private void initializeMediaPlayerAndSounds(Context context) {

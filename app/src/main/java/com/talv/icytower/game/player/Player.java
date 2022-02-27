@@ -84,7 +84,7 @@ public class Player {
     public Rect rect;
 
 
-    protected HashMap<PlayerState, BitmapAnimation> animations;
+    protected HashMap<PlayerState, PlayerAnimation> animations;
 
     private final PlayerControls playerControls;
 

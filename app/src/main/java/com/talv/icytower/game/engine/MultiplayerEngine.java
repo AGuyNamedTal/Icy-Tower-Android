@@ -39,6 +39,8 @@ public class MultiplayerEngine extends Engine {
         GameState.PLAYING.controlGroup = GUI.CONTROLS.MULTI_GAMEPLAY_CONTROLS;
         GameState.LOST.controlGroup = GUI.CONTROLS.MULTI_GAME_LOST_CONTROLS;
         initializeMatrices();
+        player2 = new Player(soundPool, context);
+
     }
 
     private void initializeMatrices() {
@@ -49,14 +51,9 @@ public class MultiplayerEngine extends Engine {
         topMatrix.postTranslate(CAMERA_WIDTH, CAMERA_HEIGHT / 2f); // rotation tilts on 0,0 so reverse that
         bottomMatrix.preScale(1, 0.5f);
         bottomMatrix.postTranslate(0, CAMERA_HEIGHT / 2f);
+
     }
 
-
-    @Override
-    public void initialize(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context) {
-        super.initialize(renderWidth, renderHeight, resources, gameCanvas, context);
-        player2 = new Player(soundPool, context);
-    }
 
     @Override
     public void reset() {
