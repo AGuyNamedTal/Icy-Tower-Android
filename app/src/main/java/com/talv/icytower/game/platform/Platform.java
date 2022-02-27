@@ -8,10 +8,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
-import com.talv.icytower.ImageHelper;
 import com.talv.icytower.R;
-import com.talv.icytower.RectHelper;
 import com.talv.icytower.game.engine.Engine;
+import com.talv.icytower.game.utils.BitmapUtils;
+import com.talv.icytower.game.utils.RectUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -74,11 +74,11 @@ public class Platform {
         PlatformTypes[] platformTypes = PlatformTypes.values();
         for (PlatformTypes platformType : platformTypes) {
             platformImages.put(platformType, new PlatformImage(
-                    ImageHelper.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.middleResId),
+                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.middleResId),
                             platformHeight, true),
-                    ImageHelper.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.leftResId),
+                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.leftResId),
                             platformHeight, true),
-                    ImageHelper.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.rightResId),
+                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.rightResId),
                             platformHeight, true)
             ));
         }
@@ -92,7 +92,7 @@ public class Platform {
         platformNumber = num;
         PlatformImage platformImage = platformImages.get(type);
         image = platformImage.createPlatformImage(width, drawCorners);
-        rect = RectHelper.rectFromWidthHeight(x, y, width, platformHeight);
+        rect = RectUtils.rectFromWidthHeight(x, y, width, platformHeight);
         if (drawNumberOnPlatform) {
             Canvas canvas = new Canvas(image);
             drawNumber(canvas, width, platformImage.linesFilled, num);

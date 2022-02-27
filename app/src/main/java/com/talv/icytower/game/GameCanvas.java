@@ -10,10 +10,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.talv.icytower.RectHelper;
-import com.talv.icytower.gui.GUI;
-import com.talv.icytower.gui.graphiccontrols.Control;
-import com.talv.icytower.gui.graphiccontrols.TextControl;
+import com.talv.icytower.game.gui.GUI;
+import com.talv.icytower.game.gui.graphiccontrols.Control;
+import com.talv.icytower.game.gui.graphiccontrols.TextControl;
+import com.talv.icytower.game.utils.RectUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,7 +83,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
                     for (Map.Entry<Integer, Control> controlEntry : controls.entrySet()) {
                         Control control = controlEntry.getValue();
                         if (!control.isEnabled) continue;
-                        if (RectHelper.isPointInRect(control.rect, fingerPoint.x, fingerPoint.y)) {
+                        if (RectUtils.isPointInRect(control.rect, fingerPoint.x, fingerPoint.y)) {
                             activeControls |= controlEntry.getKey();
                         }
                     }

@@ -3,8 +3,8 @@ package com.talv.icytower.game.platform;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.talv.icytower.ImageHelper;
 import com.talv.icytower.game.engine.Engine;
+import com.talv.icytower.game.utils.BitmapUtils;
 
 public class PlatformImage {
 
@@ -29,20 +29,20 @@ public class PlatformImage {
         rightBitmapWidth = rightBitmap.getWidth();
         minWidth = leftBitmapWidth + rightBitmapWidth;
         height = middleBitmap.getHeight();
-        linesFilled = ImageHelper.measureLinesWithPixels(leftBitmap);
+        linesFilled = BitmapUtils.measureLinesWithPixels(leftBitmap);
     }
 
     public Bitmap createPlatformImage(int width, boolean withCorners) {
         if (withCorners) {
             if (width < minWidth) {
-                return ImageHelper.stretch(createPlatformImage(minWidth, withCorners), width, height, true);
+                return BitmapUtils.stretch(createPlatformImage(minWidth, withCorners), width, height, true);
             } else {
                 Bitmap platformBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(platformBitmap);
                 canvas.drawBitmap(leftBitmap, 0, 0, Engine.gamePaint);
                 int middleBitmapWidth = width - leftBitmapWidth - rightBitmapWidth;
                 if (middleBitmapWidth > 0) {
-                    Bitmap tiledMiddle = ImageHelper.tileImageX(middleBitmap, middleBitmapWidth, height, false);
+                    Bitmap tiledMiddle = BitmapUtils.tileImageX(middleBitmap, middleBitmapWidth, height, false);
                     canvas.drawBitmap(tiledMiddle,
                             leftBitmapWidth, 0, Engine.gamePaint);
                     tiledMiddle.recycle();
@@ -51,7 +51,7 @@ public class PlatformImage {
                 return platformBitmap;
             }
         } else {
-            return ImageHelper.tileImageX(middleBitmap, width, height, false);
+            return BitmapUtils.tileImageX(middleBitmap, width, height, false);
         }
     }
 

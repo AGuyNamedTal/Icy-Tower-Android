@@ -3,9 +3,9 @@ package com.talv.icytower.game.player;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.talv.icytower.ImageHelper;
 import com.talv.icytower.activities.GameActivity;
 import com.talv.icytower.game.Debug;
+import com.talv.icytower.game.utils.BitmapUtils;
 
 public class BitmapAnimation {
 
@@ -27,7 +27,7 @@ public class BitmapAnimation {
     public BitmapAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection, int[] switchIndexes) {
         this.bitmapsRight = bitmapsRight;
         if (createLeftReflection) {
-            bitmapsLeft = ImageHelper.flipX(bitmapsRight);
+            bitmapsLeft = BitmapUtils.flipX(bitmapsRight);
         } else {
             bitmapsLeft = bitmapsRight;
         }

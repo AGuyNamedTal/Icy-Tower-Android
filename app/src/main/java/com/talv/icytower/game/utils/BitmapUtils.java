@@ -1,4 +1,4 @@
-package com.talv.icytower;
+package com.talv.icytower.game.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -6,7 +6,7 @@ import android.graphics.Matrix;
 
 import java.util.ArrayList;
 
-public class ImageHelper {
+public class BitmapUtils {
 
     public static Bitmap stretch(Bitmap bitmap, int newWidth, int newHeight, boolean dispose) {
         Bitmap output = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);

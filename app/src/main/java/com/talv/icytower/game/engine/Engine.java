@@ -19,23 +19,23 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
-import com.talv.icytower.ImageHelper;
 import com.talv.icytower.R;
-import com.talv.icytower.RectHelper;
 import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.firebase.GameStats;
 import com.talv.icytower.firebase.UserProfileInfo;
 import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.GameSettings;
+import com.talv.icytower.game.gui.graphiccontrols.ClockControl;
+import com.talv.icytower.game.gui.graphiccontrols.Control;
+import com.talv.icytower.game.gui.graphiccontrols.OnClockTimeUpListener;
+import com.talv.icytower.game.gui.graphiccontrols.UpdatingControl;
 import com.talv.icytower.game.platform.DisappearingPlatform;
 import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;
-import com.talv.icytower.gui.graphiccontrols.ClockControl;
-import com.talv.icytower.gui.graphiccontrols.Control;
-import com.talv.icytower.gui.graphiccontrols.OnClockTimeUpListener;
-import com.talv.icytower.gui.graphiccontrols.UpdatingControl;
+import com.talv.icytower.game.utils.BitmapUtils;
+import com.talv.icytower.game.utils.RectUtils;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,21 +43,21 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_LEFT;
-import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_RIGHT;
-import static com.talv.icytower.gui.GUI.CONTROLS.CHOOSE_PLAYER_CONTROLS;
-import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
-import static com.talv.icytower.gui.GUI.CONTROLS.GAMEPLAY_CONTROLS;
-import static com.talv.icytower.gui.GUI.CONTROLS.GAME_LOST_CONTROLS;
-import static com.talv.icytower.gui.GUI.CONTROLS.GAME_STATS_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.MAX_FLAGS;
-import static com.talv.icytower.gui.GUI.CONTROLS.NEW_HIGH_SCORE_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_MENU_CONTROLS;
-import static com.talv.icytower.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS;
-import static com.talv.icytower.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.checkActive;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.ARROW_LEFT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.ARROW_RIGHT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.CHOOSE_PLAYER_CONTROLS;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.CLOCK;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.GAMEPLAY_CONTROLS;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.GAME_LOST_CONTROLS;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.GAME_STATS_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.MAX_FLAGS;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.NEW_HIGH_SCORE_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PAUSE_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PAUSE_MENU_CONTROLS;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.checkActive;
 
 public abstract class Engine implements OnClockTimeUpListener {
 
@@ -184,7 +184,7 @@ public abstract class Engine implements OnClockTimeUpListener {
 
         initializeMediaPlayerAndSounds(context);
         random = new Random();
-        backgroundImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), CAMERA_WIDTH, CAMERA_HEIGHT, true);
+        backgroundImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), CAMERA_WIDTH, CAMERA_HEIGHT, true);
         frame = Bitmap.createBitmap(CAMERA_WIDTH, CAMERA_HEIGHT, Bitmap.Config.ARGB_8888);
         this.gameCanvas = gameCanvas;
         gameCanvas.initializeGUI(resources, renderWidth, renderHeight);
@@ -237,7 +237,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         platforms.add(groundPlatform);
         generatePlatforms((int) Math.ceil(CAMERA_HEIGHT / (float) (character1.height)) * 2);
         player.setCharacter(character);
-        RectHelper.setRectPos(player.rect, (CAMERA_WIDTH - player.rect.width()) / 2,
+        RectUtils.setRectPos(player.rect, (CAMERA_WIDTH - player.rect.width()) / 2,
                 platforms.peekFirst().rect.top - player.rect.height());
         onResume();
     }
@@ -302,7 +302,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         player.render(bitmapCanvas, this);
 
         // final render (stretch)
-        frameScaled = ImageHelper.stretch(frame, renderWidth, renderHeight, false);
+        frameScaled = BitmapUtils.stretch(frame, renderWidth, renderHeight, false);
 
         // add controls
         Canvas finalFrameCanvas = new Canvas(frameScaled);

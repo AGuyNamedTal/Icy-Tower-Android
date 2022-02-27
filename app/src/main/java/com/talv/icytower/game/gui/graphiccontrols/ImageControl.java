@@ -1,4 +1,4 @@
-package com.talv.icytower.gui.graphiccontrols;
+package com.talv.icytower.game.gui.graphiccontrols;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -8,9 +8,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
-import com.talv.icytower.ImageHelper;
-import com.talv.icytower.RectHelper;
 import com.talv.icytower.game.engine.Engine;
+import com.talv.icytower.game.utils.BitmapUtils;
+import com.talv.icytower.game.utils.RectUtils;
 
 public class ImageControl extends Control {
     public Bitmap image;
@@ -23,15 +23,15 @@ public class ImageControl extends Control {
     }
 
     public ImageControl(Rect rect, Resources resources, int resourceID, int width, int height) {
-        this(rect, ImageHelper.stretch(BitmapFactory.decodeResource(resources, resourceID), width, height, true));
+        this(rect, BitmapUtils.stretch(BitmapFactory.decodeResource(resources, resourceID), width, height, true));
     }
 
     public static ImageControl reflectControl(Rect rect, int renderWidth, int renderHeight, Bitmap image) {
-        return new ImageControl(RectHelper.reflectRect(rect, renderWidth, renderHeight), ImageHelper.reflectBitmap(image, false));
+        return new ImageControl(RectUtils.reflectRect(rect, renderWidth, renderHeight), BitmapUtils.reflectBitmap(image, false));
     }
 
     public static ImageControl reflectControl(ImageControl control, int renderWidth, int renderHeight) {
-        return new ImageControl(RectHelper.reflectRect(control.rect, renderWidth, renderHeight), ImageHelper.reflectBitmap(control.image, false));
+        return new ImageControl(RectUtils.reflectRect(control.rect, renderWidth, renderHeight), BitmapUtils.reflectBitmap(control.image, false));
     }
 
     private static final float BTN_TEXT_PADDING_MULTIPLE = 0.05f;

@@ -1,4 +1,4 @@
-package com.talv.icytower.gui;
+package com.talv.icytower.game.gui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,36 +8,36 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 
-import com.talv.icytower.ImageHelper;
 import com.talv.icytower.R;
-import com.talv.icytower.RectHelper;
 import com.talv.icytower.activities.MainActivity;
 import com.talv.icytower.activities.SettingsActivity;
 import com.talv.icytower.game.engine.Engine;
+import com.talv.icytower.game.gui.graphiccontrols.ClockControl;
+import com.talv.icytower.game.gui.graphiccontrols.ColorWheelTxtControl;
+import com.talv.icytower.game.gui.graphiccontrols.Control;
+import com.talv.icytower.game.gui.graphiccontrols.ImageControl;
+import com.talv.icytower.game.gui.graphiccontrols.OnControlTouchListener;
+import com.talv.icytower.game.gui.graphiccontrols.RectControl;
+import com.talv.icytower.game.gui.graphiccontrols.TextControl;
 import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;
-import com.talv.icytower.gui.graphiccontrols.ClockControl;
-import com.talv.icytower.gui.graphiccontrols.ColorWheelTxtControl;
-import com.talv.icytower.gui.graphiccontrols.Control;
-import com.talv.icytower.gui.graphiccontrols.ImageControl;
-import com.talv.icytower.gui.graphiccontrols.OnControlTouchListener;
-import com.talv.icytower.gui.graphiccontrols.RectControl;
-import com.talv.icytower.gui.graphiccontrols.TextControl;
+import com.talv.icytower.game.utils.BitmapUtils;
+import com.talv.icytower.game.utils.RectUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.talv.icytower.gui.GUI.CONTROLS.CHOOSE_PLAYER_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.CLOCK;
-import static com.talv.icytower.gui.GUI.CONTROLS.MAIN_MENU_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_1_IMG;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_1_RECT;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_2_IMG;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_2_RECT;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAY_AGAIN_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.RESUME_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.SETTINGS_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.SHARE_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.CHOOSE_PLAYER_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.CLOCK;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.MAIN_MENU_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_1_IMG;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_1_RECT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_2_IMG;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_2_RECT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAY_AGAIN_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.RESUME_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.SETTINGS_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.SHARE_BTN;
 
 public class GUI {
     public static class CONTROLS {
@@ -82,11 +82,13 @@ public class GUI {
         public static final int MULTI_GAMEPLAY_CONTROLS = PLAYER_MOVEMENT_CONTROLS | PLAYER_2_MOVEMENT_CONTROLS |
                 PAUSE_MID_BTN;
 
-
         public static final int PAUSE_MENU_CONTROLS = RESUME_BTN | SETTINGS_BTN
                 | MAIN_MENU_BTN;
         public static final int GAME_LOST_CONTROLS = GAME_OVER_TXT | NEW_HIGH_SCORE_TXT | YOUR_SCORE_TXT | PERSONAL_HIGH_SCORE_TXT
                 | PLAY_AGAIN_BTN | SHARE_BTN | SETTINGS_BTN | MAIN_MENU_BTN | GAME_STATS_TXT;
+
+        public static final int MULTI_GAME_LOST_CONTROLS = 0;
+
 
         public static final int CHOOSE_PLAYER_CONTROLS = CHOOSE_PLAYER_TXT | PLAYER_1_IMG | PLAYER_1_RECT | PLAYER_2_IMG | PLAYER_2_RECT;
 
@@ -114,21 +116,21 @@ public class GUI {
     private static void buildGameControls(Map<Integer, Control> controls, Resources resources, int renderWidth, int renderHeight) {
         int controlSize = (int) (0.18 * renderWidth);
         int controlY = (int) (renderHeight - controlSize - 0.03 * renderHeight);
-        Rect upArrow = RectHelper.rectFromWidthHeight(
+        Rect upArrow = RectUtils.rectFromWidthHeight(
                 (int) (0.05 * renderWidth),
                 controlY,
                 controlSize,
                 controlSize
         );
 
-        Rect leftArrow = RectHelper.rectFromWidthHeight(
+        Rect leftArrow = RectUtils.rectFromWidthHeight(
                 (int) (0.5 * renderWidth),
                 controlY,
                 controlSize,
                 controlSize
         );
 
-        Rect rightArrow = RectHelper.rectFromWidthHeight(
+        Rect rightArrow = RectUtils.rectFromWidthHeight(
                 leftArrow.right + (int) (0.1 * renderWidth),
                 controlY,
                 controlSize,
@@ -136,7 +138,7 @@ public class GUI {
         );
 
         int pauseBtnSize = (int) (0.12 * renderWidth);
-        Rect pauseBtn = RectHelper.rectFromWidthHeight(
+        Rect pauseBtn = RectUtils.rectFromWidthHeight(
                 renderWidth - pauseBtnSize - (int) (0.02f * renderWidth),
                 (int) (0.02f * renderHeight),
                 pauseBtnSize,
@@ -151,15 +153,15 @@ public class GUI {
         controls.put(CONTROLS.ARROW_RIGHT, arrowRightCtrl);
         controls.put(CONTROLS.PAUSE_BTN, pauseButtonCtrl);
 
-        Rect clockControl = RectHelper.rectFromWidthHeight(
+        Rect clockControl = RectUtils.rectFromWidthHeight(
                 (int) (0.01f * renderWidth),
                 (int) (0.015f * renderHeight),
                 (int) (0.1 * renderHeight),
                 (int) (0.1 * renderHeight)
         );
-        Bitmap clockImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.clock),
+        Bitmap clockImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.clock),
                 clockControl.width(), clockControl.height(), true);
-        Bitmap arrowImg = ImageHelper.stretch(BitmapFactory.decodeResource(resources, R.drawable.arrow),
+        Bitmap arrowImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.arrow),
                 (int) (clockControl.width() * 45 / 600f), (int) (clockControl.height() * 0.45f), true);
 
         controls.put(CLOCK, new ClockControl(clockControl, clockImg, arrowImg));
@@ -175,8 +177,8 @@ public class GUI {
         controls.put(CONTROLS.ARROW_UP_2, ImageControl.reflectControl(arrowUpCtrl, renderWidth, renderHeight));
         controls.put(CONTROLS.ARROW_LEFT_2, ImageControl.reflectControl(arrowLeftCtrl, renderWidth, renderHeight));
         controls.put(CONTROLS.ARROW_RIGHT_2, ImageControl.reflectControl(arrowRightCtrl, renderWidth, renderHeight));
-        controls.put(CONTROLS.PAUSE_MID_BTN, new ImageControl(RectHelper.centerRect(pauseBtnSize, pauseBtnSize, renderWidth, renderHeight),
-                ImageHelper.reflectBitmap(pauseButtonCtrl.image, false)));
+        controls.put(CONTROLS.PAUSE_MID_BTN, new ImageControl(RectUtils.centerRect(pauseBtnSize, pauseBtnSize, renderWidth, renderHeight),
+                BitmapUtils.reflectBitmap(pauseButtonCtrl.image, false)));
     }
 
 
@@ -192,21 +194,21 @@ public class GUI {
         int buttonWidth = (int) (renderWidth * BUTTON_WIDTH_MULTIPLE);
         int buttonHeight = (int) (renderHeight * BUTTON_HEIGHT_MULTIPLE);
         int paddingBetweenButtons = (int) (renderHeight * BUTTON_PADDING_MULTIPLE);
-        Rect settingsBtn = RectHelper.rectFromWidthHeight(
+        Rect settingsBtn = RectUtils.rectFromWidthHeight(
                 renderWidth / 2 - buttonWidth / 2,
                 renderHeight / 2 - buttonHeight / 2,
                 buttonWidth,
                 buttonHeight
         );
 
-        Rect resumeBtn = RectHelper.rectFromWidthHeight(
+        Rect resumeBtn = RectUtils.rectFromWidthHeight(
                 settingsBtn.left,
                 settingsBtn.top - paddingBetweenButtons - buttonHeight,
                 buttonWidth,
                 buttonHeight
         );
 
-        Rect mainMenuBtn = RectHelper.rectFromWidthHeight(
+        Rect mainMenuBtn = RectUtils.rectFromWidthHeight(
                 resumeBtn.left,
                 settingsBtn.bottom + paddingBetweenButtons,
                 buttonWidth,
@@ -225,25 +227,25 @@ public class GUI {
         int buttonWidth = (int) (renderWidth * BUTTON_WIDTH_MULTIPLE);
         int buttonHeight = (int) (renderHeight * BUTTON_HEIGHT_MULTIPLE);
         int paddingBetweenButtons = (int) (renderHeight * BUTTON_PADDING_MULTIPLE);
-        Rect playAgain = RectHelper.rectFromWidthHeight(
+        Rect playAgain = RectUtils.rectFromWidthHeight(
                 (renderWidth - buttonWidth) / 2,
                 (renderHeight - buttonHeight) / 2,
                 buttonWidth,
                 buttonHeight
         );
-        Rect share = RectHelper.rectFromWidthHeight(
+        Rect share = RectUtils.rectFromWidthHeight(
                 playAgain.left,
                 playAgain.bottom + paddingBetweenButtons,
                 buttonWidth,
                 buttonHeight
         );
-        Rect settings = RectHelper.rectFromWidthHeight(
+        Rect settings = RectUtils.rectFromWidthHeight(
                 playAgain.left,
                 share.bottom + paddingBetweenButtons,
                 buttonWidth,
                 buttonHeight
         );
-        Rect mainMenu = RectHelper.rectFromWidthHeight(
+        Rect mainMenu = RectUtils.rectFromWidthHeight(
                 playAgain.left,
                 settings.bottom + paddingBetweenButtons,
                 buttonWidth,
@@ -335,14 +337,14 @@ public class GUI {
 
         int rectThickness = (int) (renderWidth * 0.01f);
 
-        Rect player1Rect = RectHelper.rectFromWidthHeight(
+        Rect player1Rect = RectUtils.rectFromWidthHeight(
                 sidePadding,
                 textY + textSize + paddingBetweenTextAndRect,
                 charRectWidth,
                 charRectHeight
         );
         controls.put(PLAYER_1_RECT, new RectControl(player1Rect, CHARACTER_RECT_COLOR, rectThickness));
-        Rect player2Rect = RectHelper.rectFromWidthHeight(
+        Rect player2Rect = RectUtils.rectFromWidthHeight(
                 player1Rect.right + paddingBetweenChars,
                 player1Rect.top,
                 charRectWidth,
@@ -366,10 +368,10 @@ public class GUI {
         );
         Bitmap char1Img = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
         controls.put(PLAYER_1_IMG, new ImageControl(player1ImgRect,
-                ImageHelper.stretch(char1Img, player1ImgRect.width(), player1ImgRect.height(), false)));
+                BitmapUtils.stretch(char1Img, player1ImgRect.width(), player1ImgRect.height(), false)));
         Bitmap char2Img = Engine.character2.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
         controls.put(PLAYER_2_IMG, new ImageControl(player2ImgRect,
-                ImageHelper.stretch(char2Img, player2ImgRect.width(), player2ImgRect.height(), false)));
+                BitmapUtils.stretch(char2Img, player2ImgRect.width(), player2ImgRect.height(), false)));
 
     }
 

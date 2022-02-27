@@ -1,4 +1,4 @@
-package com.talv.icytower.gui;
+package com.talv.icytower.game.gui;
 
 import android.graphics.Paint;
 import android.graphics.Typeface;

@@ -8,22 +8,22 @@ import android.media.SoundPool;
 import android.util.Log;
 
 import com.talv.icytower.R;
-import com.talv.icytower.RectHelper;
 import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.PlayerPlatformsIntersection;
 import com.talv.icytower.game.engine.Engine;
 import com.talv.icytower.game.platform.Platform;
+import com.talv.icytower.game.utils.RectUtils;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import static com.talv.icytower.game.engine.Engine.PLAYER_SIZE_MULTIPLE;
-import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_LEFT;
-import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_RIGHT;
-import static com.talv.icytower.gui.GUI.CONTROLS.ARROW_UP;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS;
-import static com.talv.icytower.gui.GUI.CONTROLS.SCORE_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.ARROW_LEFT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.ARROW_RIGHT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.ARROW_UP;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.SCORE_TXT;
 
 public class Player {
 
@@ -104,10 +104,10 @@ public class Player {
     public void setCharacter(Character character) {
         if (character == null) {
             this.animations = null;
-            RectHelper.setRectSize(rect, 0, 0);
+            RectUtils.setRectSize(rect, 0, 0);
         } else {
             this.animations = character.animations;
-            RectHelper.setRectSize(rect, character.width, character.height);
+            RectUtils.setRectSize(rect, character.width, character.height);
         }
     }
     public boolean hasCharacter(){
@@ -207,7 +207,7 @@ public class Player {
 
         if (newState != null)
             updateStateAndAnimation(newState, msPassed);
-        RectHelper.setRectX(rect, newX);
+        RectUtils.setRectX(rect, newX);
     }
 
     public void resetPlayer() {
@@ -234,7 +234,7 @@ public class Player {
     private boolean isPlatformBelow(LinkedList<Platform> platforms) {
         for (Platform platform :
                 platforms) {
-            if (RectHelper.isRectBelowRect(platform.rect, rect)) {
+            if (RectUtils.isRectBelowRect(platform.rect, rect)) {
                 return true;
             }
         }
@@ -244,7 +244,7 @@ public class Player {
     private boolean isOnPlatform(LinkedList<Platform> platforms) {
         for (Platform platform :
                 platforms) {
-            if (RectHelper.isRectOnRect(rect, platform.rect)) {
+            if (RectUtils.isRectOnRect(rect, platform.rect)) {
                 return true;
             }
         }
@@ -267,7 +267,7 @@ public class Player {
             Platform platformWhichFellOn = null;
             for (Platform plat : engine.platforms) {
                 PlayerPlatformsIntersection intersection =
-                        RectHelper.doesPlatformIntersectWithMovementY(rect, yAfterIntersection, plat.rect);
+                        RectUtils.doesPlatformIntersectWithMovementY(rect, yAfterIntersection, plat.rect);
                 if (intersection.didIntersect) {
                     yAfterIntersection = Math.min(yAfterIntersection, intersection.newY);
                     platformWhichFellOn = plat;
@@ -285,7 +285,7 @@ public class Player {
             // jumping up
             // update camera
         }
-        RectHelper.setRectY(rect, newY);
+        RectUtils.setRectY(rect, newY);
         if (currentSpeed == 0 && System.currentTimeMillis() - stateUpdateTime >= TIME_FROM_SIDE_STAND_TO_STANDING) {
             updateStateAndAnimation(PlayerState.JUMPING, msPassed);
         } else {

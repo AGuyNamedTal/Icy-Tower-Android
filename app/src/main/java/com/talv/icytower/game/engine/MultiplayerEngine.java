@@ -9,21 +9,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
-import com.talv.icytower.ImageHelper;
-import com.talv.icytower.RectHelper;
 import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.game.GameCanvas;
+import com.talv.icytower.game.gui.GUI;
 import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;
-import com.talv.icytower.gui.GUI;
+import com.talv.icytower.game.utils.BitmapUtils;
+import com.talv.icytower.game.utils.RectUtils;
 
-import static com.talv.icytower.gui.GUI.CONTROLS.GAME_STATS_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.NEW_HIGH_SCORE_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.PAUSE_MID_BTN;
-import static com.talv.icytower.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
-import static com.talv.icytower.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS_SHIFT;
-import static com.talv.icytower.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.GAME_STATS_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.NEW_HIGH_SCORE_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PAUSE_MID_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS_SHIFT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
 
 public class MultiplayerEngine extends Engine {
 
@@ -37,6 +37,7 @@ public class MultiplayerEngine extends Engine {
         super(renderWidth, renderHeight, resources, gameCanvas, context);
         pauseBtnID = PAUSE_MID_BTN;
         GameState.PLAYING.controlGroup = GUI.CONTROLS.MULTI_GAMEPLAY_CONTROLS;
+        GameState.LOST.controlGroup = GUI.CONTROLS.MULTI_GAME_LOST_CONTROLS;
         initializeMatrices();
     }
 
@@ -74,7 +75,7 @@ public class MultiplayerEngine extends Engine {
             player2Char = Engine.character1;
         }
         player2.setCharacter(player2Char);
-        RectHelper.setRectPos(player2.rect, (CAMERA_WIDTH - player2.rect.width()) / 2,
+        RectUtils.setRectPos(player2.rect, (CAMERA_WIDTH - player2.rect.width()) / 2,
                 platforms.peekFirst().rect.top - player2.rect.height());
     }
 
@@ -99,7 +100,7 @@ public class MultiplayerEngine extends Engine {
         drawGame(bitmapCanvas, true);
 
         // final render (stretch)
-        frameScaled = ImageHelper.stretch(frame, renderWidth, renderHeight, false);
+        frameScaled = BitmapUtils.stretch(frame, renderWidth, renderHeight, false);
 
         // add controls
         Canvas finalFrameCanvas = new Canvas(frameScaled);
@@ -107,6 +108,7 @@ public class MultiplayerEngine extends Engine {
             // reduce brightness of background game
             finalFrameCanvas.drawRect(0, 0, renderWidth, renderHeight, pausePaint);
         }
+
         gameCanvas.renderControls(finalFrameCanvas);
     }
 

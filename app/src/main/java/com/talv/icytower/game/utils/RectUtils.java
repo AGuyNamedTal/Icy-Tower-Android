@@ -1,4 +1,4 @@
-package com.talv.icytower;
+package com.talv.icytower.game.utils;
 
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -7,7 +7,7 @@ import android.util.Log;
 import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.PlayerPlatformsIntersection;
 
-public class RectHelper {
+public class RectUtils {
 
     public static void setRectX(Rect rect, int x) {
         rect.set(x, rect.top, x + rect.width(), rect.bottom);
@@ -73,7 +73,7 @@ public class RectHelper {
     }
 
     public static Rect reflectRect(Rect rect, int renderWidth, int renderHeight) {
-        return RectHelper.rectFromWidthHeight(
+        return RectUtils.rectFromWidthHeight(
                 renderWidth - rect.right,
                 renderHeight - rect.bottom,
                 rect.width(),
@@ -82,7 +82,7 @@ public class RectHelper {
     }
 
     public static Rect centerRect(int width, int height, int renderWidth, int renderHeight) {
-        return RectHelper.rectFromWidthHeight(
+        return RectUtils.rectFromWidthHeight(
                 (renderWidth - width) / 2,
                 (renderHeight - height) / 2,
                 width,

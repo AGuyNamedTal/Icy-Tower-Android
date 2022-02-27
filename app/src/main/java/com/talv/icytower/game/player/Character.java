@@ -4,8 +4,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.talv.icytower.ImageHelper;
 import com.talv.icytower.R;
+import com.talv.icytower.game.utils.BitmapUtils;
 
 import java.util.HashMap;
 
@@ -23,19 +23,19 @@ public class Character {
 
     public static Character loadPlayer1(Resources resources, float playerSizeMultiple) {
         Bitmap animationSheet = BitmapFactory.decodeResource(resources, R.drawable.player_1_animations);
-        Bitmap[] bitmaps = ImageHelper.stretch(
-                ImageHelper.decodeAnimations(animationSheet, true),
+        Bitmap[] bitmaps = BitmapUtils.stretch(
+                BitmapUtils.decodeAnimations(animationSheet, true),
                 playerSizeMultiple, true);
         return new Character(loadPlayerAnimations(bitmaps),
-                (int)Math.round(bitmaps[0].getWidth() * playerSizeMultiple),
-                (int)Math.round(animationSheet.getHeight() * playerSizeMultiple));
+                (int) Math.round(bitmaps[0].getWidth() * playerSizeMultiple),
+                (int) Math.round(animationSheet.getHeight() * playerSizeMultiple));
     }
 
     public static Character loadPlayer2(Resources resources, float playerSizeMultiple) {
         Bitmap animationSheet = BitmapFactory.decodeResource(resources, R.drawable.player_2_animations);
 
-        Bitmap[] bitmaps = ImageHelper.stretch(
-                ImageHelper.decodeAnimations(animationSheet, true),
+        Bitmap[] bitmaps = BitmapUtils.stretch(
+                BitmapUtils.decodeAnimations(animationSheet, true),
                 playerSizeMultiple, true);
 
         // add missing 4th image
