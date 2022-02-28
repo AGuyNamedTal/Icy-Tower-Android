@@ -225,7 +225,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         player.setCharacter(null);
     }
 
-    public void setPlayerCharacter(Character character) {
+    protected void setPlayerCharacter(Character character) {
         clearPlatforms();
         Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
                 0, CAMERA_HEIGHT - Platform.getPlatformHeight() - (int) (0.05f * CAMERA_HEIGHT), CAMERA_WIDTH, false);
@@ -235,6 +235,13 @@ public abstract class Engine implements OnClockTimeUpListener {
         RectUtils.setRectPos(player.rect, (CAMERA_WIDTH - player.rect.width()) / 2,
                 platforms.peekFirst().rect.top - player.rect.height());
     }
+
+    public void startGame(Character character){
+        setPlayerCharacter(character);
+        updateGameState(Engine.GameState.PLAYING);
+        onResume();
+    }
+
 
     private void initializeMediaPlayerAndSounds(Context context) {
         musicPlayer = MediaPlayer.create(context, R.raw.background_music);
@@ -403,7 +410,6 @@ public abstract class Engine implements OnClockTimeUpListener {
 
     protected void updatePlayer(int msPassed, int activeControls) {
         int gameControls = getGameControls(activeControls);
-        // update player
         player.updatePlayer(msPassed, this, gameControls);
     }
 

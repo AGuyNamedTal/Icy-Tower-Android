@@ -42,10 +42,9 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         gameCanvas = new GameCanvas(this);
         gameCanvas.setSystemUiVisibility(UI_VISIBILITY_FLAGS);
-        setContentView(gameCanvas);
 
         Resources resources = getResources();
         Size screenSize = getRealSize();
@@ -60,6 +59,9 @@ public class GameActivity extends AppCompatActivity {
         }
         engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
         gameThread = new Thread(this::gameThread);
+
+        setContentView(gameCanvas);
+
     }
 
     private Size getRealSize() {

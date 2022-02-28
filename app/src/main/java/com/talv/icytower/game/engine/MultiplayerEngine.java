@@ -131,10 +131,8 @@ public class MultiplayerEngine extends Engine {
 
 
     protected void updatePlayer(int msPassed, int activeControls) {
-        int player1Controls = getGameControls(activeControls);
+        super.updatePlayer(msPassed, activeControls);
         int player2Controls = getGameControls(activeControls >> PLAYER_MOVEMENT_CONTROLS_SHIFT);
-        // update player
-        player.updatePlayer(msPassed, this, player1Controls);
         player2.updatePlayer(msPassed, this, player2Controls);
     }
 
@@ -150,6 +148,9 @@ public class MultiplayerEngine extends Engine {
 
 
     protected void updateLostUI(Context context) {
+        //TODO: update player_1_result and player_2_result color and text, set winners score
+
+
         int score = player.getScore();
         gameCanvas.updateText(YOUR_SCORE_TXT, "Your Score: " + score);
         gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + player.totalJumps +

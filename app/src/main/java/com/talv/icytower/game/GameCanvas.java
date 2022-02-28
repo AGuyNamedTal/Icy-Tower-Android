@@ -3,6 +3,7 @@ package com.talv.icytower.game;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
@@ -98,11 +99,20 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void renderControls(Canvas canvas) {
+        boolean resetToDefaultScale = false;
         for (Map.Entry<Integer, Control> entry : controls.entrySet()) {
             Control control = entry.getValue();
             if (!control.isVisible) continue;
+            if (control.flipY) {
+                canvas.scale(1, -1, control.rect.width() / 2f, control.rect.height() / 2f);
+                resetToDefaultScale = true;
+            } else if (resetToDefaultScale) {
+                canvas.scale(1, 1);
+                resetToDefaultScale = false;
+            }
             control.render(canvas);
         }
+        canvas.scale(1, 1);
     }
 
     public void setEnabledAndVisible(int controlsID, boolean val) {

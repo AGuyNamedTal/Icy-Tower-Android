@@ -19,7 +19,6 @@ import com.talv.icytower.game.gui.graphiccontrols.ImageControl;
 import com.talv.icytower.game.gui.graphiccontrols.OnControlTouchListener;
 import com.talv.icytower.game.gui.graphiccontrols.RectControl;
 import com.talv.icytower.game.gui.graphiccontrols.TextControl;
-import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;
 import com.talv.icytower.game.utils.BitmapUtils;
 import com.talv.icytower.game.utils.RectUtils;
@@ -29,7 +28,11 @@ import java.util.Map;
 
 import static com.talv.icytower.game.gui.GUI.CONTROLS.CHOOSE_PLAYER_TXT;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.CLOCK;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.CONTROL_POSITIONS_PER_GROUP;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.MAIN_MENU_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.MULTI_GAME_LOST_CONTROLS;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.MULTI_PLAYER_1_RESULT_TXT;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.MULTI_PLAYER_2_RESULT_TXT;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_1_IMG;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_1_RECT;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_2_IMG;
@@ -67,9 +70,11 @@ public class GUI {
         public static final int ARROW_LEFT_2 = ARROW_LEFT << PLAYER_MOVEMENT_CONTROLS_SHIFT;
         public static final int ARROW_RIGHT_2 = ARROW_RIGHT << PLAYER_MOVEMENT_CONTROLS_SHIFT;
         public static final int PAUSE_MID_BTN = 1 << 25;
+        public static final int MULTI_PLAYER_1_RESULT_TXT = 1 << 26;
+        public static final int MULTI_PLAYER_2_RESULT_TXT = 1 << 27;
 
 
-        public static final int MAX_FLAGS = PAUSE_MID_BTN << 1;
+        public static final int MAX_FLAGS = MULTI_PLAYER_2_RESULT_TXT << 1;
 
         public static final int PLAYER_MOVEMENT_CONTROLS = (ARROW_LEFT
                 | ARROW_UP | ARROW_RIGHT);
@@ -87,7 +92,8 @@ public class GUI {
         public static final int GAME_LOST_CONTROLS = GAME_OVER_TXT | NEW_HIGH_SCORE_TXT | YOUR_SCORE_TXT | PERSONAL_HIGH_SCORE_TXT
                 | PLAY_AGAIN_BTN | SHARE_BTN | SETTINGS_BTN | MAIN_MENU_BTN | GAME_STATS_TXT;
 
-        public static final int MULTI_GAME_LOST_CONTROLS = 0;
+        public static final int MULTI_GAME_LOST_CONTROLS = MULTI_PLAYER_1_RESULT_TXT | MULTI_PLAYER_2_RESULT_TXT |
+                YOUR_SCORE_TXT | PLAY_AGAIN_BTN | SHARE_BTN | SETTINGS_BTN | MAIN_MENU_BTN;
 
 
         public static final int CHOOSE_PLAYER_CONTROLS = CHOOSE_PLAYER_TXT | PLAYER_1_IMG | PLAYER_1_RECT | PLAYER_2_IMG | PLAYER_2_RECT;
@@ -313,7 +319,29 @@ public class GUI {
                 newHighScoreStr, newHighScoreHeight, GAME_OVER_TEXT_COLOR, true, 2500));
 
 
+        // build multi lost menu controls
+        //TODO: MULTI_PLAYER_1_RESULT_TXT | MULTI_PLAYER_2_RESULT_TXT |
+        //                YOUR_SCORE_TXT | PLAY_AGAIN_BTN | SHARE_BTN | SETTINGS_BTN | MAIN_MENU_BTN
+        final String player2ResultTxt = "YOU LOST";
+        Point player2Result = new Point(renderWidth / 2, (int) (renderHeight * 0.2f));
+        int player2ResWidth = gameOverWidth;
+        int player2Height = TextSizeHelper.getTextSizeFromWidth(player2ResultTxt, player2ResWidth);
+        controls.put(MULTI_PLAYER_2_RESULT_TXT,
+                new TextControl(player2Result, player2ResultTxt, player2Height, 0, true).setFlipY(true));
+
+        final String player1ResultTxt = player2ResultTxt;
+        Point player1Result = new Point(player2Result.x, player2Result.y + player2Height + (int) (renderHeight * 0.05f));
+        int player1Height = player2Height;
+        controls.put(MULTI_PLAYER_1_RESULT_TXT,
+                new TextControl(player1Result, player1ResultTxt, player1Height, 0, true));
+
+
+        HashMap<Integer, Rect> movingControls = new HashMap<>();
+
+        CONTROL_POSITIONS_PER_GROUP.put(MULTI_GAME_LOST_CONTROLS, movingControls);
+
     }
+
 
     private static final int CHOOSE_CHARACTER_COLOR = 0xFF000000;
     private static final int CHARACTER_RECT_COLOR = 0xFF444444;
@@ -431,21 +459,15 @@ public class GUI {
         controls.get(PLAYER_1_RECT).onTouch = new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                setPlayer(Engine.character1, engine);
+                engine.startGame(Engine.character1);
             }
         };
         controls.get(PLAYER_2_RECT).onTouch = new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                setPlayer(Engine.character2, engine);
+                engine.startGame(Engine.character2);
             }
         };
-    }
-
-    private static void setPlayer(Character character, Engine engine) {
-        engine.setPlayerCharacter(character);
-        engine.updateGameState(Engine.GameState.PLAYING);
-        engine.onResume();
     }
 
 
