@@ -335,6 +335,33 @@ public class GUI {
         controls.put(MULTI_PLAYER_1_RESULT_TXT,
                 new TextControl(player1Result, player1ResultTxt, player1Height, 0, true));
 
+        final String winnersScoreTxt = "WINNERS SCORE: 788";
+        Point winnersScore = new Point(player1Result.x, player1Result.y + player1Height + paddingBetweenTexts);
+
+        Rect playAgain2 = RectUtils.rectFromWidthHeight(
+                (renderWidth - buttonWidth) / 2,
+                winnersScore.y + scoresTextHeight + paddingBetweenTexts,
+                buttonWidth,
+                buttonHeight);
+        Rect share2 = RectUtils.rectFromWidthHeight(
+                playAgain2.left,
+                playAgain2.bottom + paddingBetweenButtons,
+                buttonWidth,
+                buttonHeight
+        );
+        Rect settings2 = RectUtils.rectFromWidthHeight(
+                share2.left,
+                share2.bottom + paddingBetweenButtons,
+                buttonWidth,
+                buttonHeight
+        );
+        Rect mainMenu2 = RectUtils.rectFromWidthHeight(
+                settings2.left,
+                share2.bottom + paddingBetweenButtons,
+                buttonWidth,
+                buttonHeight
+        );
+
 
         HashMap<Integer, Rect> movingControls = new HashMap<>();
 
