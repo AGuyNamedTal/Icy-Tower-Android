@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
         GameSettings.loadSettingsFromSP(getSharedPreferences(SETTINGS_SP_FILE_NAME, MODE_PRIVATE));
 
-        Button playBtn = findViewById(R.id.playBtn);
+        Button playSingleBtn = findViewById(R.id.playSingleBtn);
+        Button playMultiBtn = findViewById(R.id.playMultiBtn);
         userNameTxt = findViewById(R.id.userDataTxt);
         logOutTxt = findViewById(R.id.logOutTxt);
         logOutTxt.setOnClickListener(new View.OnClickListener() {
@@ -71,23 +72,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ScoreboardActivity.class));
             }
         });
-        playBtn.setOnClickListener(new View.OnClickListener() {
+        playSingleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (LOGIN_REQUIRED) {
-                    FirebaseUser currentUser = FirebaseHelper.auth.getCurrentUser();
-                    if (currentUser == null) {
-                        // login
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                    } else {
-                        Engine.user = currentUser.getDisplayName();
-                        LoginActivity.loginWithUser(MainActivity.this);
-                    }
-                } else {
-                    Engine.user = "";
-                    LoginActivity.loginWithUser(MainActivity.this);
-                }
-
+                startGame(true);
+            }
+        });
+        playMultiBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startGame(false);
             }
         });
         FirebaseHelper.auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
@@ -98,6 +92,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    private void startGame(boolean singleplayer) {
+        if (LOGIN_REQUIRED) {
+            FirebaseUser currentUser = FirebaseHelper.auth.getCurrentUser();
+            if (currentUser == null) {
+                // login
+                startActivity(new Intent(MainActivity.this, LoginActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
+            } else {
+                Engine.user = currentUser.getDisplayName();
+                LoginActivity.loginWithUser(MainActivity.this, singleplayer);
+            }
+        } else {
+            Engine.user = "";
+            LoginActivity.loginWithUser(MainActivity.this, singleplayer);
+        }
     }
 
     @Override

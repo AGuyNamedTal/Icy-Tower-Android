@@ -30,6 +30,7 @@ import static com.talv.icytower.firebase.AuthVerifier.isValidUsername;
 
 public class RegisterActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,7 +211,8 @@ public class RegisterActivity extends AppCompatActivity {
         Engine.user = user;
         Engine.bestGameStats = gameStats;
         Engine.userProfileInfo = userProfileInfo;
-        startActivity(new Intent(RegisterActivity.this, GameActivity.class));
+        boolean singleplayer = getIntent().getBooleanExtra(GameActivity.SINGLEPLAYER_KEY, true);
+        startActivity(new Intent(RegisterActivity.this, GameActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
         finish();
     }
 

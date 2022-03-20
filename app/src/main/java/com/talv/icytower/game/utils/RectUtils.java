@@ -46,6 +46,12 @@ public class RectUtils {
     public static boolean isPointInRect(Rect rect, float x, float y) {
         return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
     }
+    public static Rect rectFromPoint(int x, int y){
+        return new Rect(x, y, x, y);
+    }
+    public static Rect rectFromPoint(Point point){
+        return rectFromPoint(point.x, point.y);
+    }
 
     public static Rect rectFromWidthHeight(int x, int y, int width, int height) {
         return new Rect(x, y, x + width, y + height);

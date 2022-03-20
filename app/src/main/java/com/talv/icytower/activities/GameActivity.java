@@ -19,8 +19,7 @@ import com.talv.icytower.game.engine.SingleplayerEngine;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static final boolean SINGLEPLAYER = false;
-
+    public static final String SINGLEPLAYER_KEY = "SINGLEPLAYER";
     private static final int UI_VISIBILITY_FLAGS = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -52,7 +51,8 @@ public class GameActivity extends AppCompatActivity {
         int renderHeight = screenSize.getHeight();
 
         Engine.loadCharacters(resources);
-        if (SINGLEPLAYER) {
+        boolean singleplayer = getIntent().getBooleanExtra(SINGLEPLAYER_KEY, true);
+        if (singleplayer) {
             engine = new SingleplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this);
         } else {
             engine = new MultiplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this);

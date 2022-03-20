@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     Engine.user = FirebaseHelper.auth.getCurrentUser().getDisplayName();
-                                    loginWithUser(LoginActivity.this);
+                                    loginWithUser(LoginActivity.this, getIntent().getBooleanExtra(GameActivity.SINGLEPLAYER_KEY, true));
 
                                 } else {
                                     // If sign in fails, display a message to the user.
@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    public static void loginWithUser(Activity context) {
+    public static void loginWithUser(Activity context, boolean singleplayer) {
         Toast.makeText(context,
                 "Retrieving player profile...",
                 Toast.LENGTH_LONG).show();
@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             Engine.userProfileInfo = ((DataSnapshot) task.getResult()).getValue(UserProfileInfo.class);
                         }
-                        context.startActivity(new Intent(context, GameActivity.class));
+                        context.startActivity(new Intent(context, GameActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
                         context.finish();
                     }
                 });

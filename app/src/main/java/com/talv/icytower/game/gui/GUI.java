@@ -41,6 +41,7 @@ import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAY_AGAIN_BTN;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.RESUME_BTN;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.SETTINGS_BTN;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.SHARE_BTN;
+import static com.talv.icytower.game.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
 
 public class GUI {
     public static class CONTROLS {
@@ -266,7 +267,8 @@ public class GUI {
         HashMap<Integer, Rect> changingControlsPositions = new HashMap<>();
         changingControlsPositions.put(CONTROLS.SETTINGS_BTN, settings);
         changingControlsPositions.put(CONTROLS.MAIN_MENU_BTN, mainMenu);
-        CONTROLS.CONTROL_POSITIONS_PER_GROUP.put(CONTROLS.GAME_LOST_CONTROLS, changingControlsPositions);
+        changingControlsPositions.put(SHARE_BTN, share);
+
 
 
         final String yourScoreStr = "Your Score: XXXX";
@@ -318,6 +320,11 @@ public class GUI {
         controls.put(CONTROLS.NEW_HIGH_SCORE_TXT, new ColorWheelTxtControl(newHighScore,
                 newHighScoreStr, newHighScoreHeight, GAME_OVER_TEXT_COLOR, true, 2500));
 
+        changingControlsPositions.put(YOUR_SCORE_TXT, RectUtils.rectFromPoint(yourScore));
+
+        CONTROLS.CONTROL_POSITIONS_PER_GROUP.put(CONTROLS.GAME_LOST_CONTROLS, changingControlsPositions);
+
+
 
         // build multi lost menu controls
         //TODO: MULTI_PLAYER_1_RESULT_TXT | MULTI_PLAYER_2_RESULT_TXT |
@@ -364,6 +371,10 @@ public class GUI {
 
 
         HashMap<Integer, Rect> movingControls = new HashMap<>();
+        movingControls.put(YOUR_SCORE_TXT, RectUtils.rectFromPoint(winnersScore));
+        movingControls.put(PLAY_AGAIN_BTN, playAgain2);
+        movingControls.put(SHARE_BTN, share2);
+        movingControls.put(MAIN_MENU_BTN, mainMenu2);
 
         CONTROL_POSITIONS_PER_GROUP.put(MULTI_GAME_LOST_CONTROLS, movingControls);
 

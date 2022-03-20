@@ -15,15 +15,45 @@
         android:layout_marginBottom="20dp"
         app:srcCompat="@drawable/icy_tower_logo" />
 
-    <Button
-        android:id="@+id/playBtn"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="6dp"
-        android:text="PLAY"
+        android:layout_marginBottom="2dp"
+        android:text="Play!"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp">
+        <Button
+            android:id="@+id/playSingleBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="SINGLEPLAYER"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+        <Button
+            android:id="@+id/playMultiBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:text="MUTLIPLAYER"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/userDataTxt"
