@@ -234,9 +234,11 @@ public abstract class Engine implements OnClockTimeUpListener {
         player.setCharacter(character);
         RectUtils.setRectPos(player.rect, (CAMERA_WIDTH - player.rect.width()) / 2,
                 platforms.peekFirst().rect.top - player.rect.height());
+
     }
 
     public void startGame(Character character){
+        reset();
         setPlayerCharacter(character);
         updateGameState(Engine.GameState.PLAYING);
         onResume();

@@ -27,7 +27,7 @@ public class Character {
                 BitmapUtils.decodeAnimations(animationSheet, true),
                 playerSizeMultiple, true);
         int width = Math.round(bitmaps[0].getWidth());
-        int height = Math.round(animationSheet.getHeight() * playerSizeMultiple);
+        int height = Math.round(animationSheet.getHeight() * playerSizeMultiple * 0.93f);
         return new Character(loadPlayerAnimations(bitmaps), width, height);
     }
 
@@ -43,9 +43,9 @@ public class Character {
         System.arraycopy(bitmaps, 0, newBitmaps, 0, 3);
         newBitmaps[3] = bitmaps[5];
         System.arraycopy(bitmaps, 3, newBitmaps, 4, newBitmaps.length - 4);
-        return new Character(loadPlayerAnimations(newBitmaps),
-                (int) Math.round(bitmaps[0].getWidth() * playerSizeMultiple),
-                (int) Math.round(animationSheet.getHeight() * playerSizeMultiple));
+        int width = Math.round(bitmaps[0].getWidth() * playerSizeMultiple);
+        int height = Math.round(animationSheet.getHeight() * playerSizeMultiple * 0.93f);
+        return new Character(loadPlayerAnimations(newBitmaps), width, height);
 
     }
 

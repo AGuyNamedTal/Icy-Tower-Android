@@ -46,50 +46,19 @@ public class MainActivity extends AppCompatActivity {
         Button playMultiBtn = findViewById(R.id.playMultiBtn);
         userNameTxt = findViewById(R.id.userDataTxt);
         logOutTxt = findViewById(R.id.logOutTxt);
-        logOutTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseHelper.auth.signOut();
-                updateUI();
-            }
+        logOutTxt.setOnClickListener(view -> {
+            FirebaseHelper.auth.signOut();
+            updateUI();
         });
 
-        findViewById(R.id.aboutDevBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AboutDevActivity.class));
-            }
-        });
-        findViewById(R.id.settingsBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            }
-        });
-        findViewById(R.id.scoreboardBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ScoreboardActivity.class));
-            }
-        });
-        playSingleBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startGame(true);
-            }
-        });
-        playMultiBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startGame(false);
-            }
-        });
-        FirebaseHelper.auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (activityOnForeground)
-                    updateUI();
-            }
+        findViewById(R.id.aboutDevBtn).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, AboutDevActivity.class)));
+        findViewById(R.id.settingsBtn).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
+        findViewById(R.id.scoreboardBtn).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, ScoreboardActivity.class)));
+        playSingleBtn.setOnClickListener(v -> startGame(true));
+        playMultiBtn.setOnClickListener(view -> startGame(false));
+        FirebaseHelper.auth.addAuthStateListener(firebaseAuth -> {
+            if (activityOnForeground)
+                updateUI();
         });
 
     }
@@ -129,11 +98,7 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Application Exit")
                 .setMessage("Are you sure you want to quit?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> finish())
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(true)
@@ -150,12 +115,7 @@ public class MainActivity extends AppCompatActivity {
             userNameTxt.setText("Logged in as: " + user.getDisplayName());
             logOutTxt.setVisibility(View.VISIBLE);
             if (FirebaseHelper.hasInternetConnection(MainActivity.this)) {
-                user.reload().addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        updateUI();
-                    }
-                });
+                user.reload().addOnFailureListener(e -> updateUI());
             }
         }
     }
