@@ -14,7 +14,23 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         app:srcCompat="@drawable/icy_tower_logo" />
+    <TextView
+        android:id="@+id/userDataTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:text="Currently logged in as: Tal"
+        android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/logOutTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:text="@string/want_logout"
+        android:textSize="20sp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,23 +71,7 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/userDataTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:text="Currently logged in as: Tal"
-        android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/logOutTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:text="@string/want_logout"
-        android:textSize="20sp" />
 
     <Button
         android:id="@+id/settingsBtn"
@@ -80,6 +80,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:text="SETTINGS"
+        android:layout_marginTop="20dp"
         android:textSize="20sp" />
 
     <Button
@@ -91,21 +92,4 @@
         android:text="SCOREBOARD"
         android:textSize="20sp" />
 
-    <Button
-        android:id="@+id/aboutDevBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:text="ABOUT DEVELEPOR"
-        android:textSize="20sp" />
-
-    <Button
-        android:id="@+id/aboutGameBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:text="ABOUT GAME"
-        android:textSize="20sp" />
 </LinearLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/about_dev_option"
+        android:title="About Developer" />
+    <item
+        android:id="@+id/about_game_option"
+        android:title="About Game" />
+</menu>

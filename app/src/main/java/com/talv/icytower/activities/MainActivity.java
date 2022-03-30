@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -51,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
             updateUI();
         });
 
-        findViewById(R.id.aboutDevBtn).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, AboutDevActivity.class)));
         findViewById(R.id.settingsBtn).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
         findViewById(R.id.scoreboardBtn).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, ScoreboardActivity.class)));
         playSingleBtn.setOnClickListener(v -> startGame(true));
@@ -77,6 +79,27 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Engine.user = "";
             LoginActivity.loginWithUser(MainActivity.this, singleplayer);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.about_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about_dev_option:
+                startActivity(new Intent(MainActivity.this, AboutDevActivity.class));
+                return true;
+            case R.id.about_game_option:
+                startActivity(new Intent(MainActivity.this, AboutGameActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
