@@ -178,7 +178,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         minPlatformWidth = (int) (CAMERA_WIDTH * PLAT_CAMERA_MIN_RATIO);
         initializeMediaPlayerAndSounds(context);
         random = new Random();
-        backgroundImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.background_1), CAMERA_WIDTH, CAMERA_HEIGHT, true);
+        backgroundImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.background), CAMERA_WIDTH, CAMERA_HEIGHT, true);
         frame = Bitmap.createBitmap(CAMERA_WIDTH, CAMERA_HEIGHT, Bitmap.Config.ARGB_8888);
         this.gameCanvas = gameCanvas;
         gameCanvas.initializeGUI(resources, renderWidth, renderHeight);
@@ -288,7 +288,6 @@ public abstract class Engine implements OnClockTimeUpListener {
         vibrate(CLOCK_VIBRATION);
         return CAMERA_SPEED_INCREASE_TIME;
     }
-
 
     public void updateFrame() {
         // draw on frame

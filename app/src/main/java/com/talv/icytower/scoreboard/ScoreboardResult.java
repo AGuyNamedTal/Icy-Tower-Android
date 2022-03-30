@@ -3,14 +3,14 @@ package com.talv.icytower.scoreboard;
 import com.google.firebase.database.DatabaseException;
 
 public class ScoreboardResult {
-    public DatabaseException exception;
+    public Exception exception;
     public ScoreboardData[] scoreboardData;
 
-    public boolean isSuccess() {
+    public boolean isSuccessful() {
         return exception == null;
     }
 
-    public ScoreboardResult(DatabaseException exception) {
+    public ScoreboardResult(Exception exception) {
         this.exception = exception;
     }
 

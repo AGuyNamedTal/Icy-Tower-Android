@@ -79,11 +79,17 @@ public class FirebaseHelper {
         setUserProfileInfo(user, profileInfo).addOnFailureListener(onFailureListener);
     }
 
+    private static final int SCOREBOARD_PLAYERS_COUNT = 10;
+
     public static void getScoreboard(OnScoreboardRetrieveComplete onCompleteListener) {
-        users.addListenerForSingleValueEvent(new ValueEventListener() {
+        users.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Map<String, Object> usersMap = (Map<String, Object>) snapshot.getValue();
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    onCompleteListener.onComplete(new ScoreboardResult(task.getException()));
+                    return;
+                }
+                Map<String, Object> usersMap = (Map<String, Object>) task.getResult().getValue();
                 ScoreboardData[] scoreboardData = new ScoreboardData[usersMap.size()];
                 int i = 0;
                 for (Map.Entry<String, Object> user : usersMap.entrySet()) {
@@ -94,18 +100,17 @@ public class FirebaseHelper {
                     scoreboardData[i] = new ScoreboardData(profileInfo, bestGameStats, username);
                     i++;
                 }
+
                 Arrays.sort(scoreboardData, new Comparator<ScoreboardData>() {
                     @Override
                     public int compare(ScoreboardData sd1, ScoreboardData sd2) {
                         return sd2.bestGameStats.highscore - sd1.bestGameStats.highscore;
                     }
                 });
+                if (scoreboardData.length > SCOREBOARD_PLAYERS_COUNT) {
+                    scoreboardData = Arrays.copyOfRange(scoreboardData, 0, SCOREBOARD_PLAYERS_COUNT);
+                }
                 onCompleteListener.onComplete(new ScoreboardResult(scoreboardData));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                onCompleteListener.onComplete(new ScoreboardResult(error.toException()));
             }
         });
     }

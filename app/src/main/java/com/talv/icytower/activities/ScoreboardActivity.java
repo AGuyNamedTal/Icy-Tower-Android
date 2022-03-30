@@ -42,7 +42,7 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
         FirebaseHelper.getScoreboard(new FirebaseHelper.OnScoreboardRetrieveComplete() {
             @Override
             public void onComplete(ScoreboardResult scoreboardResult) {
-                if (scoreboardResult.isSuccess()) {
+                if (scoreboardResult.isSuccessful()) {
                     adapter.data = scoreboardResult.scoreboardData;
                     adapter.notifyDataSetChanged();
                 } else {

@@ -120,11 +120,10 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
             int bit = 1 << i;
             if ((controlsID & bit) == bit) {
                 Control control = controls.get(bit);
-                if (control == null) {
-                    System.out.println("h");
+                if (control != null) {
+                    control.isVisible = val;
+                    control.isEnabled = val;
                 }
-                control.isVisible = val;
-                control.isEnabled = val;
             }
         }
     }

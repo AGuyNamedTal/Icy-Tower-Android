@@ -50,7 +50,6 @@ public class GameActivity extends AppCompatActivity {
         int renderWidth = screenSize.getWidth();
         int renderHeight = screenSize.getHeight();
 
-        Engine.loadCharacters(resources);
         boolean singleplayer = getIntent().getBooleanExtra(SINGLEPLAYER_KEY, true);
         if (singleplayer) {
             engine = new SingleplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this);

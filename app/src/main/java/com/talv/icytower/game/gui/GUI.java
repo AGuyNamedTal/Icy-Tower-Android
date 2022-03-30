@@ -268,7 +268,7 @@ public class GUI {
         changingControlsPositions.put(CONTROLS.SETTINGS_BTN, settings);
         changingControlsPositions.put(CONTROLS.MAIN_MENU_BTN, mainMenu);
         changingControlsPositions.put(SHARE_BTN, share);
-
+        changingControlsPositions.put(PLAY_AGAIN_BTN, playAgain);
 
 
         final String yourScoreStr = "Your Score: XXXX";
@@ -293,6 +293,7 @@ public class GUI {
         );
         controls.put(CONTROLS.YOUR_SCORE_TXT, new TextControl(yourScore,
                 yourScoreStr, scoresTextHeight, SCORES_TEXT_COLOR, true));
+        changingControlsPositions.put(YOUR_SCORE_TXT, RectUtils.rectFromPoint(yourScore));
 
         int gameOverWidth = (int) (scoresTextWidth * 1.25f);
         int gameOverHeight = TextSizeHelper.getTextSizeFromWidth(gameOverStr, gameOverWidth);
@@ -325,7 +326,6 @@ public class GUI {
         CONTROLS.CONTROL_POSITIONS_PER_GROUP.put(CONTROLS.GAME_LOST_CONTROLS, changingControlsPositions);
 
 
-
         // build multi lost menu controls
         //TODO: MULTI_PLAYER_1_RESULT_TXT | MULTI_PLAYER_2_RESULT_TXT |
         //                YOUR_SCORE_TXT | PLAY_AGAIN_BTN | SHARE_BTN | SETTINGS_BTN | MAIN_MENU_BTN
@@ -344,6 +344,7 @@ public class GUI {
 
         final String winnersScoreTxt = "WINNERS SCORE: 788";
         Point winnersScore = new Point(player1Result.x, player1Result.y + player1Height + paddingBetweenTexts);
+
 
         Rect playAgain2 = RectUtils.rectFromWidthHeight(
                 (renderWidth - buttonWidth) / 2,
