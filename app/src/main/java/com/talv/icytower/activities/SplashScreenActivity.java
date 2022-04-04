@@ -1,22 +1,22 @@
 package com.talv.icytower.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.talv.icytower.R;
 import com.talv.icytower.game.engine.Engine;
 import com.talv.icytower.game.player.Player;
 
 public class SplashScreenActivity extends AppCompatActivity {
+
+    private static final boolean SKIP_SPLASHSCREEN = true;
 
     private static final int DELAY = 5000;
     private static final int MAX_ALPHA_DELAY = DELAY / 2;
@@ -33,6 +33,10 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Engine.loadCharacters(getResources());
+        if (SKIP_SPLASHSCREEN) {
+            endSplashScreen();
+            return;
+        }
         bitmaps = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsLeft;
         setContentView(R.layout.activity_splash_screen);
         imageView = findViewById(R.id.splashScreenImgView);
@@ -61,8 +65,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
 
-            startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
-            finish();
+            endSplashScreen();
         }).start();
         new Thread(() -> {
             for (int i = 0; i < MAX_ALPHA_DELAY / ALPHA_CHANGE_DELAY; i++) {
@@ -81,6 +84,11 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
         }).start();
         soundPool.play(startupSoundId, 1, 1, 0, 0, 1);
+    }
+
+    private void endSplashScreen() {
+        startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+        finish();
     }
 
     private void switchAnimation() {

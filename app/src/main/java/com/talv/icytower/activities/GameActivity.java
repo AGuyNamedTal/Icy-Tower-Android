@@ -1,16 +1,12 @@
 package com.talv.icytower.activities;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.media.RingtoneManager;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Size;
@@ -19,15 +15,16 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 
-import com.talv.icytower.R;
 import com.talv.icytower.batteryChange.BatteryChangeListener;
 import com.talv.icytower.batteryChange.BatteryChangeReceiver;
+import com.talv.icytower.batteryChange.BatteryNotification;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.engine.Engine;
 import com.talv.icytower.game.engine.MultiplayerEngine;
 import com.talv.icytower.game.engine.SingleplayerEngine;
+
+@SuppressLint("SourceLockedOrientationActivity")
 
 public class GameActivity extends AppCompatActivity {
 
@@ -53,19 +50,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        batteryChangeReceiver = new BatteryChangeReceiver(0.3, new BatteryChangeListener() {
-            @Override
-            public void onBatteryLow(double battery) {
-                showBatteryLowNotification();
-            }
 
-            @Override
-            public void onBatteryNotLow(double battery) {
-
-            }
-        });
-        registerReceiver(batteryChangeReceiver, new IntentFilter(
-                Intent.ACTION_BATTERY_CHANGED));
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         gameCanvas = new GameCanvas(this);
@@ -86,30 +71,48 @@ public class GameActivity extends AppCompatActivity {
         gameThread = new Thread(this::gameThread);
 
         setContentView(gameCanvas);
+        batteryTest();
+    }
+
+    private void registerBatteryChangeListener() {
+        final BatteryNotification batteryNotification = new BatteryNotification(this);
+        batteryChangeReceiver = new BatteryChangeReceiver(0.3, new BatteryChangeListener() {
+            @Override
+            public void onBatteryLow(double battery) {
+                batteryNotification.showNotification();
+            }
+
+            @Override
+            public void onBatteryNotLow(double battery) {
+                batteryNotification.hideNotification();
+            }
+        });
+        registerReceiver(batteryChangeReceiver, new IntentFilter(
+                Intent.ACTION_BATTERY_CHANGED));
+    }
+
+
+    private void batteryTest() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                batteryChangeReceiver.batteryChangeListener.onBatteryLow(0.1d);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                batteryChangeReceiver.batteryChangeListener.onBatteryNotLow(0.5d);
+            }
+        });
 
     }
 
-    private void showBatteryLowNotification(){
-        SharedPreferenceManager sharedPreferenceManager = SharedPreferenceManager.getInstance(context);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, reqCode, intent, PendingIntent.FLAG_ONE_SHOT);
-        String CHANNEL_ID = "channel_name";// The id of the channel.
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(GameActivity.this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.icon)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setContentIntent(pendingIntent);
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Channel Name";// The user-visible name of the channel.
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            notificationManager.createNotificationChannel(mChannel);
-        }
-        notificationManager.notify(reqCode, notificationBuilder.build()); // 0 is the request code, it should be unique id
-    }
 
     @Override
     protected void onDestroy() {
