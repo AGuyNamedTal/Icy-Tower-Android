@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,7 +13,7 @@
         android:layout_gravity="center"
         android:text=" - USer registration - "
         android:textAllCaps="true"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
     <TextView
@@ -25,7 +24,7 @@
         android:layout_marginBottom="5dp"
         android:paddingRight="10dp"
         android:text="Enter Email: "
-        android:textSize="26sp" />
+        android:textSize="21sp" />
 
     <EditText
         android:id="@+id/regEmailTxt"
@@ -35,8 +34,8 @@
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:text="Tal12345@gmal.com"
-        android:textSize="26sp" />
+        android:text=""
+        android:textSize="21sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -46,7 +45,7 @@
         android:layout_marginBottom="5dp"
         android:paddingRight="10dp"
         android:text="Enter Display name: "
-        android:textSize="26sp" />
+        android:textSize="21sp" />
 
     <EditText
         android:id="@+id/regNameTxt"
@@ -57,8 +56,8 @@
         android:ems="10"
         android:hint="Display Name"
         android:inputType="text"
-        android:text="Admin"
-        android:textSize="26sp" />
+        android:text=""
+        android:textSize="21sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -67,7 +66,7 @@
         android:layout_marginBottom="5dp"
         android:paddingRight="10dp"
         android:text="Enter Password: "
-        android:textSize="26sp" />
+        android:textSize="21sp" />
 
     <EditText
         android:id="@+id/regPass1Txt"
@@ -78,8 +77,9 @@
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
-        android:text="TalAdmin1"
-        android:textSize="26sp" />
+        android:text=""
+        android:textSize="21sp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
         android:layout_marginBottom="5dp"
         android:paddingRight="10dp"
         android:text="Confirm Password: "
-        android:textSize="26sp" />
+        android:textSize="21sp" />
 
     <EditText
         android:id="@+id/regPass2Txt"
@@ -98,8 +98,42 @@
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
-        android:text="TalAdmin1"
-        android:textSize="26sp" />
+        android:text=""
+        android:textSize="21sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/image_border"
+        android:padding="2dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/chooseProfilePhoto"
+                android:layout_width="match_parent"
+                android:textSize="18sp"
+                android:layout_height="wrap_content"
+                android:text="Choose profile photo" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/scoreboardProfilePhoto"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+
+            tools:srcCompat="@tools:sample/avatars" />
+
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/registerBtn"
@@ -107,7 +141,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="REGISTER"
-        android:textSize="26sp" />
+        android:textSize="21sp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -116,8 +151,9 @@
         android:layout_marginBottom="5dp"
         android:paddingRight="10dp"
         android:text="@string/want_login"
-        android:textSize="24sp"
+        android:textSize="19sp"
         android:id="@+id/want_login"/>
+
     <Button
         android:id="@+id/registerBackBtn"
         android:layout_width="wrap_content"
@@ -126,6 +162,6 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="2dp"
         android:text="Back"
-        android:textSize="26sp" />
+        android:textSize="21sp" />
 
 </LinearLayout>

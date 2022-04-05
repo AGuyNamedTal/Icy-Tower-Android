@@ -29,8 +29,6 @@ public class BatteryNotification {
         notificationManager = context.getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
 
-        // initialize notification
-        // Create an explicit intent for an Activity in your app
         Intent intent = new Intent(context, GameActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);

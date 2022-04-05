@@ -7,8 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.media.AudioAttributes;
-import android.media.MediaPlayer;
-import android.media.PlaybackParams;
 import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.VibrationEffect;
@@ -23,13 +21,13 @@ import com.talv.icytower.R;
 import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.firebase.GameStats;
 import com.talv.icytower.firebase.UserProfileInfo;
-import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.GameSettings;
 import com.talv.icytower.game.gui.graphiccontrols.ClockControl;
 import com.talv.icytower.game.gui.graphiccontrols.Control;
 import com.talv.icytower.game.gui.graphiccontrols.OnClockTimeUpListener;
 import com.talv.icytower.game.gui.graphiccontrols.UpdatingControl;
+import com.talv.icytower.game.musicService.MusicServiceConnection;
 import com.talv.icytower.game.platform.DisappearingPlatform;
 import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.player.Character;
@@ -103,7 +101,7 @@ public abstract class Engine implements OnClockTimeUpListener {
 
 
     public Player player;
-    private Random random;
+    private final Random random;
 
     public GameCanvas gameCanvas;
 
@@ -142,7 +140,6 @@ public abstract class Engine implements OnClockTimeUpListener {
     private int gameOverSound;
     private int gameOverStreamId;
 
-    private MediaPlayer musicPlayer;
     public SoundPool soundPool;
 
     private ClockControl clock;
@@ -168,9 +165,11 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     protected int pauseBtnID;
+    public MusicServiceConnection musicServiceConnection;
 
     public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas
-            gameCanvas, Context context) {
+            gameCanvas, Context context, MusicServiceConnection musicServiceConnection) {
+        this.musicServiceConnection = musicServiceConnection;
         pauseBtnID = PAUSE_BTN;
         this.renderWidth = renderWidth;
         this.renderHeight = renderHeight;
@@ -211,14 +210,18 @@ public abstract class Engine implements OnClockTimeUpListener {
         cameraY = 0;
         externalCameraSpeed = 0f;
         constantCameraSpeed = 0f;
-        soundPool.stop(gameOverStreamId);
         clock.currentTime = 0;
         clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
         clock.countTime = false;
-        musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(1f));
+        stopGameOver();
+        musicServiceConnection.resetSpeed();
         clearPlatforms();
         player.resetPlayer();
         player.updateScore(0, gameCanvas);
+    }
+
+    public void stopGameOver() {
+        soundPool.stop(gameOverStreamId);
     }
 
     public void clearPlayerCharacter() {
@@ -237,7 +240,7 @@ public abstract class Engine implements OnClockTimeUpListener {
 
     }
 
-    public void startGame(Character character){
+    public void startGame(Character character) {
         reset();
         setPlayerCharacter(character);
         updateGameState(Engine.GameState.PLAYING);
@@ -246,13 +249,8 @@ public abstract class Engine implements OnClockTimeUpListener {
 
 
     private void initializeMediaPlayerAndSounds(Context context) {
-        musicPlayer = MediaPlayer.create(context, R.raw.background_music);
         AudioAttributes attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
-        musicPlayer.setAudioAttributes(attr);
-        musicPlayer.setLooping(true);
-        musicPlayer.setVolume(0.4f, 0.4f);
-
         soundPool = new SoundPool.Builder().setAudioAttributes(attr).setMaxStreams(2).build();
         gameOverSound = soundPool.load(context, R.raw.game_over, 1);
     }
@@ -276,15 +274,10 @@ public abstract class Engine implements OnClockTimeUpListener {
         }
     }
 
-    public void stopBackgroundMusic() {
-        musicPlayer.pause();
-        musicPlayer.seekTo(0);
-    }
-
     @Override
     public long clockTimeUp(long time) {
         constantCameraSpeed += CAMERA_CONSTANT_SPEED_INCREASE;
-        musicPlayer.setPlaybackParams(new PlaybackParams().setSpeed(musicPlayer.getPlaybackParams().getSpeed() * 1.1f));
+        musicServiceConnection.increaseSpeed();
         vibrate(CLOCK_VIBRATION);
         return CAMERA_SPEED_INCREASE_TIME;
     }
@@ -317,8 +310,6 @@ public abstract class Engine implements OnClockTimeUpListener {
 
     public void updateGame(int msPassed, Context context) {
         int activeControls = gameCanvas.activeControls.get();
-        if (Debug.LOG_MSPASSED)
-            Log.d("MS PASSED", String.valueOf(msPassed));
         if (checkActive(activeControls, pauseBtnID)) {
             onPause();
         }
@@ -344,16 +335,17 @@ public abstract class Engine implements OnClockTimeUpListener {
     public void onResume() {
         processingClick = false;
         if (currentGameState == GameState.PLAYING) {
-            if (GameSettings.BACKG_MUSIC && !musicPlayer.isPlaying()) {
-                musicPlayer.start();
+            if (GameSettings.BACKG_MUSIC && !musicServiceConnection.isPlaying()) {
+                musicServiceConnection.start();
             }
             activateClockIfNeeded();
         }
     }
 
     public void onPause() {
+        stopGameOver();
         if (currentGameState == GameState.PLAYING) {
-            musicPlayer.pause();
+            musicServiceConnection.pause();
             updateGameState(GameState.PAUSED);
             clock.countTime = false;
         }
@@ -449,17 +441,19 @@ public abstract class Engine implements OnClockTimeUpListener {
         if (maxPlayerY() > cameraY + CAMERA_HEIGHT) {
             // LOST!
             updateGameState(GameState.LOST);
-            stopBackgroundMusic();
+            musicServiceConnection.stop();
             gameOverStreamId = playSound(gameOverSound, 1);
-            updateLostUI(context);
+            updateLostUI(context, getWinningPlayer());
         }
     }
 
-    protected void updateLostUI(Context context) {
-        int score = player.getScore();
+    abstract Player getWinningPlayer();
+
+    protected void updateLostUI(Context context, Player winningPlayer) {
+        int score = winningPlayer.getScore();
         gameCanvas.updateText(YOUR_SCORE_TXT, "Your Score: " + score);
-        gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + player.totalJumps +
-                "   Time: " + formatGameTimeToString(player.totalTime) + " (sec)");
+        gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + winningPlayer.totalJumps +
+                "   Time: " + formatGameTimeToString(winningPlayer.totalTime) + " (sec)");
 
         if (bestGameStats == null) {
             // feature disabled
@@ -470,8 +464,8 @@ public abstract class Engine implements OnClockTimeUpListener {
             if (score > bestGameStats.highscore) {
                 gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, true);
                 bestGameStats.highscore = score;
-                bestGameStats.timeTaken = player.totalTime;
-                bestGameStats.totalJumps = player.totalJumps;
+                bestGameStats.timeTaken = winningPlayer.totalTime;
+                bestGameStats.totalJumps = winningPlayer.totalJumps;
 
                 FirebaseHelper.setBestGameStats(user, bestGameStats, new OnFailureListener() {
                     @Override

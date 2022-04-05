@@ -15,17 +15,18 @@
         android:text=" - על המשחק - "
         android:textAllCaps="true"
         android:textSize="36sp"
+        android:layout_marginBottom="10dp"
         android:textStyle="bold" />
 
     <TextView
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:layoutDirection="rtl"
+        android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:paddingBottom="100dp"
-        android:text="המשחק הוא משחק מגניב"
-        android:textSize="42sp" />
+        android:text="@string/description"
+        android:textSize="18sp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"

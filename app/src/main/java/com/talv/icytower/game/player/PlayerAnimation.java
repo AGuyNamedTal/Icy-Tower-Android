@@ -1,10 +1,8 @@
 package com.talv.icytower.game.player;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.talv.icytower.activities.GameActivity;
-import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.utils.BitmapUtils;
 
 public class PlayerAnimation {
@@ -53,8 +51,6 @@ public class PlayerAnimation {
 
 
     public void updateTime(int msPassed) {
-        if (Debug.LOG_ANIMATION)
-            Log.d("animation", "current time = " + currentTime);
         currentTime += msPassed;
         if (currentTime >= maxIndex) {
             currentTime = currentTime % maxIndex;
@@ -75,8 +71,6 @@ public class PlayerAnimation {
             }
             previousTime = switchIndexes[i];
         }
-        if (Debug.LOG_ANIMATION)
-            Log.d("animation", "index " + index);
         if (direction == Player.Direction.RIGHT) {
             return bitmapsRight[index];
         }

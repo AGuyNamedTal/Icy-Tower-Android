@@ -4,26 +4,17 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.talv.icytower.firebase.FirebaseHelper;
 import com.talv.icytower.game.GameCanvas;
-import com.talv.icytower.game.gui.GUI;
+import com.talv.icytower.game.musicService.MusicServiceConnection;
 import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.player.Character;
 import com.talv.icytower.game.player.Player;
 import com.talv.icytower.game.utils.BitmapUtils;
 import com.talv.icytower.game.utils.RectUtils;
 
-import static com.talv.icytower.game.gui.GUI.CONTROLS.GAME_STATS_TXT;
-import static com.talv.icytower.game.gui.GUI.CONTROLS.NEW_HIGH_SCORE_TXT;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.PAUSE_MID_BTN;
-import static com.talv.icytower.game.gui.GUI.CONTROLS.PERSONAL_HIGH_SCORE_TXT;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.PLAYER_MOVEMENT_CONTROLS_SHIFT;
-import static com.talv.icytower.game.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
 
 public class MultiplayerEngine extends Engine {
 
@@ -33,11 +24,9 @@ public class MultiplayerEngine extends Engine {
     private Player player2;
 
 
-    public MultiplayerEngine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context) {
-        super(renderWidth, renderHeight, resources, gameCanvas, context);
+    public MultiplayerEngine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context, MusicServiceConnection musicServiceConnection) {
+        super(renderWidth, renderHeight, resources, gameCanvas, context, musicServiceConnection);
         pauseBtnID = PAUSE_MID_BTN;
-        GameState.PLAYING.controlGroup = GUI.CONTROLS.MULTI_GAMEPLAY_CONTROLS;
-        GameState.LOST.controlGroup = GUI.CONTROLS.MULTI_GAME_LOST_CONTROLS;
         initializeMatrices();
         player2 = new Player(soundPool, context);
 
@@ -147,51 +136,11 @@ public class MultiplayerEngine extends Engine {
     }
 
 
-    protected void updateLostUI(Context context) {
-        //TODO: update player_1_result and player_2_result color and text, set winners score
-
-
-        int score = player.getScore();
-        gameCanvas.updateText(YOUR_SCORE_TXT, "Your Score: " + score);
-        gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + player.totalJumps +
-                "   Time: " + formatGameTimeToString(player.totalTime) + " (sec)");
-
-        if (bestGameStats == null) {
-            // feature disabled
-            gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, false);
-            gameCanvas.setEnabledAndVisible(PERSONAL_HIGH_SCORE_TXT, false);
-        } else {
-            gameCanvas.setEnabledAndVisible(PERSONAL_HIGH_SCORE_TXT, true);
-            if (score > bestGameStats.highscore) {
-                gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, true);
-                bestGameStats.highscore = score;
-                bestGameStats.timeTaken = player.totalTime;
-                bestGameStats.totalJumps = player.totalJumps;
-
-                FirebaseHelper.setBestGameStats(user, bestGameStats, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(context, "Game stats update failed - " + exception.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, false);
-            }
-            gameCanvas.updateText(PERSONAL_HIGH_SCORE_TXT, "Highscore: " + bestGameStats.highscore);
+    @Override
+    Player getWinningPlayer() {
+        if (player2.getScore() > player.getScore()) {
+            return player2;
         }
-        if (userProfileInfo != null) {
-            // feature enabled
-            userProfileInfo.gamesPlayed++;
-            FirebaseHelper.setUserProfileInfo(user, userProfileInfo, new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(context, "User profile info update failed - " + exception.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+        return player;
     }
-
-
 }

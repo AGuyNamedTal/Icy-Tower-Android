@@ -1,12 +1,12 @@
 package com.talv.icytower.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Size;
@@ -23,6 +23,8 @@ import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.engine.Engine;
 import com.talv.icytower.game.engine.MultiplayerEngine;
 import com.talv.icytower.game.engine.SingleplayerEngine;
+import com.talv.icytower.game.musicService.MediaPlayerService;
+import com.talv.icytower.game.musicService.MusicServiceConnection;
 
 @SuppressLint("SourceLockedOrientationActivity")
 
@@ -46,12 +48,13 @@ public class GameActivity extends AppCompatActivity {
 
     private boolean loopGame;
     private BatteryChangeReceiver batteryChangeReceiver;
+    private MusicServiceConnection musicPlayerServiceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        bindMusicService();
+        registerBatteryChangeListener();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         gameCanvas = new GameCanvas(this);
         gameCanvas.setSystemUiVisibility(UI_VISIBILITY_FLAGS);
@@ -63,15 +66,14 @@ public class GameActivity extends AppCompatActivity {
 
         boolean singleplayer = getIntent().getBooleanExtra(SINGLEPLAYER_KEY, true);
         if (singleplayer) {
-            engine = new SingleplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this);
+            engine = new SingleplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this, musicPlayerServiceConnection);
         } else {
-            engine = new MultiplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this);
+            engine = new MultiplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this, musicPlayerServiceConnection);
         }
         engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
         gameThread = new Thread(this::gameThread);
 
         setContentView(gameCanvas);
-        batteryTest();
     }
 
     private void registerBatteryChangeListener() {
@@ -91,26 +93,9 @@ public class GameActivity extends AppCompatActivity {
                 Intent.ACTION_BATTERY_CHANGED));
     }
 
-
-    private void batteryTest() {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                batteryChangeReceiver.batteryChangeListener.onBatteryLow(0.1d);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                batteryChangeReceiver.batteryChangeListener.onBatteryNotLow(0.5d);
-            }
-        });
-
+    private void bindMusicService() {
+        musicPlayerServiceConnection = new MusicServiceConnection();
+        bindService(new Intent(this, MediaPlayerService.class), musicPlayerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
 
@@ -118,6 +103,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(batteryChangeReceiver);
+        if (musicPlayerServiceConnection.serviceBounded)
+            unbindService(musicPlayerServiceConnection);
     }
 
     private Size getRealSize() {

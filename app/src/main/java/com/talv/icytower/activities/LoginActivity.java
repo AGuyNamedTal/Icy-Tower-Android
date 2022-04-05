@@ -32,7 +32,8 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.want_register).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                boolean singleplayer = getIntent().getBooleanExtra(GameActivity.SINGLEPLAYER_KEY, true);
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
                 finish();
             }
         });
@@ -113,6 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                             Engine.userProfileInfo = ((DataSnapshot) task.getResult()).getValue(UserProfileInfo.class);
                         }
                         context.startActivity(new Intent(context, GameActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
+                        context.overridePendingTransition(0, 0);
                         context.finish();
                     }
                 });

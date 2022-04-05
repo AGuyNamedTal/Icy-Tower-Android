@@ -13,10 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.talv.icytower.R;
 import com.talv.icytower.game.engine.Engine;
 import com.talv.icytower.game.player.Player;
+import com.talv.icytower.game.utils.BitmapUtils;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private static final boolean SKIP_SPLASHSCREEN = true;
+    private static final boolean SKIP_SPLASHSCREEN = false;
 
     private static final int DELAY = 5000;
     private static final int MAX_ALPHA_DELAY = DELAY / 2;
@@ -37,19 +38,29 @@ public class SplashScreenActivity extends AppCompatActivity {
             endSplashScreen();
             return;
         }
-        bitmaps = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsLeft;
+        bitmaps = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsLeft.clone();
         setContentView(R.layout.activity_splash_screen);
         imageView = findViewById(R.id.splashScreenImgView);
         imageView.setImageAlpha(0);
+
         soundPool = new SoundPool.Builder().setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()).setMaxStreams(1).build();
         startupSoundId = soundPool.load(this, R.raw.splash_screen_startup, 1);
     }
 
 
+    private boolean firstTime = true;
+
     @Override
-    protected void onStart() {
-        super.onStart();
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (!hasFocus || !firstTime) return;
+        firstTime = true;
+        int imageWidth = imageView.getMeasuredWidth();
+        int imageHeight = imageView.getMeasuredHeight();
+        for (int i = 0; i < bitmaps.length; i++) {
+            bitmaps[i] = BitmapUtils.stretch(bitmaps[i], imageWidth, imageHeight, false);
+        }
         new Thread(() -> {
             for (int i = 0; i < DELAY / ANIMATION_SWITCH_DELAY; i++) {
                 runOnUiThread(new Runnable() {
@@ -93,5 +104,11 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void switchAnimation() {
         imageView.setImageBitmap(bitmaps[(currentBitmapIndex = (currentBitmapIndex + 1) % bitmaps.length)]);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 }

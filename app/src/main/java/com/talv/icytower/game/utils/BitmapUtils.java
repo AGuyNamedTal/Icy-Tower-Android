@@ -1,9 +1,11 @@
 package com.talv.icytower.game.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class BitmapUtils {
@@ -136,6 +138,16 @@ public class BitmapUtils {
             }
         }
         return linesFilled;
+    }
+
+    public static byte[] toBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
+    }
+
+    public static Bitmap fromBytes(byte[] bytes) {
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
 

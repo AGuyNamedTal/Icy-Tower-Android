@@ -14,6 +14,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         app:srcCompat="@drawable/icy_tower_logo" />
+
     <TextView
         android:id="@+id/userDataTxt"
         android:layout_width="wrap_content"
@@ -23,6 +24,13 @@
         android:text="Currently logged in as: Tal"
         android:textSize="20sp" />
 
+    <ImageView
+        android:id="@+id/mainActivityProfilePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:visibility="gone"
+        android:scaleType="fitCenter" />
+
     <TextView
         android:id="@+id/logOutTxt"
         android:layout_width="wrap_content"
@@ -31,14 +39,16 @@
         android:layout_marginBottom="20dp"
         android:text="@string/want_logout"
         android:textSize="20sp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="2dp"
-        android:text="Play!"
+        android:text="@string/play"
         android:textColor="#000000"
         android:textSize="20sp"
+        android:paddingBottom="10dp"
         android:textStyle="bold" />
 
 

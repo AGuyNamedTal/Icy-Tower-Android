@@ -2,9 +2,7 @@ package com.talv.icytower.game.utils;
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.util.Log;
 
-import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.PlayerPlatformsIntersection;
 
 public class RectUtils {
@@ -14,8 +12,6 @@ public class RectUtils {
     }
 
     public static void setRectY(Rect rect, int y) {
-        if (Debug.LOG_JUMP)
-            Log.d("jump", "Y = " + y);
         rect.set(rect.left, y, rect.right, y + rect.height());
     }
 

@@ -479,7 +479,7 @@ public class GUI {
                 engine.reset();
                 engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
                 engine.onResume();
-                engine.stopBackgroundMusic();
+                engine.musicServiceConnection.stop();
             }
         };
         controls.get(SHARE_BTN).onTouch = new OnControlTouchListener() {

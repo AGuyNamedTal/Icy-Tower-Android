@@ -10,37 +10,28 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-class GetIPFromInternetTask extends AsyncTask<Void, Void, String>
-{
+class GetIPFromInternetTask extends AsyncTask<Void, Void, String> {
     private static final String IP_GETTER_URL = "https://iplist.cc/api";
 
     @Override
-    protected String doInBackground(Void... params)
-    {
+    protected String doInBackground(Void... params) {
         BufferedReader bufferedReader = null;
-        try
-        {
+        try {
             URL url = new URL(IP_GETTER_URL);
             URLConnection urlConn = url.openConnection();
             bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
 
             StringBuilder stringBuffer = new StringBuilder();
             String line;
-            while ((line = bufferedReader.readLine()) != null)
-            {
+            while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
             }
 
             return new JSONObject(stringBuffer.toString()).getString("countrycode");
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
             return null;
-        }
-        finally
-        {
-            if(bufferedReader != null)
-            {
+        } finally {
+            if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
                 } catch (IOException ignored) {

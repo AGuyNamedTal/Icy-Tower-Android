@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.talv.icytower.game.GameCanvas;
+import com.talv.icytower.game.musicService.MusicServiceConnection;
+import com.talv.icytower.game.player.Player;
 
 public class SingleplayerEngine extends Engine {
-    public SingleplayerEngine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context) {
-        super(renderWidth, renderHeight, resources, gameCanvas, context);
+    public SingleplayerEngine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context, MusicServiceConnection musicServiceConnection) {
+        super(renderWidth, renderHeight, resources, gameCanvas, context, musicServiceConnection);
     }
 
     @Override
@@ -20,4 +22,8 @@ public class SingleplayerEngine extends Engine {
         return player.rect.top;
     }
 
+    @Override
+    Player getWinningPlayer() {
+        return player;
+    }
 }

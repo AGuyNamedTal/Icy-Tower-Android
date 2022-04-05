@@ -1,6 +1,7 @@
 package com.talv.icytower.firebase;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -11,24 +12,30 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.talv.icytower.game.utils.BitmapUtils;
 import com.talv.icytower.scoreboard.ScoreboardData;
 import com.talv.icytower.scoreboard.ScoreboardResult;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseHelper {
     public static FirebaseAuth auth;
     public static FirebaseDatabase database;
+    public static FirebaseStorage storage;
+    public static StorageReference storageReference;
     public static DatabaseReference dbRef;
     public static DatabaseReference users;
 
+
     private static final String USERS_REFERENCE_PATH = "users";
+    private static final String PROFILE_PHOTOS_REFERENCE_PATH = "profile_photos";
     private static final String PROFILE_INFO_REFERENCE_PATH = "profile_info";
     private static final String BEST_GAME_STATS_REFERENCE_PATH = "best_game_stats";
 
@@ -36,8 +43,40 @@ public class FirebaseHelper {
     public static void initialize() {
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference().child(PROFILE_PHOTOS_REFERENCE_PATH);
         dbRef = database.getReference();
         users = dbRef.child(USERS_REFERENCE_PATH);
+    }
+
+    public static void setProfilePhoto(String user, byte[] bitmapBytes, OnCompleteListener onCompleteListener) {
+        storageReference.child(user).putBytes(bitmapBytes).addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void deleteProfilePhoto(String user) {
+        storageReference.child(user).delete();
+    }
+
+    public static void getProfilePhotoBytes(String user, OnCompleteListener onCompleteListener) {
+        storageReference.child(user).getBytes(100L * 1000 * 1000 /*100 MB*/).addOnCompleteListener(onCompleteListener);
+    }
+
+    public static void getProfilePhotoBitmap(String user, OnProfilePhotoGetComplete onProfilePhotoGetComplete) {
+        getProfilePhotoBytes(user, new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if (task.isSuccessful()) {
+                    try {
+                        Bitmap bitmap = BitmapUtils.fromBytes((byte[]) task.getResult());
+                        onProfilePhotoGetComplete.onComplete(bitmap);
+                    } catch (Exception ignored) {
+                        onProfilePhotoGetComplete.onComplete(null);
+                    }
+                } else {
+                    onProfilePhotoGetComplete.onComplete(null);
+                }
+            }
+        });
     }
 
     public static boolean hasInternetConnection(Context context) {
@@ -79,9 +118,8 @@ public class FirebaseHelper {
         setUserProfileInfo(user, profileInfo).addOnFailureListener(onFailureListener);
     }
 
-    private static final int SCOREBOARD_PLAYERS_COUNT = 10;
 
-    public static void getScoreboard(OnScoreboardRetrieveComplete onCompleteListener) {
+    public static void getScoreboard(OnScoreboardRetrieveComplete onCompleteListener, int scoreboardPlayerCount) {
         users.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -90,6 +128,9 @@ public class FirebaseHelper {
                     return;
                 }
                 Map<String, Object> usersMap = (Map<String, Object>) task.getResult().getValue();
+                if (usersMap == null) {
+                    usersMap = new HashMap<>(0);
+                }
                 ScoreboardData[] scoreboardData = new ScoreboardData[usersMap.size()];
                 int i = 0;
                 for (Map.Entry<String, Object> user : usersMap.entrySet()) {
@@ -107,8 +148,8 @@ public class FirebaseHelper {
                         return sd2.bestGameStats.highscore - sd1.bestGameStats.highscore;
                     }
                 });
-                if (scoreboardData.length > SCOREBOARD_PLAYERS_COUNT) {
-                    scoreboardData = Arrays.copyOfRange(scoreboardData, 0, SCOREBOARD_PLAYERS_COUNT);
+                if (scoreboardData.length > scoreboardPlayerCount) {
+                    scoreboardData = Arrays.copyOfRange(scoreboardData, 0, scoreboardPlayerCount);
                 }
                 onCompleteListener.onComplete(new ScoreboardResult(scoreboardData));
             }

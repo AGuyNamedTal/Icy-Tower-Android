@@ -1,22 +1,29 @@
 package com.talv.icytower.activities;
 
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.talv.icytower.R;
 import com.talv.icytower.firebase.FirebaseHelper;
+import com.talv.icytower.firebase.OnProfilePhotoGetComplete;
 import com.talv.icytower.game.engine.Engine;
+import com.talv.icytower.game.utils.BitmapUtils;
 import com.talv.icytower.scoreboard.ScoreboardAdapter;
 import com.talv.icytower.scoreboard.ScoreboardData;
 import com.talv.icytower.scoreboard.ScoreboardResult;
@@ -28,6 +35,7 @@ import java.util.Locale;
 public class ScoreboardActivity extends AppCompatActivity implements ScoreboardAdapter.ItemClickListener {
 
     ScoreboardAdapter adapter;
+    private static final int SCOREBOARD_PLAYERS_COUNT = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +59,7 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
                     finish();
                 }
             }
-        });
+        }, SCOREBOARD_PLAYERS_COUNT);
         findViewById(R.id.scoreboardBackBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,7 +74,7 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.user_profile_popup, null);
+        final View popupView = inflater.inflate(R.layout.user_profile_popup, null);
 
         TextView usernameTxt = ((TextView) popupView.findViewById(R.id.up_username));
         usernameTxt.setText(scoreboardData.user);
@@ -75,14 +83,14 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
         ((TextView) popupView.findViewById(R.id.up_date)).setText(formatDate(scoreboardData.profileInfo.creationDate));
         ((TextView) popupView.findViewById(R.id.up_gamesPlayed)).setText(String.valueOf(scoreboardData.profileInfo.gamesPlayed));
         ((TextView) popupView.findViewById(R.id.up_highscore)).setText(String.valueOf(scoreboardData.bestGameStats.highscore));
-        ((TextView) popupView.findViewById(R.id.up_time)).setText(Engine.formatGameTimeToString(scoreboardData.bestGameStats.timeTaken));
+        ((TextView) popupView.findViewById(R.id.up_time)).setText(Engine.formatGameTimeToString(scoreboardData.bestGameStats.timeTaken) + " (sec)");
         ((TextView) popupView.findViewById(R.id.up_totalJumps)).setText(String.valueOf(scoreboardData.bestGameStats.totalJumps));
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
-
+        popupWindow.setAnimationStyle(R.style.PopupAnimation);
         // show the popup window
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
@@ -92,10 +100,57 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
                 popupWindow.dismiss();
             }
         });
+        final ImageView imageView = ((ImageView) (popupView.findViewById(R.id.scoreboardProfilePhoto)));
+        FirebaseHelper.getProfilePhotoBytes(scoreboardData.user, new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                if (task.isSuccessful()) {
+                    try {
+                        Bitmap bitmap = BitmapUtils.fromBytes((byte[]) task.getResult());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                imageView.setImageBitmap(bitmap);
+                            }
+                        });
+                    } catch (Exception ignored) {
+                        Toast.makeText(ScoreboardActivity.this, "Unable to retrieve profile photo", Toast.LENGTH_SHORT).show();
+                        imageView.setVisibility(View.GONE);
+                    }
+                } else {
+                    Toast.makeText(ScoreboardActivity.this, "Unable to retrieve profile photo", Toast.LENGTH_SHORT).show();
+                    imageView.setVisibility(View.GONE);
+                }
+            }
+        });
+        FirebaseHelper.getProfilePhotoBitmap(scoreboardData.user, new OnProfilePhotoGetComplete() {
+            @Override
+            public void onComplete(Bitmap bitmap) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (bitmap == null) {
+                            Toast.makeText(ScoreboardActivity.this, "Unable to retrieve profile photo", Toast.LENGTH_SHORT).show();
+                            imageView.setVisibility(View.GONE);
+                        } else {
+                            imageView.setImageBitmap(bitmap);
+                            imageView.setVisibility(View.VISIBLE);
+                        }
+
+                    }
+                });
+
+            }
+        });
     }
 
     private String formatDate(long unixTime) {
         return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(unixTime * 1000));
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
 }

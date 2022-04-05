@@ -1,14 +1,14 @@
 package com.talv.icytower.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
-import com.talv.icytower.game.GameSettings;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.talv.icytower.R;
+import com.talv.icytower.game.GameSettings;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -56,5 +56,11 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         GameSettings.saveSettingsToSP(getSharedPreferences(SETTINGS_SP_FILE_NAME, MODE_PRIVATE));
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

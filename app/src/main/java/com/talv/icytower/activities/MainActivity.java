@@ -1,24 +1,24 @@
 package com.talv.icytower.activities;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.talv.icytower.R;
 import com.talv.icytower.firebase.FirebaseHelper;
+import com.talv.icytower.firebase.OnProfilePhotoGetComplete;
 import com.talv.icytower.game.GameSettings;
 import com.talv.icytower.game.engine.Engine;
 
@@ -26,11 +26,12 @@ import static com.talv.icytower.activities.SettingsActivity.SETTINGS_SP_FILE_NAM
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final boolean LOGIN_REQUIRED = false;
+    private static final boolean LOGIN_REQUIRED = true;
 
 
     private TextView userNameTxt;
     private TextView logOutTxt;
+    private ImageView profilePhotoImgView;
 
 
     private boolean activityOnForeground = false;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button playSingleBtn = findViewById(R.id.playSingleBtn);
         Button playMultiBtn = findViewById(R.id.playMultiBtn);
+        profilePhotoImgView = findViewById(R.id.mainActivityProfilePhoto);
         userNameTxt = findViewById(R.id.userDataTxt);
         logOutTxt = findViewById(R.id.logOutTxt);
         logOutTxt.setOnClickListener(view -> {
@@ -54,8 +56,14 @@ public class MainActivity extends AppCompatActivity {
             updateUI();
         });
 
-        findViewById(R.id.settingsBtn).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
-        findViewById(R.id.scoreboardBtn).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, ScoreboardActivity.class)));
+        findViewById(R.id.settingsBtn).setOnClickListener(view -> {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
+        findViewById(R.id.scoreboardBtn).setOnClickListener(view -> {
+            startActivity(new Intent(MainActivity.this, ScoreboardActivity.class));
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
         playSingleBtn.setOnClickListener(v -> startGame(true));
         playMultiBtn.setOnClickListener(view -> startGame(false));
         FirebaseHelper.auth.addAuthStateListener(firebaseAuth -> {
@@ -72,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentUser == null) {
                 // login
                 startActivity(new Intent(MainActivity.this, LoginActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
+                overridePendingTransition(0, 0);
             } else {
                 Engine.user = currentUser.getDisplayName();
                 LoginActivity.loginWithUser(MainActivity.this, singleplayer);
@@ -133,12 +142,30 @@ public class MainActivity extends AppCompatActivity {
         if (user == null) {
             userNameTxt.setText("Currently not logged in");
             logOutTxt.setVisibility(View.GONE);
+            profilePhotoImgView.setVisibility(View.GONE);
         } else {
-
             userNameTxt.setText("Logged in as: " + user.getDisplayName());
             logOutTxt.setVisibility(View.VISIBLE);
             if (FirebaseHelper.hasInternetConnection(MainActivity.this)) {
                 user.reload().addOnFailureListener(e -> updateUI());
+                FirebaseHelper.getProfilePhotoBitmap(user.getDisplayName(), new OnProfilePhotoGetComplete() {
+                    @Override
+                    public void onComplete(Bitmap bitmap) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bitmap == null) {
+                                    Toast.makeText(MainActivity.this, "Unable to retrieve profile photo", Toast.LENGTH_SHORT).show();
+                                    profilePhotoImgView.setVisibility(View.GONE);
+                                } else {
+                                    profilePhotoImgView.setImageBitmap(bitmap);
+                                    profilePhotoImgView.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+                        });
+                    }
+                });
             }
         }
     }

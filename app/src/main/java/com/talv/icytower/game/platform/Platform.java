@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 
 import com.talv.icytower.R;
 import com.talv.icytower.game.engine.Engine;
@@ -128,7 +127,6 @@ public class Platform {
     }
 
     public void onPlayerFall() {
-        Log.d("hey", "fell on platform " + platformNumber);
     }
 
     public void render(Canvas canvas, Engine engine) {

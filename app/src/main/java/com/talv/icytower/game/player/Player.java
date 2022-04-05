@@ -5,10 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.media.SoundPool;
-import android.util.Log;
 
 import com.talv.icytower.R;
-import com.talv.icytower.game.Debug;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.PlayerPlatformsIntersection;
 import com.talv.icytower.game.engine.Engine;
@@ -133,8 +131,6 @@ public class Player {
 
 
     private Bitmap getCurrentImage() {
-        if (Debug.LOG_ANIMATION)
-            Log.d("animation", currentState.toString());
         return animations.get(currentState).getCurrentBitmap(currentDirection);
     }
 
@@ -350,38 +346,26 @@ public class Player {
         }
 
         private void moveLeft() {
-            if (Debug.LOG_PLAYER)
-                Log.d("player", "MOVING LEFT");
             if (currentSpeed > 0) {
                 currentSpeed = -MIN_SPEED;
             }
             currentSpeed -= ACCELERATION_SPEED * msPassed;
             currentSpeed = Math.max(currentSpeed, -MAX_SPEED);
-            if (Debug.LOG_SPEED)
-                Log.d("speed", String.valueOf(currentSpeed));
         }
 
         private void moveRight() {
-            if (Debug.LOG_PLAYER)
-                Log.d("player", "MOVING RIGHT");
             if (currentSpeed < 0) {
                 currentSpeed = MIN_SPEED;
             }
             currentSpeed += ACCELERATION_SPEED * msPassed;
             currentSpeed = Math.min(currentSpeed, MAX_SPEED);
-            if (Debug.LOG_SPEED)
-                Log.d("speed", String.valueOf(currentSpeed));
         }
 
 
         private void jump(boolean decelerate) {
-            if (Debug.LOG_PLAYER)
-                Log.d("player", "JUMPING");
             if (decelerate)
                 decelerateSpeed();
             boolean cantJump = isJumping() || isFalling();
-            if (Debug.LOG_JUMP)
-                Log.d("jump", "Can't Jump: " + cantJump);
             if (cantJump) return;
             engine.playSound(jumpSoundID, 0.8f);
             totalJumps++;
@@ -390,7 +374,6 @@ public class Player {
         }
 
         private void moveJumpLeft() {
-            if (Debug.LOG_PLAYER) Log.d("player", "JUMP MOVE LEFT");
             //JUMP:
             jump(false);
 
@@ -399,7 +382,6 @@ public class Player {
         }
 
         private void moveJumpRight() {
-            if (Debug.LOG_PLAYER) Log.d("player", "JUMP MOVE RIGHT");
 
             //JUMP:
             jump(false);
@@ -409,8 +391,6 @@ public class Player {
         }
 
         private void stand() {
-            if (Debug.LOG_PLAYER)
-                Log.d("player", "STANDING");
 
             decelerateSpeed();
 
