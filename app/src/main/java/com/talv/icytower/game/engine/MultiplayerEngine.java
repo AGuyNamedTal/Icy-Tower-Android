@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 
 import com.talv.icytower.game.GameCanvas;
+import com.talv.icytower.game.gui.GUI;
 import com.talv.icytower.game.musicService.MusicServiceConnection;
 import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.player.Character;
@@ -27,9 +28,9 @@ public class MultiplayerEngine extends Engine {
     public MultiplayerEngine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context, MusicServiceConnection musicServiceConnection) {
         super(renderWidth, renderHeight, resources, gameCanvas, context, musicServiceConnection);
         pauseBtnID = PAUSE_MID_BTN;
+        GameState.PLAYING.controlGroup = GUI.CONTROLS.MULTI_GAMEPLAY_CONTROLS;
         initializeMatrices();
         player2 = new Player(soundPool, context);
-
     }
 
     private void initializeMatrices() {
