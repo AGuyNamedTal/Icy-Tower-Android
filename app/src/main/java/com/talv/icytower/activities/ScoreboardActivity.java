@@ -47,6 +47,18 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
         adapter = new ScoreboardAdapter(this, new ScoreboardData[0]);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
+
+        findViewById(R.id.scoreboardBackBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        if (!FirebaseHelper.hasInternetConnection(this)) {
+            Toast.makeText(this, "No internet connection, can't view scoreboard", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        Toast.makeText(this, "Retrieving scoreboard...", Toast.LENGTH_SHORT).show();
         FirebaseHelper.getScoreboard(new FirebaseHelper.OnScoreboardRetrieveComplete() {
             @Override
             public void onComplete(ScoreboardResult scoreboardResult) {
@@ -60,12 +72,6 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
                 }
             }
         }, SCOREBOARD_PLAYERS_COUNT);
-        findViewById(R.id.scoreboardBackBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
     }
 
     @Override

@@ -152,12 +152,16 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (bitmap == null) {
-                                    Toast.makeText(MainActivity.this, "Unable to retrieve profile photo", Toast.LENGTH_SHORT).show();
+                                if (FirebaseHelper.auth.getCurrentUser() == null) {
                                     profilePhotoImgView.setVisibility(View.GONE);
                                 } else {
-                                    profilePhotoImgView.setImageBitmap(bitmap);
-                                    profilePhotoImgView.setVisibility(View.VISIBLE);
+                                    if (bitmap == null) {
+                                        Toast.makeText(MainActivity.this, "Unable to retrieve profile photo", Toast.LENGTH_SHORT).show();
+                                        profilePhotoImgView.setVisibility(View.GONE);
+                                    } else {
+                                        profilePhotoImgView.setImageBitmap(bitmap);
+                                        profilePhotoImgView.setVisibility(View.VISIBLE);
+                                    }
                                 }
 
                             }
