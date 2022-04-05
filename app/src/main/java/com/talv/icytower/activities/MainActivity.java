@@ -100,16 +100,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.about_dev_option:
-                startActivity(new Intent(MainActivity.this, AboutDevActivity.class));
-                return true;
-            case R.id.about_game_option:
-                startActivity(new Intent(MainActivity.this, AboutGameActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.about_dev_option) {
+            startActivity(new Intent(MainActivity.this, AboutDevActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.about_game_option) {
+            startActivity(new Intent(MainActivity.this, AboutGameActivity.class));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
