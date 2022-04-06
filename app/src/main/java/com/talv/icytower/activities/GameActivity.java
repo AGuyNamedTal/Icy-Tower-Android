@@ -110,7 +110,7 @@ public class GameActivity extends AppCompatActivity {
     private Size getRealSize() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
-        return new Size(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        return new Size(displayMetrics.widthPixels, (int) (displayMetrics.heightPixels * 0.98));
     }
 
     @Override
