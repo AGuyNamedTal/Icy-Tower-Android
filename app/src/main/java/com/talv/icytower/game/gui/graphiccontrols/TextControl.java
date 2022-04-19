@@ -62,5 +62,13 @@ public class TextControl extends Control {
         canvas.drawText(text, x, y, paint);
     }
 
-
+    @Override
+    public String toString() {
+        return "TextControl{" +
+                "text='" + text + '\'' +
+                ", paint=" + paint +
+                ", bounds=" + bounds +
+                ", centerXPoint=" + centerXPoint +
+                "} " + super.toString();
+    }
 }

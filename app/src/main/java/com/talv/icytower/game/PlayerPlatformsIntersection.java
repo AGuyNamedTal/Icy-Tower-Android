@@ -1,7 +1,5 @@
 package com.talv.icytower.game;
 
-import android.util.Log;
-
 public class PlayerPlatformsIntersection {
 
     public int newY;
@@ -14,5 +12,13 @@ public class PlayerPlatformsIntersection {
 
     public PlayerPlatformsIntersection(int newY) {
         this.newY = newY;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerPlatformsIntersection{" +
+                "newY=" + newY +
+                ", didIntersect=" + didIntersect +
+                '}';
     }
 }

@@ -17,4 +17,5 @@ public class TextSizeHelper {
         return (int) Math.round(PAINT_TXT_SIZE * width / PAINT.measureText(text));
     }
 
+
 }

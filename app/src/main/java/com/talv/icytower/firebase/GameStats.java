@@ -32,4 +32,13 @@ public class GameStats {
 
         this(((Long) map.get(HIGH_SCORE_NAME)).intValue(), ((Long) map.get(TOTAL_JUMPS_NAME)).intValue(), (long) map.get(TIME_TAKEN_NAME));
     }
+
+    @Override
+    public String toString() {
+        return "GameStats{" +
+                "highscore=" + highscore +
+                ", totalJumps=" + totalJumps +
+                ", timeTaken=" + timeTaken +
+                '}';
+    }
 }

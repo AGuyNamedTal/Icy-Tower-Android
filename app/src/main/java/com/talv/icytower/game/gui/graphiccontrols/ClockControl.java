@@ -51,4 +51,17 @@ public class ClockControl extends ImageControl implements UpdatingControl {
         matrix.setRotate(angleOfRotation);
         matrix.postTranslate(getRect().exactCenterX() + (arrow.getWidth() / 2f), getRect().exactCenterY());
     }
+
+    @Override
+    public String toString() {
+        return "ClockControl{" +
+                "arrow=" + arrow +
+                ", matrix=" + matrix +
+                ", currentTime=" + currentTime +
+                ", timeTillSpeedIncrease=" + timeTillSpeedIncrease +
+                ", countTime=" + countTime +
+                ", onClockTimeUpListener=" + onClockTimeUpListener +
+                ", STARTING_ANGLE=" + STARTING_ANGLE +
+                "} " + super.toString();
+    }
 }

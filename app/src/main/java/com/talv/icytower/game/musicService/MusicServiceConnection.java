@@ -50,4 +50,12 @@ public class MusicServiceConnection implements ServiceConnection {
         if (mediaPlayerService == null) return false;
         return mediaPlayerService.isPlaying();
     }
+
+    @Override
+    public String toString() {
+        return "MusicServiceConnection{" +
+                "mediaPlayerService=" + mediaPlayerService +
+                ", serviceBounded=" + serviceBounded +
+                '}';
+    }
 }

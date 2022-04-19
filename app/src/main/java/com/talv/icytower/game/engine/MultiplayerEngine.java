@@ -144,4 +144,13 @@ public class MultiplayerEngine extends Engine {
         }
         return player;
     }
+
+    @Override
+    public String toString() {
+        return "MultiplayerEngine{" +
+                "topMatrix=" + topMatrix +
+                ", bottomMatrix=" + bottomMatrix +
+                ", player2=" + player2 +
+                "} " + super.toString();
+    }
 }

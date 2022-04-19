@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.talv.icytower.R;
 
+import java.util.Arrays;
+
 
 public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.ViewHolder> {
 
@@ -93,5 +95,14 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.Vi
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+    }
+
+    @Override
+    public String toString() {
+        return "ScoreboardAdapter{" +
+                "data=" + Arrays.toString(data) +
+                ", inflater=" + inflater +
+                ", onClickListener=" + onClickListener +
+                "} " + super.toString();
     }
 }

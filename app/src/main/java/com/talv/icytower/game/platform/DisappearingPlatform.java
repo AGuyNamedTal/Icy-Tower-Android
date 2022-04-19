@@ -48,4 +48,13 @@ public class DisappearingPlatform extends Platform {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "DisappearingPlatform{" +
+                "paint=" + paint +
+                ", lifespan=" + lifespan +
+                ", disappearing=" + disappearing +
+                "} " + super.toString();
+    }
 }

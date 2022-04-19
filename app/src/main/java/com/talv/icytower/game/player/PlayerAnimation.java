@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import com.talv.icytower.activities.GameActivity;
 import com.talv.icytower.game.utils.BitmapUtils;
 
+import java.util.Arrays;
+
 public class PlayerAnimation {
 
     public final Bitmap[] bitmapsRight;
@@ -78,4 +80,14 @@ public class PlayerAnimation {
     }
 
 
+    @Override
+    public String toString() {
+        return "PlayerAnimation{" +
+                "bitmapsRight=" + Arrays.toString(bitmapsRight) +
+                ", bitmapsLeft=" + Arrays.toString(bitmapsLeft) +
+                ", switchIndexes=" + Arrays.toString(switchIndexes) +
+                ", currentTime=" + currentTime +
+                ", maxIndex=" + maxIndex +
+                '}';
+    }
 }

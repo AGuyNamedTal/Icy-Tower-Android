@@ -31,4 +31,11 @@ public class RectControl extends Control {
     public void render(Canvas canvas) {
         canvas.drawRect(getRect(), paint);
     }
+
+    @Override
+    public String toString() {
+        return "RectControl{" +
+                "paint=" + paint +
+                "} " + super.toString();
+    }
 }

@@ -80,4 +80,13 @@ public class Character {
         }, true));
         return animations;
     }
+
+    @Override
+    public String toString() {
+        return "Character{" +
+                "animations=" + animations +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }

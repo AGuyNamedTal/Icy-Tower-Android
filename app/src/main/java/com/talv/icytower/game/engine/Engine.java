@@ -63,37 +63,6 @@ public abstract class Engine implements OnClockTimeUpListener {
     private int renderWidth;
     private int renderHeight;
 
-    @Override
-    public String toString() {
-        return "Engine{" +
-                "frameScaled=" + frameScaled +
-                ", frame=" + frame +
-                ", renderWidth=" + renderWidth +
-                ", renderHeight=" + renderHeight +
-                ", maxPlatformWidth=" + maxPlatformWidth +
-                ", minPlatformWidth=" + minPlatformWidth +
-                ", PLAT_CAMERA_MAX_RATIO=" + PLAT_CAMERA_MAX_RATIO +
-                ", PLAT_CAMERA_MIN_RATIO=" + PLAT_CAMERA_MIN_RATIO +
-                ", platforms=" + platforms +
-                ", backgroundImg=" + backgroundImg +
-                ", cameraY=" + cameraY +
-                ", externalCameraSpeed=" + externalCameraSpeed +
-                ", constantCameraSpeed=" + constantCameraSpeed +
-                ", player=" + player +
-                ", random=" + random +
-                ", gameCanvas=" + gameCanvas +
-                ", touchRestricted=" + touchRestricted +
-                ", currentGameState=" + currentGameState +
-                ", processingClick=" + processingClick +
-                ", gameOverSound=" + gameOverSound +
-                ", gameOverStreamId=" + gameOverStreamId +
-                ", soundPool=" + soundPool +
-                ", clock=" + clock +
-                ", vibrator=" + vibrator +
-                ", pauseBtnID=" + pauseBtnID +
-                ", musicServiceConnection=" + musicServiceConnection +
-                '}';
-    }
 
     public static Character character1;
     public static Character character2;
@@ -626,5 +595,36 @@ public abstract class Engine implements OnClockTimeUpListener {
         return time / 1000 + "." + Math.round((time % 1000) / 100f);
     }
 
+    @Override
+    public String toString() {
+        return "Engine{" +
+                "frameScaled=" + frameScaled +
+                ", frame=" + frame +
+                ", renderWidth=" + renderWidth +
+                ", renderHeight=" + renderHeight +
+                ", maxPlatformWidth=" + maxPlatformWidth +
+                ", minPlatformWidth=" + minPlatformWidth +
+                ", PLAT_CAMERA_MAX_RATIO=" + PLAT_CAMERA_MAX_RATIO +
+                ", PLAT_CAMERA_MIN_RATIO=" + PLAT_CAMERA_MIN_RATIO +
+                ", platforms=" + platforms +
+                ", backgroundImg=" + backgroundImg +
+                ", cameraY=" + cameraY +
+                ", externalCameraSpeed=" + externalCameraSpeed +
+                ", constantCameraSpeed=" + constantCameraSpeed +
+                ", player=" + player +
+                ", random=" + random +
+                ", gameCanvas=" + gameCanvas +
+                ", touchRestricted=" + touchRestricted +
+                ", currentGameState=" + currentGameState +
+                ", processingClick=" + processingClick +
+                ", gameOverSound=" + gameOverSound +
+                ", gameOverStreamId=" + gameOverStreamId +
+                ", soundPool=" + soundPool +
+                ", clock=" + clock +
+                ", vibrator=" + vibrator +
+                ", pauseBtnID=" + pauseBtnID +
+                ", musicServiceConnection=" + musicServiceConnection +
+                '}';
+    }
 
 }

@@ -50,5 +50,11 @@ public class BatteryNotification {
         notificationManager.cancel(NOTIFICATION_ID);
     }
 
-
+    @Override
+    public String toString() {
+        return "BatteryNotification{" +
+                "notificationManager=" + notificationManager +
+                ", builder=" + builder +
+                '}';
+    }
 }

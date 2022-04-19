@@ -75,4 +75,11 @@ public class ImageControl extends Control {
     public void render(Canvas canvas) {
         canvas.drawBitmap(image, getRect().left, getRect().top, Engine.gamePaint);
     }
+
+    @Override
+    public String toString() {
+        return "ImageControl{" +
+                "image=" + image +
+                "} " + super.toString();
+    }
 }

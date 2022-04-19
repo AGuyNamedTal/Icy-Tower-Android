@@ -61,5 +61,17 @@ public class PlatformImage {
         leftBitmap.recycle();
     }
 
-
+    @Override
+    public String toString() {
+        return "PlatformImage{" +
+                "middleBitmap=" + middleBitmap +
+                ", leftBitmap=" + leftBitmap +
+                ", rightBitmap=" + rightBitmap +
+                ", minWidth=" + minWidth +
+                ", rightBitmapWidth=" + rightBitmapWidth +
+                ", leftBitmapWidth=" + leftBitmapWidth +
+                ", height=" + height +
+                ", linesFilled=" + linesFilled +
+                '}';
+    }
 }

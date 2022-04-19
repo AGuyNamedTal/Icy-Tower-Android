@@ -72,4 +72,12 @@ public class MediaPlayerService extends Service {
         super.onDestroy();
         if (musicPlayer != null) musicPlayer.release();
     }
+
+    @Override
+    public String toString() {
+        return "MediaPlayerService{" +
+                "musicPlayer=" + musicPlayer +
+                ", mBinder=" + mBinder +
+                "} " + super.toString();
+    }
 }

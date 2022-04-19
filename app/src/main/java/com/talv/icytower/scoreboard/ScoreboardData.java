@@ -14,5 +14,12 @@ public class ScoreboardData {
         this.user = user;
     }
 
-
+    @Override
+    public String toString() {
+        return "ScoreboardData{" +
+                "profileInfo=" + profileInfo +
+                ", bestGameStats=" + bestGameStats +
+                ", user='" + user + '\'' +
+                '}';
+    }
 }

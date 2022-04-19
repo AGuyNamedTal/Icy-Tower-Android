@@ -412,5 +412,22 @@ public class Player {
 
     }
 
-
+    @Override
+    public String toString() {
+        return "Player{" +
+                "score=" + score +
+                ", stateUpdateTime=" + stateUpdateTime +
+                ", currentVerticalSpeed=" + currentVerticalSpeed +
+                ", currentSpeed=" + currentSpeed +
+                ", externalSpeed=" + externalSpeed +
+                ", currentDirection=" + currentDirection +
+                ", currentState=" + currentState +
+                ", rect=" + rect +
+                ", animations=" + animations +
+                ", playerControls=" + playerControls +
+                ", jumpSoundID=" + jumpSoundID +
+                ", totalJumps=" + totalJumps +
+                ", totalTime=" + totalTime +
+                '}';
+    }
 }

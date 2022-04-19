@@ -35,4 +35,13 @@ public class BatteryChangeReceiver extends BroadcastReceiver {
 //        Log.d("battery", String.valueOf(batteryPct));
         previousBattery = batteryPct;
     }
+
+    @Override
+    public String toString() {
+        return "BatteryChangeReceiver{" +
+                "batteryLow=" + batteryLow +
+                ", batteryChangeListener=" + batteryChangeListener +
+                ", previousBattery=" + previousBattery +
+                "} " + super.toString();
+    }
 }

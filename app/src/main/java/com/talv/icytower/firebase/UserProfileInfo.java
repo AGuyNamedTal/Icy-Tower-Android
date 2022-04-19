@@ -49,5 +49,12 @@ public class UserProfileInfo {
         return new UserProfileInfo(unixTime, 0, countryCode);
     }
 
-
+    @Override
+    public String toString() {
+        return "UserProfileInfo{" +
+                "creationDate=" + creationDate +
+                ", gamesPlayed=" + gamesPlayed +
+                ", countryCode='" + countryCode + '\'' +
+                '}';
+    }
 }

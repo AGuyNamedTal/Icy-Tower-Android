@@ -15,6 +15,7 @@ import com.talv.icytower.game.gui.graphiccontrols.Control;
 import com.talv.icytower.game.gui.graphiccontrols.TextControl;
 import com.talv.icytower.game.utils.RectUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -98,17 +99,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void renderControls(Canvas canvas) {
-        boolean resetToDefaultScale = false;
         for (Map.Entry<Integer, Control> entry : controls.entrySet()) {
             Control control = entry.getValue();
             if (!control.isVisible()) continue;
-            if (control.isFlipY()) {
-                canvas.scale(1, -1, control.getRect().width() / 2f, control.getRect().height() / 2f);
-                resetToDefaultScale = true;
-            } else if (resetToDefaultScale) {
-                canvas.scale(1, 1);
-                resetToDefaultScale = false;
-            }
             control.render(canvas);
         }
         canvas.scale(1, 1);
@@ -148,5 +141,15 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
     public Control getControl(int controlID) {
         return controls.get(controlID);
+    }
+
+    @Override
+    public String toString() {
+        return "GameCanvas{" +
+                "controls=" + controls +
+                ", FINGERS=" + Arrays.toString(FINGERS) +
+                ", holder=" + holder +
+                ", activeControls=" + activeControls +
+                "} " + super.toString();
     }
 }

@@ -28,4 +28,9 @@ public class SingleplayerEngine extends Engine {
     Player getWinningPlayer() {
         return player;
     }
+
+    @Override
+    public String toString() {
+        return "SingleplayerEngine{} " + super.toString();
+    }
 }

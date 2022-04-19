@@ -146,5 +146,12 @@ public class Platform {
         platformImages.clear();
     }
 
-
+    @Override
+    public String toString() {
+        return "Platform{" +
+                "rect=" + rect +
+                ", image=" + image +
+                ", platformNumber=" + platformNumber +
+                '}';
+    }
 }

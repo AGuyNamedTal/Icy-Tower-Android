@@ -334,7 +334,7 @@ public class GUI {
         int player2ResWidth = gameOverWidth;
         int player2Height = TextSizeHelper.getTextSizeFromWidth(player2ResultTxt, player2ResWidth);
         controls.put(MULTI_PLAYER_2_RESULT_TXT,
-                new TextControl(player2Result, player2ResultTxt, player2Height, 0, true).setFlipY(true));
+                new TextControl(player2Result, player2ResultTxt, player2Height, 0, true));
 
         final String player1ResultTxt = player2ResultTxt;
         Point player1Result = new Point(player2Result.x, player2Result.y + player2Height + (int) (renderHeight * 0.05f));
