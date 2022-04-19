@@ -106,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.about_game_option) {
             startActivity(new Intent(MainActivity.this, AboutGameActivity.class));
             return true;
+        } else if (item.getItemId() == R.id.exit_option) {
+            showExitWarning();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -125,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        showExitWarning();
+    }
+
+    private void showExitWarning() {
         new AlertDialog.Builder(this)
                 .setTitle("Application Exit")
                 .setMessage("Are you sure you want to quit?")

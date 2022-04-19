@@ -49,6 +49,6 @@ public class ClockControl extends ImageControl implements UpdatingControl {
     private void updateMatrix() {
         float angleOfRotation = ((360f * currentTime / timeTillSpeedIncrease) + STARTING_ANGLE) % 360;
         matrix.setRotate(angleOfRotation);
-        matrix.postTranslate(rect.exactCenterX() + (arrow.getWidth() / 2f), rect.exactCenterY());
+        matrix.postTranslate(getRect().exactCenterX() + (arrow.getWidth() / 2f), getRect().exactCenterY());
     }
 }

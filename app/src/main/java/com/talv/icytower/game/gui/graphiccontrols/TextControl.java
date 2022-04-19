@@ -22,8 +22,8 @@ public class TextControl extends Control {
 
     public TextControl(Point point, String text, float textSize, int textColor, boolean centerX) {
         paint.setTextSize(textSize);
-        this.isEnabled = false;
-        this.isVisible = false;
+        this.setEnabled(false);
+        this.setVisible(false);
         if (centerX) {
             this.centerXPoint = point;
         } else {
@@ -31,7 +31,7 @@ public class TextControl extends Control {
         }
         paint.setColor(textColor);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        this.rect = new Rect(point.x, point.y, point.x, point.y);
+        this.setRect(new Rect(point.x, point.y, point.x, point.y));
         setText(text);
     }
 
@@ -47,18 +47,18 @@ public class TextControl extends Control {
         int width = bounds.width();
         int height = bounds.height();
         if (centerXPoint == null) {
-            RectUtils.setRectSize(rect, width, height);
+            RectUtils.setRectSize(getRect(), width, height);
         } else {
-            rect = new Rect(centerXPoint.x - width / 2, centerXPoint.y - height / 2,
-                    centerXPoint.x + width / 2, centerXPoint.y + height / 2);
+            setRect(new Rect(centerXPoint.x - width / 2, centerXPoint.y - height / 2,
+                    centerXPoint.x + width / 2, centerXPoint.y + height / 2));
         }
 
     }
 
     @Override
     public void render(Canvas canvas) {
-        int x = rect.left - bounds.left;
-        int y = rect.top - bounds.top;
+        int x = getRect().left - bounds.left;
+        int y = getRect().top - bounds.top;
         canvas.drawText(text, x, y, paint);
     }
 

@@ -78,7 +78,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void registerBatteryChangeListener() {
         final BatteryNotification batteryNotification = new BatteryNotification(this);
-        batteryChangeReceiver = new BatteryChangeReceiver(0.3, new BatteryChangeListener() {
+        batteryChangeReceiver = new BatteryChangeReceiver(0.95, new BatteryChangeListener() {
             @Override
             public void onBatteryLow(double battery) {
                 batteryNotification.showNotification();

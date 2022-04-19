@@ -10,7 +10,7 @@ public class BatteryChangeReceiver extends BroadcastReceiver {
     private final double batteryLow;
     public final BatteryChangeListener batteryChangeListener;
 
-    private double previousBattery = -1;
+    private double previousBattery = 1;
 
     public BatteryChangeReceiver(double batterLow, BatteryChangeListener batteryChangeListener) {
         this.batteryLow = batterLow;

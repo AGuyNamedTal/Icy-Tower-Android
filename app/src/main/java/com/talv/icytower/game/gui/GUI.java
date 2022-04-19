@@ -446,21 +446,21 @@ public class GUI {
 
         // pause controls
 
-        controls.get(MAIN_MENU_BTN).onTouch = new OnControlTouchListener() {
+        controls.get(MAIN_MENU_BTN).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 context.startActivity(intent);
             }
-        };
-        controls.get(SETTINGS_BTN).onTouch = new OnControlTouchListener() {
+        });
+        controls.get(SETTINGS_BTN).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
                 context.startActivity(new Intent(context, SettingsActivity.class));
             }
-        };
-        controls.get(RESUME_BTN).onTouch = new OnControlTouchListener() {
+        });
+        controls.get(RESUME_BTN).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
                 if (engine.currentGameState == Engine.GameState.PAUSED) {
@@ -468,11 +468,11 @@ public class GUI {
                 }
                 engine.onResume();
             }
-        };
+        });
 
         // lost controls
 
-        controls.get(PLAY_AGAIN_BTN).onTouch = new OnControlTouchListener() {
+        controls.get(PLAY_AGAIN_BTN).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
                 engine.clearPlayerCharacter();
@@ -481,32 +481,32 @@ public class GUI {
                 engine.onResume();
                 engine.musicServiceConnection.stop();
             }
-        };
-        controls.get(SHARE_BTN).onTouch = new OnControlTouchListener() {
+        });
+        controls.get(SHARE_BTN).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+                Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
-                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "MY AWESOME SCORE!!!");
-                intent.putExtra(android.content.Intent.EXTRA_TEXT,
+                intent.putExtra(Intent.EXTRA_SUBJECT, "MY AWESOME SCORE!!!");
+                intent.putExtra(Intent.EXTRA_TEXT,
                         "I just scored " + engine.player.getScore() + " points on Icy Tower!!!");
                 context.startActivity(Intent.createChooser(intent, "Share using..."));
             }
-        };
+        });
 
         // choose character controls
-        controls.get(PLAYER_1_RECT).onTouch = new OnControlTouchListener() {
+        controls.get(PLAYER_1_RECT).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
                 engine.startGame(Engine.character1);
             }
-        };
-        controls.get(PLAYER_2_RECT).onTouch = new OnControlTouchListener() {
+        });
+        controls.get(PLAYER_2_RECT).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
                 engine.startGame(Engine.character2);
             }
-        };
+        });
     }
 
 

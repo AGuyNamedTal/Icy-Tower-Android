@@ -58,6 +58,42 @@ import static com.talv.icytower.game.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.checkActive;
 
 public abstract class Engine implements OnClockTimeUpListener {
+    private Bitmap frameScaled;
+    private Bitmap frame;
+    private int renderWidth;
+    private int renderHeight;
+
+    @Override
+    public String toString() {
+        return "Engine{" +
+                "frameScaled=" + frameScaled +
+                ", frame=" + frame +
+                ", renderWidth=" + renderWidth +
+                ", renderHeight=" + renderHeight +
+                ", maxPlatformWidth=" + maxPlatformWidth +
+                ", minPlatformWidth=" + minPlatformWidth +
+                ", PLAT_CAMERA_MAX_RATIO=" + PLAT_CAMERA_MAX_RATIO +
+                ", PLAT_CAMERA_MIN_RATIO=" + PLAT_CAMERA_MIN_RATIO +
+                ", platforms=" + platforms +
+                ", backgroundImg=" + backgroundImg +
+                ", cameraY=" + cameraY +
+                ", externalCameraSpeed=" + externalCameraSpeed +
+                ", constantCameraSpeed=" + constantCameraSpeed +
+                ", player=" + player +
+                ", random=" + random +
+                ", gameCanvas=" + gameCanvas +
+                ", touchRestricted=" + touchRestricted +
+                ", currentGameState=" + currentGameState +
+                ", processingClick=" + processingClick +
+                ", gameOverSound=" + gameOverSound +
+                ", gameOverStreamId=" + gameOverStreamId +
+                ", soundPool=" + soundPool +
+                ", clock=" + clock +
+                ", vibrator=" + vibrator +
+                ", pauseBtnID=" + pauseBtnID +
+                ", musicServiceConnection=" + musicServiceConnection +
+                '}';
+    }
 
     public static Character character1;
     public static Character character2;
@@ -94,11 +130,6 @@ public abstract class Engine implements OnClockTimeUpListener {
 
     private static final int CAMERA_SPEED_INCREASE_TIME = 15 * 1000; // 15 seconds
 
-    protected Bitmap frameScaled;
-    protected Bitmap frame;
-    protected int renderWidth;
-    protected int renderHeight;
-
 
     public Player player;
     private final Random random;
@@ -106,6 +137,38 @@ public abstract class Engine implements OnClockTimeUpListener {
     public GameCanvas gameCanvas;
 
     public AtomicBoolean touchRestricted = new AtomicBoolean(false);
+
+    protected Bitmap getFrameScaled() {
+        return frameScaled;
+    }
+
+    protected void setFrameScaled(Bitmap frameScaled) {
+        this.frameScaled = frameScaled;
+    }
+
+    protected Bitmap getFrame() {
+        return frame;
+    }
+
+    protected void setFrame(Bitmap frame) {
+        this.frame = frame;
+    }
+
+    protected int getRenderWidth() {
+        return renderWidth;
+    }
+
+    protected void setRenderWidth(int renderWidth) {
+        this.renderWidth = renderWidth;
+    }
+
+    protected int getRenderHeight() {
+        return renderHeight;
+    }
+
+    protected void setRenderHeight(int renderHeight) {
+        this.renderHeight = renderHeight;
+    }
 
     public enum GameState {
         PLAYING(GAMEPLAY_CONTROLS),
@@ -171,14 +234,14 @@ public abstract class Engine implements OnClockTimeUpListener {
             gameCanvas, Context context, MusicServiceConnection musicServiceConnection) {
         this.musicServiceConnection = musicServiceConnection;
         pauseBtnID = PAUSE_BTN;
-        this.renderWidth = renderWidth;
-        this.renderHeight = renderHeight;
+        this.setRenderWidth(renderWidth);
+        this.setRenderHeight(renderHeight);
         maxPlatformWidth = (int) (CAMERA_WIDTH * PLAT_CAMERA_MAX_RATIO);
         minPlatformWidth = (int) (CAMERA_WIDTH * PLAT_CAMERA_MIN_RATIO);
         initializeMediaPlayerAndSounds(context);
         random = new Random();
         backgroundImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.background), CAMERA_WIDTH, CAMERA_HEIGHT, true);
-        frame = Bitmap.createBitmap(CAMERA_WIDTH, CAMERA_HEIGHT, Bitmap.Config.ARGB_8888);
+        setFrame(Bitmap.createBitmap(CAMERA_WIDTH, CAMERA_HEIGHT, Bitmap.Config.ARGB_8888));
         this.gameCanvas = gameCanvas;
         gameCanvas.initializeGUI(resources, renderWidth, renderHeight);
         initializeClock();
@@ -284,7 +347,7 @@ public abstract class Engine implements OnClockTimeUpListener {
 
     public void updateFrame() {
         // draw on frame
-        Canvas bitmapCanvas = new Canvas(frame);
+        Canvas bitmapCanvas = new Canvas(getFrame());
         // draw background
         bitmapCanvas.drawBitmap(backgroundImg, 0, 0, gamePaint);
         // draw platforms
@@ -297,13 +360,13 @@ public abstract class Engine implements OnClockTimeUpListener {
         player.render(bitmapCanvas, this);
 
         // final render (stretch)
-        frameScaled = BitmapUtils.stretch(frame, renderWidth, renderHeight, false);
+        setFrameScaled(BitmapUtils.stretch(getFrame(), getRenderWidth(), getRenderHeight(), false));
 
         // add controls
-        Canvas finalFrameCanvas = new Canvas(frameScaled);
+        Canvas finalFrameCanvas = new Canvas(getFrameScaled());
         if (currentGameState == GameState.PAUSED || currentGameState == GameState.LOST) {
             // reduce brightness of background game
-            finalFrameCanvas.drawRect(0, 0, renderWidth, renderHeight, pausePaint);
+            finalFrameCanvas.drawRect(0, 0, getRenderWidth(), getRenderHeight(), pausePaint);
         }
         gameCanvas.renderControls(finalFrameCanvas);
     }
@@ -329,7 +392,7 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     public void render(Canvas canvas) {
-        canvas.drawBitmap(frameScaled, 0, 0, gamePaint);
+        canvas.drawBitmap(getFrameScaled(), 0, 0, gamePaint);
     }
 
     public void onResume() {
@@ -367,7 +430,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         for (Map.Entry<Integer, Control> controlEntry : gameCanvas.controls.entrySet()) {
             if ((controlEntry.getKey() & GAMEPLAY_CONTROLS) != 0) continue;
             Control control = controlEntry.getValue();
-            if (control.isVisible && control instanceof UpdatingControl) {
+            if (control.isVisible() && control instanceof UpdatingControl) {
                 ((UpdatingControl) control).update(msPassed);
             }
         }
@@ -548,8 +611,8 @@ public abstract class Engine implements OnClockTimeUpListener {
         while (currentBit < MAX_FLAGS) {
             if (checkActive(activeControls, currentBit)) {
                 Control activeControl = gameCanvas.getControl(currentBit);
-                if (activeControl.onTouch != null) {
-                    activeControl.onTouch.onTouch(this, context);
+                if (activeControl.getOnTouch() != null) {
+                    activeControl.getOnTouch().onTouch(this, context);
                     return true;
                 }
             }

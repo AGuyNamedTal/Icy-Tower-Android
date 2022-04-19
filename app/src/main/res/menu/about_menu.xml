@@ -6,4 +6,7 @@
     <item
         android:id="@+id/about_game_option"
         android:title="About Game" />
+    <item
+        android:id="@+id/exit_option"
+        android:title="Exit" />
 </menu>

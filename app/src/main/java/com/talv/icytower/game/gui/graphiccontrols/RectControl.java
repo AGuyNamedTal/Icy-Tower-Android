@@ -9,9 +9,9 @@ public class RectControl extends Control {
     private final Paint paint;
 
     public RectControl(Rect rect, int color, int thickness) {
-        isEnabled = false;
-        isVisible = false;
-        this.rect = rect;
+        setEnabled(false);
+        setVisible(false);
+        this.setRect(rect);
         paint = new Paint();
         paint.setColor(color);
         paint.setStyle(Paint.Style.STROKE);
@@ -19,9 +19,9 @@ public class RectControl extends Control {
     }
 
     public RectControl(Rect rect, int color) {
-        isEnabled = false;
-        isVisible = false;
-        this.rect = rect;
+        setEnabled(false);
+        setVisible(false);
+        this.setRect(rect);
         paint = new Paint();
         paint.setColor(color);
         paint.setStyle(Paint.Style.FILL);
@@ -29,6 +29,6 @@ public class RectControl extends Control {
 
     @Override
     public void render(Canvas canvas) {
-        canvas.drawRect(rect, paint);
+        canvas.drawRect(getRect(), paint);
     }
 }

@@ -74,7 +74,7 @@ public class MultiplayerEngine extends Engine {
 
     public void updateFrame() {
         // draw on frame
-        Canvas bitmapCanvas = new Canvas(frame);
+        Canvas bitmapCanvas = new Canvas(getFrame());
         // draw top
 
         bitmapCanvas.setMatrix(topMatrix);
@@ -87,13 +87,13 @@ public class MultiplayerEngine extends Engine {
         drawGame(bitmapCanvas, true);
 
         // final render (stretch)
-        frameScaled = BitmapUtils.stretch(frame, renderWidth, renderHeight, false);
+        setFrameScaled(BitmapUtils.stretch(getFrame(), getRenderWidth(), getRenderHeight(), false));
 
         // add controls
-        Canvas finalFrameCanvas = new Canvas(frameScaled);
+        Canvas finalFrameCanvas = new Canvas(getFrameScaled());
         if (currentGameState == GameState.PAUSED || currentGameState == GameState.LOST) {
             // reduce brightness of background game
-            finalFrameCanvas.drawRect(0, 0, renderWidth, renderHeight, pausePaint);
+            finalFrameCanvas.drawRect(0, 0, getRenderWidth(), getRenderHeight(), pausePaint);
         }
 
         gameCanvas.renderControls(finalFrameCanvas);

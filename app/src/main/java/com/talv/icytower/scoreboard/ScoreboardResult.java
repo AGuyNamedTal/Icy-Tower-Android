@@ -1,7 +1,5 @@
 package com.talv.icytower.scoreboard;
 
-import com.google.firebase.database.DatabaseException;
-
 public class ScoreboardResult {
     public Exception exception;
     public ScoreboardData[] scoreboardData;

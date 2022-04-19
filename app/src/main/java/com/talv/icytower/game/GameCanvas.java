@@ -3,7 +3,6 @@ package com.talv.icytower.game;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
@@ -83,8 +82,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
                     FINGERS[index] = fingerPoint;
                     for (Map.Entry<Integer, Control> controlEntry : controls.entrySet()) {
                         Control control = controlEntry.getValue();
-                        if (!control.isEnabled) continue;
-                        if (RectUtils.isPointInRect(control.rect, fingerPoint.x, fingerPoint.y)) {
+                        if (!control.isEnabled()) continue;
+                        if (RectUtils.isPointInRect(control.getRect(), fingerPoint.x, fingerPoint.y)) {
                             activeControls |= controlEntry.getKey();
                         }
                     }
@@ -102,9 +101,9 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         boolean resetToDefaultScale = false;
         for (Map.Entry<Integer, Control> entry : controls.entrySet()) {
             Control control = entry.getValue();
-            if (!control.isVisible) continue;
-            if (control.flipY) {
-                canvas.scale(1, -1, control.rect.width() / 2f, control.rect.height() / 2f);
+            if (!control.isVisible()) continue;
+            if (control.isFlipY()) {
+                canvas.scale(1, -1, control.getRect().width() / 2f, control.getRect().height() / 2f);
                 resetToDefaultScale = true;
             } else if (resetToDefaultScale) {
                 canvas.scale(1, 1);
@@ -121,8 +120,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
             if ((controlsID & bit) == bit) {
                 Control control = controls.get(bit);
                 if (control != null) {
-                    control.isVisible = val;
-                    control.isEnabled = val;
+                    control.setVisible(val);
+                    control.setEnabled(val);
                 }
             }
         }
@@ -143,7 +142,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
             int controlId = controlPosition.getKey();
             Rect controlRect = controlPosition.getValue();
             if (controls.containsKey(controlId))
-                controls.get(controlPosition.getKey()).rect = controlRect;
+                controls.get(controlPosition.getKey()).setRect(controlRect);
         }
     }
 

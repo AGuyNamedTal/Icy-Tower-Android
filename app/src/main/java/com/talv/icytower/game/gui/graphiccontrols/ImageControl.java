@@ -16,9 +16,9 @@ public class ImageControl extends Control {
     public Bitmap image;
 
     public ImageControl(Rect rect, Bitmap image) {
-        this.isEnabled = false;
-        this.isVisible = false;
-        this.rect = rect;
+        this.setEnabled(false);
+        this.setVisible(false);
+        this.setRect(rect);
         this.image = image;
     }
 
@@ -28,7 +28,7 @@ public class ImageControl extends Control {
 
 
     public static ImageControl reflectControl(ImageControl control, int renderWidth, int renderHeight) {
-        return new ImageControl(RectUtils.reflectRect(control.rect, renderWidth, renderHeight), BitmapUtils.reflectBitmap(control.image, false));
+        return new ImageControl(RectUtils.reflectRect(control.getRect(), renderWidth, renderHeight), BitmapUtils.reflectBitmap(control.image, false));
     }
 
     private static final float BTN_TEXT_PADDING_MULTIPLE = 0.05f;
@@ -73,6 +73,6 @@ public class ImageControl extends Control {
 
     @Override
     public void render(Canvas canvas) {
-        canvas.drawBitmap(image, rect.left, rect.top, Engine.gamePaint);
+        canvas.drawBitmap(image, getRect().left, getRect().top, Engine.gamePaint);
     }
 }
