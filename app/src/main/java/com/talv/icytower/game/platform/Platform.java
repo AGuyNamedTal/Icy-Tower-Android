@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 public class Platform {
 
+
     public enum PlatformTypes {
         LEVEL_0(0, R.drawable.platform_0_left, R.drawable.platform_0_mid, R.drawable.platform_0_right),
         LEVEL_1(1, R.drawable.platform_1_left, R.drawable.platform_1_mid, R.drawable.platform_1_right),
@@ -36,7 +37,7 @@ public class Platform {
         }
     }
 
-    public static final PlatformTypes[] PLATFORM_TYPE_BY_LEVEL;
+    private static final PlatformTypes[] PLATFORM_TYPE_BY_LEVEL;
 
     private static final int NUMBER_ON_EVERY_N_PLAT = 10;
 
@@ -44,9 +45,31 @@ public class Platform {
     private static int platformHeight;
 
 
-    public Rect rect;
-    public Bitmap image;
-    public int platformNumber;
+    private Rect rect;
+    private final Bitmap image;
+    private final int platformNumber;
+
+    public static PlatformTypes[] getPlatformTypeByLevel() {
+        return PLATFORM_TYPE_BY_LEVEL;
+    }
+
+    public Rect getRect() {
+        return rect;
+    }
+
+    public void setRect(Rect rect) {
+        this.rect = rect;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
+
+
+    public int getPlatformNumber() {
+        return platformNumber;
+    }
+
 
     static {
         PLATFORM_TYPE_BY_LEVEL = PlatformTypes.values();
@@ -94,7 +117,7 @@ public class Platform {
         rect = RectUtils.rectFromWidthHeight(x, y, width, platformHeight);
         if (drawNumberOnPlatform) {
             Canvas canvas = new Canvas(image);
-            drawNumber(canvas, width, platformImage.linesFilled, num);
+            drawNumber(canvas, width, platformImage.getLinesFilled(), num);
         }
     }
 
@@ -123,14 +146,14 @@ public class Platform {
     }
 
     protected Paint getPaint() {
-        return Engine.gamePaint;
+        return Engine.getGamePaint();
     }
 
     public void onPlayerFall() {
     }
 
     public void render(Canvas canvas, Engine engine) {
-        canvas.drawBitmap(image, rect.left, rect.top - engine.cameraY, getPaint());
+        canvas.drawBitmap(image, rect.left, rect.top - engine.getCameraY(), getPaint());
     }
 
     public void recycle() {

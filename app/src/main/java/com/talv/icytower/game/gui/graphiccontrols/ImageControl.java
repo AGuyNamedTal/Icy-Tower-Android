@@ -13,7 +13,11 @@ import com.talv.icytower.game.utils.BitmapUtils;
 import com.talv.icytower.game.utils.RectUtils;
 
 public class ImageControl extends Control {
-    public Bitmap image;
+    private final Bitmap image;
+
+    public Bitmap getImage() {
+        return image;
+    }
 
     public ImageControl(Rect rect, Bitmap image) {
         this.setEnabled(false);
@@ -73,7 +77,7 @@ public class ImageControl extends Control {
 
     @Override
     public void render(Canvas canvas) {
-        canvas.drawBitmap(image, getRect().left, getRect().top, Engine.gamePaint);
+        canvas.drawBitmap(image, getRect().left, getRect().top, Engine.getGamePaint());
     }
 
     @Override
@@ -82,4 +86,6 @@ public class ImageControl extends Control {
                 "image=" + image +
                 "} " + super.toString();
     }
+
+
 }

@@ -12,11 +12,36 @@ public class GameStats {
     private static final String TOTAL_JUMPS_NAME = "total_jumps";
     private static final String TIME_TAKEN_NAME = "time_taken";
     @PropertyName(HIGH_SCORE_NAME)
-    public int highscore;
+    private int highscore;
     @PropertyName(TOTAL_JUMPS_NAME)
-    public int totalJumps;
+    private int totalJumps;
     @PropertyName(TIME_TAKEN_NAME)
-    public long timeTaken;
+    private long timeTaken;
+
+    public int getHighscore() {
+        return highscore;
+    }
+
+    public void setHighscore(int highscore) {
+        this.highscore = highscore;
+    }
+
+    public int getTotalJumps() {
+        return totalJumps;
+    }
+
+    public void setTotalJumps(int totalJumps) {
+        this.totalJumps = totalJumps;
+    }
+
+    public long getTimeTaken() {
+        return timeTaken;
+    }
+
+    public void setTimeTaken(long timeTaken) {
+        this.timeTaken = timeTaken;
+    }
+
 
     public GameStats() {
 
@@ -41,4 +66,6 @@ public class GameStats {
                 ", timeTaken=" + timeTaken +
                 '}';
     }
+
+
 }

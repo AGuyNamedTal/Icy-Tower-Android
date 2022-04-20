@@ -15,11 +15,35 @@ public class UserProfileInfo {
     private static final String GAMES_PLAYED_NAME = "games_played";
     private static final String COUNTRY_CODE_NAME = "country_code";
     @PropertyName(CREATION_DATE_NAME)
-    public long creationDate;
+    private long creationDate;
     @PropertyName(GAMES_PLAYED_NAME)
-    public int gamesPlayed;
+    private int gamesPlayed;
     @PropertyName(COUNTRY_CODE_NAME)
-    public String countryCode;
+    private String countryCode;
+
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public void setGamesPlayed(int gamesPlayed) {
+        this.gamesPlayed = gamesPlayed;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 
     public UserProfileInfo() {
 
@@ -57,4 +81,6 @@ public class UserProfileInfo {
                 ", countryCode='" + countryCode + '\'' +
                 '}';
     }
+
+
 }

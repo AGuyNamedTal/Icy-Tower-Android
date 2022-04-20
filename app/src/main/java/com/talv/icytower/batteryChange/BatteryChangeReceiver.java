@@ -8,7 +8,7 @@ import android.os.BatteryManager;
 public class BatteryChangeReceiver extends BroadcastReceiver {
 
     private final double batteryLow;
-    public final BatteryChangeListener batteryChangeListener;
+    private final BatteryChangeListener batteryChangeListener;
 
     private double previousBattery = 1;
 
@@ -44,4 +44,5 @@ public class BatteryChangeReceiver extends BroadcastReceiver {
                 ", previousBattery=" + previousBattery +
                 "} " + super.toString();
     }
+
 }

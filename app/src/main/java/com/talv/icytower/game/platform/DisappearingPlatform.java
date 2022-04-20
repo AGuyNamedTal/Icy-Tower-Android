@@ -8,8 +8,8 @@ public class DisappearingPlatform extends Platform {
     private static final int STARTING_ALPHA = (int) (255 * STARTING_OPACITY);
     private static final int DISAPPEARING_PLATFORM_LIFESPAN = 500;
 
-    public Paint paint;
-    public double lifespan;
+    private final Paint paint;
+    private double lifespan;
 
     private boolean disappearing = false;
 
@@ -57,4 +57,5 @@ public class DisappearingPlatform extends Platform {
                 ", disappearing=" + disappearing +
                 "} " + super.toString();
     }
+
 }

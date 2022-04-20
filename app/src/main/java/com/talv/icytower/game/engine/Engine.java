@@ -64,35 +64,35 @@ public abstract class Engine implements OnClockTimeUpListener {
     private int renderHeight;
 
 
-    public static Character character1;
-    public static Character character2;
+    private static Character character1;
+    private static Character character2;
 
     public static final float PLAYER_SIZE_MULTIPLE = 0.7f;
 
-    public static Paint gamePaint;
-    public static Paint pausePaint;
+    private static final Paint gamePaint;
+    private static final Paint pausePaint;
 
-    public static GameStats bestGameStats;
-    public static UserProfileInfo userProfileInfo;
-    public static String user;
+    private static GameStats bestGameStats;
+    private static UserProfileInfo userProfileInfo;
+    private static String user;
 
 
     private final int maxPlatformWidth;
     private final int minPlatformWidth;
     private final float PLAT_CAMERA_MAX_RATIO = PLAYER_SIZE_MULTIPLE * 0.55f;
     private final float PLAT_CAMERA_MIN_RATIO = PLAYER_SIZE_MULTIPLE * 0.35f;
-    public LinkedList<Platform> platforms = new LinkedList<>();
+    private final LinkedList<Platform> platforms = new LinkedList<>();
 
 
     protected Bitmap backgroundImg;
 
-    public int cameraY;
+    private int cameraY;
     public static final int CAMERA_WIDTH = 250;
     public static final int CAMERA_HEIGHT = 550;
 
 
-    public float externalCameraSpeed;
-    public float constantCameraSpeed;
+    private float externalCameraSpeed;
+    private float constantCameraSpeed;
     private static final float CAMERA_SPEED_DECELERATION = PLAYER_SIZE_MULTIPLE * 0.004f;
     private static final float CAMERA_SPEED_ACCELERATION = CAMERA_SPEED_DECELERATION / -1.5f;
     private static final float CAMERA_CONSTANT_SPEED_INCREASE = Engine.PLAYER_SIZE_MULTIPLE * -0.0465f;
@@ -100,12 +100,53 @@ public abstract class Engine implements OnClockTimeUpListener {
     private static final int CAMERA_SPEED_INCREASE_TIME = 15 * 1000; // 15 seconds
 
 
-    public Player player;
+    private Player player;
     private final Random random;
 
-    public GameCanvas gameCanvas;
+    private GameCanvas gameCanvas;
 
-    public AtomicBoolean touchRestricted = new AtomicBoolean(false);
+    private AtomicBoolean touchRestricted = new AtomicBoolean(false);
+
+    public static Character getCharacter1() {
+        return character1;
+    }
+
+
+    public static Character getCharacter2() {
+        return character2;
+    }
+
+    public static Paint getGamePaint() {
+        return gamePaint;
+    }
+
+    public static Paint getPausePaint() {
+        return pausePaint;
+    }
+
+    public static GameStats getBestGameStats() {
+        return bestGameStats;
+    }
+
+    public static void setBestGameStats(GameStats bestGameStats) {
+        Engine.bestGameStats = bestGameStats;
+    }
+
+    public static UserProfileInfo getUserProfileInfo() {
+        return userProfileInfo;
+    }
+
+    public static void setUserProfileInfo(UserProfileInfo userProfileInfo) {
+        Engine.userProfileInfo = userProfileInfo;
+    }
+
+    public static String getUser() {
+        return user;
+    }
+
+    public static void setUser(String user) {
+        Engine.user = user;
+    }
 
     protected Bitmap getFrameScaled() {
         return frameScaled;
@@ -139,6 +180,31 @@ public abstract class Engine implements OnClockTimeUpListener {
         this.renderHeight = renderHeight;
     }
 
+    public LinkedList<Platform> getPlatforms() {
+        return platforms;
+    }
+
+    public int getCameraY() {
+        return cameraY;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public GameCanvas getGameCanvas() {
+        return gameCanvas;
+    }
+
+    public SoundPool getSoundPool() {
+        return soundPool;
+    }
+
+    public MusicServiceConnection getMusicServiceConnection() {
+        return musicServiceConnection;
+    }
+
+
     public enum GameState {
         PLAYING(GAMEPLAY_CONTROLS),
         PAUSED(PAUSE_MENU_CONTROLS),
@@ -153,7 +219,11 @@ public abstract class Engine implements OnClockTimeUpListener {
 
     }
 
-    public GameState currentGameState = GameState.PLAYING;
+    private GameState currentGameState = GameState.PLAYING;
+
+    public GameState getCurrentGameState() {
+        return currentGameState;
+    }
 
     public void updateGameState(GameState newGameState) {
         if (currentGameState != newGameState) {
@@ -172,7 +242,7 @@ public abstract class Engine implements OnClockTimeUpListener {
     private int gameOverSound;
     private int gameOverStreamId;
 
-    public SoundPool soundPool;
+    private SoundPool soundPool;
 
     private ClockControl clock;
     private Vibrator vibrator;
@@ -197,7 +267,7 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     protected int pauseBtnID;
-    public MusicServiceConnection musicServiceConnection;
+    private final MusicServiceConnection musicServiceConnection;
 
     public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas
             gameCanvas, Context context, MusicServiceConnection musicServiceConnection) {
@@ -215,10 +285,9 @@ public abstract class Engine implements OnClockTimeUpListener {
         gameCanvas.initializeGUI(resources, renderWidth, renderHeight);
         initializeClock();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        int platformHeight = (int) (character1.height * 0.6f);
+        int platformHeight = (int) (character1.getHeight() * 0.6f);
         Platform.loadBitmaps(resources, platformHeight);
         player = new Player(soundPool, context);
-
     }
 
 
@@ -242,9 +311,9 @@ public abstract class Engine implements OnClockTimeUpListener {
         cameraY = 0;
         externalCameraSpeed = 0f;
         constantCameraSpeed = 0f;
-        clock.currentTime = 0;
-        clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
-        clock.countTime = false;
+        clock.setCurrentTime(0);
+        clock.setTimeTillSpeedIncrease(CAMERA_SPEED_INCREASE_TIME);
+        clock.setCountTime(false);
         stopGameOver();
         musicServiceConnection.resetSpeed();
         clearPlatforms();
@@ -265,10 +334,10 @@ public abstract class Engine implements OnClockTimeUpListener {
         Platform groundPlatform = new Platform(Platform.PlatformTypes.LEVEL_0, 0,
                 0, CAMERA_HEIGHT - Platform.getPlatformHeight() - (int) (0.05f * CAMERA_HEIGHT), CAMERA_WIDTH, false);
         platforms.add(groundPlatform);
-        generatePlatforms((int) Math.ceil(CAMERA_HEIGHT / (float) (character1.height)) * 2);
+        generatePlatforms((int) Math.ceil(CAMERA_HEIGHT / (float) (character1.getHeight())) * 2);
         player.setCharacter(character);
-        RectUtils.setRectPos(player.rect, (CAMERA_WIDTH - player.rect.width()) / 2,
-                platforms.peekFirst().rect.top - player.rect.height());
+        RectUtils.setRectPos(player.getRect(), (CAMERA_WIDTH - player.getRect().width()) / 2,
+                platforms.peekFirst().getRect().top - player.getRect().height());
 
     }
 
@@ -288,9 +357,9 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     private void initializeClock() {
-        clock = (ClockControl) gameCanvas.controls.get(CLOCK);
-        clock.onClockTimeUpListener = this;
-        clock.timeTillSpeedIncrease = CAMERA_SPEED_INCREASE_TIME;
+        clock = (ClockControl) gameCanvas.getControls().get(CLOCK);
+        clock.setOnClockTimeUpListener(this);
+        clock.setTimeTillSpeedIncrease(CAMERA_SPEED_INCREASE_TIME);
     }
 
     public int playSound(int soundID, float rate) {
@@ -321,7 +390,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         bitmapCanvas.drawBitmap(backgroundImg, 0, 0, gamePaint);
         // draw platforms
         for (Platform platform : platforms) {
-            if (platform.rect.bottom >= cameraY) {
+            if (platform.getRect().bottom >= cameraY) {
                 platform.render(bitmapCanvas, this);
             }
         }
@@ -341,7 +410,7 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     public void updateGame(int msPassed, Context context) {
-        int activeControls = gameCanvas.activeControls.get();
+        int activeControls = gameCanvas.getActiveControls().get();
         if (checkActive(activeControls, pauseBtnID)) {
             onPause();
         }
@@ -379,7 +448,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         if (currentGameState == GameState.PLAYING) {
             musicServiceConnection.pause();
             updateGameState(GameState.PAUSED);
-            clock.countTime = false;
+            clock.setCountTime(false);
         }
     }
 
@@ -391,12 +460,12 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     protected void activateClock() {
-        clock.countTime = true;
+        clock.setCountTime(true);
         constantCameraSpeed = Math.min(CAMERA_CONSTANT_SPEED_INCREASE, constantCameraSpeed);
     }
 
     protected void updateNonGamingControls(int msPassed) {
-        for (Map.Entry<Integer, Control> controlEntry : gameCanvas.controls.entrySet()) {
+        for (Map.Entry<Integer, Control> controlEntry : gameCanvas.getControls().entrySet()) {
             if ((controlEntry.getKey() & GAMEPLAY_CONTROLS) != 0) continue;
             Control control = controlEntry.getValue();
             if (control.isVisible() && control instanceof UpdatingControl) {
@@ -424,7 +493,7 @@ public abstract class Engine implements OnClockTimeUpListener {
             if (platform instanceof DisappearingPlatform) {
                 removePlat = ((DisappearingPlatform) platform).tick(msPassed);
             }
-            if (removePlat || platform.rect.top > cameraY + CAMERA_HEIGHT) {
+            if (removePlat || platform.getRect().top > cameraY + CAMERA_HEIGHT) {
                 platform.recycle();
                 iterator.remove();
                 removed++;
@@ -484,8 +553,8 @@ public abstract class Engine implements OnClockTimeUpListener {
     protected void updateLostUI(Context context, Player winningPlayer) {
         int score = winningPlayer.getScore();
         gameCanvas.updateText(YOUR_SCORE_TXT, "Your Score: " + score);
-        gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + winningPlayer.totalJumps +
-                "   Time: " + formatGameTimeToString(winningPlayer.totalTime) + " (sec)");
+        gameCanvas.updateText(GAME_STATS_TXT, "Total Jumps: " + winningPlayer.getTotalJumps() +
+                "   Time: " + formatGameTimeToString(winningPlayer.getTotalTime()) + " (sec)");
 
         if (bestGameStats == null) {
             // feature disabled
@@ -493,11 +562,11 @@ public abstract class Engine implements OnClockTimeUpListener {
             gameCanvas.setEnabledAndVisible(PERSONAL_HIGH_SCORE_TXT, false);
         } else {
             gameCanvas.setEnabledAndVisible(PERSONAL_HIGH_SCORE_TXT, true);
-            if (score > bestGameStats.highscore) {
+            if (score > bestGameStats.getHighscore()) {
                 gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, true);
-                bestGameStats.highscore = score;
-                bestGameStats.timeTaken = winningPlayer.totalTime;
-                bestGameStats.totalJumps = winningPlayer.totalJumps;
+                bestGameStats.setHighscore(score);
+                bestGameStats.setTimeTaken(winningPlayer.getTotalTime());
+                bestGameStats.setTotalJumps(winningPlayer.getTotalJumps());
 
                 FirebaseHelper.setBestGameStats(user, bestGameStats, new OnFailureListener() {
                     @Override
@@ -509,11 +578,11 @@ public abstract class Engine implements OnClockTimeUpListener {
             } else {
                 gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, false);
             }
-            gameCanvas.updateText(PERSONAL_HIGH_SCORE_TXT, "Highscore: " + bestGameStats.highscore);
+            gameCanvas.updateText(PERSONAL_HIGH_SCORE_TXT, "Highscore: " + bestGameStats.getHighscore());
         }
         if (userProfileInfo != null) {
             // feature enabled
-            userProfileInfo.gamesPlayed++;
+            userProfileInfo.setGamesPlayed(userProfileInfo.getGamesPlayed() + 1);
             FirebaseHelper.setUserProfileInfo(user, userProfileInfo, new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -531,10 +600,10 @@ public abstract class Engine implements OnClockTimeUpListener {
             Log.wtf("PLATFORMS EMPTY", "platfors.isEmpty() == true");
         } else {
             Platform last = platforms.getLast();
-            lastPlatformY = last.rect.top;
-            lastPlatformNum = last.platformNumber;
+            lastPlatformY = last.getRect().top;
+            lastPlatformNum = last.getPlatformNumber();
         }
-        int distanceBetweenPlatforms = (int) (character1.height * 0.9f);
+        int distanceBetweenPlatforms = (int) (character1.getHeight() * 0.9f);
         int height = Platform.getPlatformHeight();
         for (int i = 0; i < count; i++) {
             int y = lastPlatformY - distanceBetweenPlatforms - height;
@@ -552,7 +621,7 @@ public abstract class Engine implements OnClockTimeUpListener {
                 x = random.nextInt(CAMERA_WIDTH - width);
                 drawCorners = true;
             }
-            Platform.PlatformTypes platformLevel = Platform.PLATFORM_TYPE_BY_LEVEL[Math.min(Platform.PLATFORM_TYPE_BY_LEVEL.length - 1, lastPlatformNum / PLATFORMS_BETWEEN_LEVELS)];
+            Platform.PlatformTypes platformLevel = Platform.getPlatformTypeByLevel()[Math.min(Platform.getPlatformTypeByLevel().length - 1, lastPlatformNum / PLATFORMS_BETWEEN_LEVELS)];
 
             Platform newPlatform;
             if (fullLevel || random.nextInt(REGULAR_TO_DISAPPEARING_PLATFORM_RATIO) != 0) {
@@ -569,7 +638,7 @@ public abstract class Engine implements OnClockTimeUpListener {
     private void clearPlatforms() {
         Iterator<Platform> iterator = platforms.descendingIterator();
         while (iterator.hasNext()) {
-            iterator.next().image.recycle();
+            iterator.next().getImage().recycle();
             iterator.remove();
         }
     }

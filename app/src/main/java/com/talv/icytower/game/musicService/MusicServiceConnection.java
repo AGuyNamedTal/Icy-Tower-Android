@@ -5,8 +5,12 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 public class MusicServiceConnection implements ServiceConnection {
-    public MediaPlayerService mediaPlayerService;
-    public boolean serviceBounded = false;
+    private MediaPlayerService mediaPlayerService;
+    private boolean serviceBounded = false;
+
+    public boolean isServiceBounded() {
+        return serviceBounded;
+    }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
@@ -58,4 +62,6 @@ public class MusicServiceConnection implements ServiceConnection {
                 ", serviceBounded=" + serviceBounded +
                 '}';
     }
+
+
 }

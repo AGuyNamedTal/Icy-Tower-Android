@@ -16,17 +16,17 @@ public class SingleplayerEngine extends Engine {
 
     @Override
     int minPlayerY() {
-        return player.rect.top;
+        return getPlayer().getRect().top;
     }
 
     @Override
     int maxPlayerY() {
-        return player.rect.top;
+        return getPlayer().getRect().top;
     }
 
     @Override
     Player getWinningPlayer() {
-        return player;
+        return getPlayer();
     }
 
     @Override

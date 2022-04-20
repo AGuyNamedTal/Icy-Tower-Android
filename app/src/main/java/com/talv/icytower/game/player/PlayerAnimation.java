@@ -9,9 +9,17 @@ import java.util.Arrays;
 
 public class PlayerAnimation {
 
-    public final Bitmap[] bitmapsRight;
-    public final Bitmap[] bitmapsLeft;
+    private final Bitmap[] bitmapsRight;
+    private final Bitmap[] bitmapsLeft;
     private final int[] switchIndexes;
+
+    public Bitmap[] getBitmapsRight() {
+        return bitmapsRight;
+    }
+
+    public Bitmap[] getBitmapsLeft() {
+        return bitmapsLeft;
+    }
 
     private int currentTime = 0;
     private final int maxIndex;
@@ -90,4 +98,5 @@ public class PlayerAnimation {
                 ", maxIndex=" + maxIndex +
                 '}';
     }
+
 }

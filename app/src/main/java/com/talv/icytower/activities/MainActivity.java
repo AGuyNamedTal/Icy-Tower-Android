@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         userNameTxt = findViewById(R.id.userDataTxt);
         logOutTxt = findViewById(R.id.logOutTxt);
         logOutTxt.setOnClickListener(view -> {
-            FirebaseHelper.auth.signOut();
+            FirebaseHelper.getAuth().signOut();
             updateUI();
         });
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         });
         playSingleBtn.setOnClickListener(v -> startGame(true));
         playMultiBtn.setOnClickListener(view -> startGame(false));
-        FirebaseHelper.auth.addAuthStateListener(firebaseAuth -> {
+        FirebaseHelper.getAuth().addAuthStateListener(firebaseAuth -> {
             if (activityOnForeground)
                 updateUI();
         });
@@ -76,17 +76,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void startGame(boolean singleplayer) {
         if (LOGIN_REQUIRED) {
-            FirebaseUser currentUser = FirebaseHelper.auth.getCurrentUser();
+            FirebaseUser currentUser = FirebaseHelper.getAuth().getCurrentUser();
             if (currentUser == null) {
                 // login
                 startActivity(new Intent(MainActivity.this, LoginActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
                 overridePendingTransition(0, 0);
             } else {
-                Engine.user = currentUser.getDisplayName();
+                Engine.setUser(currentUser.getDisplayName());
                 LoginActivity.loginWithUser(MainActivity.this, singleplayer);
             }
         } else {
-            Engine.user = "";
+            Engine.setUser("");
             LoginActivity.loginWithUser(MainActivity.this, singleplayer);
         }
     }
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        FirebaseUser user = FirebaseHelper.auth.getCurrentUser();
+        FirebaseUser user = FirebaseHelper.getAuth().getCurrentUser();
         if (user == null) {
             userNameTxt.setText("Currently not logged in");
             logOutTxt.setVisibility(View.GONE);
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (FirebaseHelper.auth.getCurrentUser() == null) {
+                                if (FirebaseHelper.getAuth().getCurrentUser() == null) {
                                     profilePhotoImgView.setVisibility(View.GONE);
                                 } else {
                                     if (bitmap == null) {

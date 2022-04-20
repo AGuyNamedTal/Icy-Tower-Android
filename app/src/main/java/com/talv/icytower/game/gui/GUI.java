@@ -185,7 +185,7 @@ public class GUI {
         controls.put(CONTROLS.ARROW_LEFT_2, ImageControl.reflectControl(arrowLeftCtrl, renderWidth, renderHeight));
         controls.put(CONTROLS.ARROW_RIGHT_2, ImageControl.reflectControl(arrowRightCtrl, renderWidth, renderHeight));
         controls.put(CONTROLS.PAUSE_MID_BTN, new ImageControl(RectUtils.centerRect(pauseBtnSize, pauseBtnSize, renderWidth, renderHeight),
-                BitmapUtils.reflectBitmap(pauseButtonCtrl.image, false)));
+                BitmapUtils.reflectBitmap(pauseButtonCtrl.getImage(), false)));
     }
 
 
@@ -400,7 +400,7 @@ public class GUI {
         int paddingBetweenChars = renderWidth / 5;
         int sidePadding = renderWidth / 8;
         int charRectWidth = (renderWidth - paddingBetweenChars - sidePadding * 2) / 2;
-        int charRectHeight = (int) (charRectWidth * ((float) Engine.character1.height / Engine.character1.width));
+        int charRectHeight = (int) (charRectWidth * ((float) Engine.getCharacter1().getHeight() / Engine.getCharacter1().getWidth()));
 
         int rectThickness = (int) (renderWidth * 0.01f);
 
@@ -433,10 +433,10 @@ public class GUI {
                 player2Rect.right - rectPaddingX,
                 player2Rect.bottom - rectPaddingY
         );
-        Bitmap char1Img = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
+        Bitmap char1Img = Engine.getCharacter1().getAnimations().get(Player.PlayerState.STANDING).getBitmapsRight()[0];
         controls.put(PLAYER_1_IMG, new ImageControl(player1ImgRect,
                 BitmapUtils.stretch(char1Img, player1ImgRect.width(), player1ImgRect.height(), false)));
-        Bitmap char2Img = Engine.character2.animations.get(Player.PlayerState.STANDING).bitmapsRight[0];
+        Bitmap char2Img = Engine.getCharacter2().getAnimations().get(Player.PlayerState.STANDING).getBitmapsRight()[0];
         controls.put(PLAYER_2_IMG, new ImageControl(player2ImgRect,
                 BitmapUtils.stretch(char2Img, player2ImgRect.width(), player2ImgRect.height(), false)));
 
@@ -463,7 +463,7 @@ public class GUI {
         controls.get(RESUME_BTN).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                if (engine.currentGameState == Engine.GameState.PAUSED) {
+                if (engine.getCurrentGameState() == Engine.GameState.PAUSED) {
                     engine.updateGameState(Engine.GameState.PLAYING);
                 }
                 engine.onResume();
@@ -479,7 +479,7 @@ public class GUI {
                 engine.reset();
                 engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
                 engine.onResume();
-                engine.musicServiceConnection.stop();
+                engine.getMusicServiceConnection().stop();
             }
         });
         controls.get(SHARE_BTN).setOnTouch(new OnControlTouchListener() {
@@ -489,7 +489,7 @@ public class GUI {
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_SUBJECT, "MY AWESOME SCORE!!!");
                 intent.putExtra(Intent.EXTRA_TEXT,
-                        "I just scored " + engine.player.getScore() + " points on Icy Tower!!!");
+                        "I just scored " + engine.getPlayer().getScore() + " points on Icy Tower!!!");
                 context.startActivity(Intent.createChooser(intent, "Share using..."));
             }
         });
@@ -498,13 +498,13 @@ public class GUI {
         controls.get(PLAYER_1_RECT).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                engine.startGame(Engine.character1);
+                engine.startGame(Engine.getCharacter1());
             }
         });
         controls.get(PLAYER_2_RECT).setOnTouch(new OnControlTouchListener() {
             @Override
             public void onTouch(Engine engine, Context context) {
-                engine.startGame(Engine.character2);
+                engine.startGame(Engine.getCharacter2());
             }
         });
     }

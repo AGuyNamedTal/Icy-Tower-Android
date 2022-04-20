@@ -13,11 +13,27 @@ public class ClockControl extends ImageControl implements UpdatingControl {
     private final Bitmap arrow;
     private final Matrix matrix = new Matrix();
 
-    public long currentTime = 0;
-    public long timeTillSpeedIncrease = 1;
-    public boolean countTime = false;
+    private long currentTime = 0;
+    private long timeTillSpeedIncrease = 1;
+    private boolean countTime = false;
+    private OnClockTimeUpListener onClockTimeUpListener;
 
-    public OnClockTimeUpListener onClockTimeUpListener;
+    public void setCurrentTime(long currentTime) {
+        this.currentTime = currentTime;
+    }
+
+    public void setTimeTillSpeedIncrease(long timeTillSpeedIncrease) {
+        this.timeTillSpeedIncrease = timeTillSpeedIncrease;
+    }
+
+    public void setCountTime(boolean countTime) {
+        this.countTime = countTime;
+    }
+
+    public void setOnClockTimeUpListener(OnClockTimeUpListener onClockTimeUpListener) {
+        this.onClockTimeUpListener = onClockTimeUpListener;
+    }
+
 
     private final float STARTING_ANGLE = 180;
 
@@ -33,7 +49,7 @@ public class ClockControl extends ImageControl implements UpdatingControl {
         super.render(canvas);
         // render arrow:
         updateMatrix();
-        canvas.drawBitmap(arrow, matrix, Engine.gamePaint);
+        canvas.drawBitmap(arrow, matrix, Engine.getGamePaint());
     }
 
     @Override
@@ -64,4 +80,6 @@ public class ClockControl extends ImageControl implements UpdatingControl {
                 ", STARTING_ANGLE=" + STARTING_ANGLE +
                 "} " + super.toString();
     }
+
+
 }

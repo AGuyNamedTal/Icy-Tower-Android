@@ -51,13 +51,13 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "No internet connection available", Toast.LENGTH_LONG).show();
                     return;
                 }
-                FirebaseHelper.auth.signInWithEmailAndPassword(email, pass)
+                FirebaseHelper.getAuth().signInWithEmailAndPassword(email, pass)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    Engine.user = FirebaseHelper.auth.getCurrentUser().getDisplayName();
+                                    Engine.setUser(FirebaseHelper.getAuth().getCurrentUser().getDisplayName());
                                     loginWithUser(LoginActivity.this, getIntent().getBooleanExtra(GameActivity.SINGLEPLAYER_KEY, true));
 
                                 } else {
@@ -91,27 +91,27 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(context,
                 "Retrieving player profile...",
                 Toast.LENGTH_LONG).show();
-        FirebaseHelper.getBestGameStats(Engine.user, new OnCompleteListener() {
+        FirebaseHelper.getBestGameStats(Engine.getUser(), new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
                 if (!task.isSuccessful()) {
                     Toast.makeText(context, "Unable to retrieve best game stats (highscore), feature will be disabled - "
                                     + task.getException().getMessage(),
                             Toast.LENGTH_SHORT).show();
-                    Engine.bestGameStats = null;
+                    Engine.setBestGameStats(null);
                 } else {
-                    Engine.bestGameStats = ((DataSnapshot) task.getResult()).getValue(GameStats.class);
+                    Engine.setBestGameStats(((DataSnapshot) task.getResult()).getValue(GameStats.class));
                 }
-                FirebaseHelper.getUserProfileInfo(Engine.user, new OnCompleteListener() {
+                FirebaseHelper.getUserProfileInfo(Engine.getUser(), new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (!task.isSuccessful()) {
                             Toast.makeText(context, "Unable to retrieve user profile info, feature will be disabled - "
                                             + task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
-                            Engine.userProfileInfo = null;
+                            Engine.setUserProfileInfo(null);
                         } else {
-                            Engine.userProfileInfo = ((DataSnapshot) task.getResult()).getValue(UserProfileInfo.class);
+                            Engine.setUserProfileInfo(((DataSnapshot) task.getResult()).getValue(UserProfileInfo.class));
                         }
                         context.startActivity(new Intent(context, GameActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
                         context.overridePendingTransition(0, 0);

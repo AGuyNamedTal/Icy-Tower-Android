@@ -63,11 +63,11 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
             @Override
             public void onComplete(ScoreboardResult scoreboardResult) {
                 if (scoreboardResult.isSuccessful()) {
-                    adapter.data = scoreboardResult.scoreboardData;
+                    adapter.setData(scoreboardResult.getScoreboardData());
                     adapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(ScoreboardActivity.this, "Unable to retrieve scoreboard - " +
-                            scoreboardResult.exception.getMessage(), Toast.LENGTH_LONG).show();
+                            scoreboardResult.getException().getMessage(), Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
@@ -76,21 +76,21 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
 
     @Override
     public void onItemClick(View view, int position) {
-        ScoreboardData scoreboardData = adapter.data[position];
+        ScoreboardData scoreboardData = adapter.getData()[position];
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         final View popupView = inflater.inflate(R.layout.user_profile_popup, null);
 
         TextView usernameTxt = ((TextView) popupView.findViewById(R.id.up_username));
-        usernameTxt.setText(scoreboardData.user);
+        usernameTxt.setText(scoreboardData.getUser());
         usernameTxt.setPaintFlags(usernameTxt.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
-        ((TextView) popupView.findViewById(R.id.up_date)).setText(formatDate(scoreboardData.profileInfo.creationDate));
-        ((TextView) popupView.findViewById(R.id.up_gamesPlayed)).setText(String.valueOf(scoreboardData.profileInfo.gamesPlayed));
-        ((TextView) popupView.findViewById(R.id.up_highscore)).setText(String.valueOf(scoreboardData.bestGameStats.highscore));
-        ((TextView) popupView.findViewById(R.id.up_time)).setText(Engine.formatGameTimeToString(scoreboardData.bestGameStats.timeTaken) + " (sec)");
-        ((TextView) popupView.findViewById(R.id.up_totalJumps)).setText(String.valueOf(scoreboardData.bestGameStats.totalJumps));
+        ((TextView) popupView.findViewById(R.id.up_date)).setText(formatDate(scoreboardData.getProfileInfo().getCreationDate()));
+        ((TextView) popupView.findViewById(R.id.up_gamesPlayed)).setText(String.valueOf(scoreboardData.getProfileInfo().getGamesPlayed()));
+        ((TextView) popupView.findViewById(R.id.up_highscore)).setText(String.valueOf(scoreboardData.getBestGameStats().getHighscore()));
+        ((TextView) popupView.findViewById(R.id.up_time)).setText(Engine.formatGameTimeToString(scoreboardData.getBestGameStats().getTimeTaken()) + " (sec)");
+        ((TextView) popupView.findViewById(R.id.up_totalJumps)).setText(String.valueOf(scoreboardData.getBestGameStats().getTotalJumps()));
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -107,7 +107,7 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
             }
         });
         final ImageView imageView = ((ImageView) (popupView.findViewById(R.id.scoreboardProfilePhoto)));
-        FirebaseHelper.getProfilePhotoBytes(scoreboardData.user, new OnCompleteListener() {
+        FirebaseHelper.getProfilePhotoBytes(scoreboardData.getUser(), new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
@@ -129,7 +129,7 @@ public class ScoreboardActivity extends AppCompatActivity implements ScoreboardA
                 }
             }
         });
-        FirebaseHelper.getProfilePhotoBitmap(scoreboardData.user, new OnProfilePhotoGetComplete() {
+        FirebaseHelper.getProfilePhotoBitmap(scoreboardData.getUser(), new OnProfilePhotoGetComplete() {
             @Override
             public void onComplete(Bitmap bitmap) {
                 runOnUiThread(new Runnable() {

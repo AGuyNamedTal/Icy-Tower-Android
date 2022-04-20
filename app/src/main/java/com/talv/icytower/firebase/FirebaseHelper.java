@@ -26,13 +26,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseHelper {
-    public static FirebaseAuth auth;
-    public static FirebaseDatabase database;
-    public static FirebaseStorage storage;
-    public static StorageReference storageReference;
-    public static DatabaseReference dbRef;
-    public static DatabaseReference users;
+    private static FirebaseAuth auth;
+    private static FirebaseDatabase database;
+    private static FirebaseStorage storage;
+    private static StorageReference storageReference;
+    private static DatabaseReference dbRef;
+    private static DatabaseReference users;
 
+    public static FirebaseAuth getAuth() {
+        return auth;
+    }
+
+    public static FirebaseDatabase getDatabase() {
+        return database;
+    }
+
+    public static FirebaseStorage getStorage() {
+        return storage;
+    }
+
+    public static StorageReference getStorageReference() {
+        return storageReference;
+    }
+
+    public static DatabaseReference getDbRef() {
+        return dbRef;
+    }
+
+    public static DatabaseReference getUsers() {
+        return users;
+    }
+
+
+    public interface OnScoreboardRetrieveComplete {
+        void onComplete(ScoreboardResult scoreboardResult);
+    }
 
     private static final String USERS_REFERENCE_PATH = "users";
     private static final String PROFILE_PHOTOS_REFERENCE_PATH = "profile_photos";
@@ -145,7 +173,7 @@ public class FirebaseHelper {
                 Arrays.sort(scoreboardData, new Comparator<ScoreboardData>() {
                     @Override
                     public int compare(ScoreboardData sd1, ScoreboardData sd2) {
-                        return sd2.bestGameStats.highscore - sd1.bestGameStats.highscore;
+                        return sd2.getBestGameStats().getHighscore() - sd1.getBestGameStats().getHighscore();
                     }
                 });
                 if (scoreboardData.length > scoreboardPlayerCount) {
@@ -156,9 +184,5 @@ public class FirebaseHelper {
         });
     }
 
-
-    public interface OnScoreboardRetrieveComplete {
-        void onComplete(ScoreboardResult scoreboardResult);
-    }
 
 }

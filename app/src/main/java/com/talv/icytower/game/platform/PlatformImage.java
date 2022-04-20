@@ -17,7 +17,11 @@ public class PlatformImage {
     private final int rightBitmapWidth;
     private final int leftBitmapWidth;
     private final int height;
-    public int linesFilled;
+    private final int linesFilled;
+
+    public int getLinesFilled() {
+        return linesFilled;
+    }
 
 
     public PlatformImage(Bitmap middleBitmap, Bitmap leftBitmap, Bitmap rightBitmap) {
@@ -39,15 +43,15 @@ public class PlatformImage {
             } else {
                 Bitmap platformBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(platformBitmap);
-                canvas.drawBitmap(leftBitmap, 0, 0, Engine.gamePaint);
+                canvas.drawBitmap(leftBitmap, 0, 0, Engine.getGamePaint());
                 int middleBitmapWidth = width - leftBitmapWidth - rightBitmapWidth;
                 if (middleBitmapWidth > 0) {
                     Bitmap tiledMiddle = BitmapUtils.tileImageX(middleBitmap, middleBitmapWidth, height, false);
                     canvas.drawBitmap(tiledMiddle,
-                            leftBitmapWidth, 0, Engine.gamePaint);
+                            leftBitmapWidth, 0, Engine.getGamePaint());
                     tiledMiddle.recycle();
                 }
-                canvas.drawBitmap(rightBitmap, width - rightBitmapWidth, 0, Engine.gamePaint);
+                canvas.drawBitmap(rightBitmap, width - rightBitmapWidth, 0, Engine.getGamePaint());
                 return platformBitmap;
             }
         } else {
@@ -74,4 +78,5 @@ public class PlatformImage {
                 ", linesFilled=" + linesFilled +
                 '}';
     }
+
 }

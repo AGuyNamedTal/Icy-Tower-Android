@@ -24,14 +24,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 
-    public final Map<Integer, Control> controls = new HashMap<>();
+    private final Map<Integer, Control> controls = new HashMap<>();
 
     private static final int MAX_FINGERS = 10;
     private final PointF[] FINGERS = new PointF[MAX_FINGERS];
     //public static PointF[] CLICK_FINGERS = new PointF[MAX_FINGERS];
-    public SurfaceHolder holder;
+    private SurfaceHolder holder;
 
-    public AtomicInteger activeControls = new AtomicInteger(0);
+    private AtomicInteger activeControls = new AtomicInteger(0);
 
     public GameCanvas(Context context) {
         super(context);
@@ -151,5 +151,18 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
                 ", holder=" + holder +
                 ", activeControls=" + activeControls +
                 "} " + super.toString();
+    }
+
+    public Map<Integer, Control> getControls() {
+        return controls;
+    }
+
+    @Override
+    public SurfaceHolder getHolder() {
+        return holder;
+    }
+
+    public AtomicInteger getActiveControls() {
+        return activeControls;
     }
 }

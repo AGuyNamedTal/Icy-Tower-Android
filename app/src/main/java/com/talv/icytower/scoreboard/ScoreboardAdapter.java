@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.ViewHolder> {
 
-    public ScoreboardData[] data;
+    private ScoreboardData[] data;
     private final LayoutInflater inflater;
     private ItemClickListener onClickListener;
 
@@ -38,9 +38,9 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ScoreboardData data = this.data[position];
-        holder.countryTxt.setText(countryCodeToEmoji(data.profileInfo.countryCode));
-        holder.scoreTxt.setText(String.valueOf(data.bestGameStats.highscore));
-        holder.userTxt.setText(data.user);
+        holder.countryTxt.setText(countryCodeToEmoji(data.getProfileInfo().getCountryCode()));
+        holder.scoreTxt.setText(String.valueOf(data.getBestGameStats().getHighscore()));
+        holder.userTxt.setText(data.getUser());
     }
 
     private String countryCodeToEmoji(String countryCode) {
@@ -63,6 +63,14 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.Vi
     @Override
     public int getItemCount() {
         return data.length;
+    }
+
+    public ScoreboardData[] getData() {
+        return data;
+    }
+
+    public void setData(ScoreboardData[] data) {
+        this.data = data;
     }
 
 

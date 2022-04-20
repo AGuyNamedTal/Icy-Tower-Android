@@ -103,7 +103,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(batteryChangeReceiver);
-        if (musicPlayerServiceConnection.serviceBounded)
+        if (musicPlayerServiceConnection.isServiceBounded())
             unbindService(musicPlayerServiceConnection);
     }
 
@@ -169,12 +169,12 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void gameTick(int time) {
-        if (gameCanvas.holder == null) return;
+        if (gameCanvas.getHolder() == null) return;
         engine.updateFrame();
-        Canvas canvas = gameCanvas.holder.lockCanvas();
+        Canvas canvas = gameCanvas.getHolder().lockCanvas();
         if (canvas == null) return;
         engine.render(canvas);
-        gameCanvas.holder.unlockCanvasAndPost(canvas);
+        gameCanvas.getHolder().unlockCanvasAndPost(canvas);
         engine.updateGame(time, GameActivity.this);
 
     }

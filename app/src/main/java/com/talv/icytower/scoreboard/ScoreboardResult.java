@@ -3,8 +3,16 @@ package com.talv.icytower.scoreboard;
 import java.util.Arrays;
 
 public class ScoreboardResult {
-    public Exception exception;
-    public ScoreboardData[] scoreboardData;
+    private Exception exception;
+    private ScoreboardData[] scoreboardData;
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public ScoreboardData[] getScoreboardData() {
+        return scoreboardData;
+    }
 
     public boolean isSuccessful() {
         return exception == null;
@@ -25,4 +33,6 @@ public class ScoreboardResult {
                 ", scoreboardData=" + Arrays.toString(scoreboardData) +
                 '}';
     }
+
+
 }

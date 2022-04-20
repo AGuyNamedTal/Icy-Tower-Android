@@ -11,9 +11,21 @@ import java.util.HashMap;
 
 public class Character {
 
-    public final HashMap<Player.PlayerState, PlayerAnimation> animations;
-    public final int width;
-    public final int height;
+    private final HashMap<Player.PlayerState, PlayerAnimation> animations;
+    private final int width;
+    private final int height;
+
+    public HashMap<Player.PlayerState, PlayerAnimation> getAnimations() {
+        return animations;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 
     private Character(HashMap<Player.PlayerState, PlayerAnimation> animations, int width, int height) {
         this.animations = animations;
@@ -89,4 +101,6 @@ public class Character {
                 ", height=" + height +
                 '}';
     }
+
+
 }

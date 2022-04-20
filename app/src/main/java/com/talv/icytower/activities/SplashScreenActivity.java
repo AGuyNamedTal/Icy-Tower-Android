@@ -38,7 +38,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             endSplashScreen();
             return;
         }
-        bitmaps = Engine.character1.animations.get(Player.PlayerState.STANDING).bitmapsLeft.clone();
+        bitmaps = Engine.getCharacter1().getAnimations().get(Player.PlayerState.STANDING).getBitmapsLeft().clone();
         setContentView(R.layout.activity_splash_screen);
         imageView = findViewById(R.id.splashScreenImgView);
         imageView.setImageAlpha(0);

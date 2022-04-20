@@ -25,6 +25,12 @@ import static com.talv.icytower.game.gui.GUI.CONTROLS.SCORE_TXT;
 
 public class Player {
 
+
+    public Rect getRect() {
+        return rect;
+    }
+
+
     public enum Direction {
         LEFT,
         RIGHT
@@ -69,7 +75,8 @@ public class Player {
     public static final float MIN_JUMP_SPEED = -MAX_FALL_SPEED * 0.93f;
     public static final float HORIZONTAL_TO_VERTICAL_JUMP_MULTIPLE = 0.053f;
 
-    public float currentVerticalSpeed;
+
+    private float currentVerticalSpeed;
 
 
     private float currentSpeed;
@@ -77,9 +84,9 @@ public class Player {
     private float externalSpeed;
 
 
-    public Direction currentDirection;
-    public PlayerState currentState;
-    public Rect rect;
+    private Direction currentDirection;
+    private PlayerState currentState;
+    private Rect rect;
 
 
     protected HashMap<PlayerState, PlayerAnimation> animations;
@@ -88,8 +95,16 @@ public class Player {
 
     private int jumpSoundID;
 
-    public int totalJumps;
-    public long totalTime;
+    private int totalJumps;
+    private long totalTime;
+
+    public int getTotalJumps() {
+        return totalJumps;
+    }
+
+    public long getTotalTime() {
+        return totalTime;
+    }
 
     public Player(SoundPool soundPool, Context context) {
         rect = new Rect();
@@ -104,8 +119,8 @@ public class Player {
             this.animations = null;
             RectUtils.setRectSize(rect, 0, 0);
         } else {
-            this.animations = character.animations;
-            RectUtils.setRectSize(rect, character.width, character.height);
+            this.animations = character.getAnimations();
+            RectUtils.setRectSize(rect, character.getWidth(), character.getHeight());
         }
     }
     public boolean hasCharacter(){
@@ -137,7 +152,7 @@ public class Player {
 
     public void render(Canvas canvas, Engine engine) {
         if (animations == null) return;
-        canvas.drawBitmap(getCurrentImage(), rect.left, rect.top - engine.cameraY, Engine.gamePaint);
+        canvas.drawBitmap(getCurrentImage(), rect.left, rect.top - engine.getCameraY(), Engine.getGamePaint());
 
     }
 
@@ -176,7 +191,7 @@ public class Player {
             currentDirection = Direction.RIGHT;
         }
 
-        if (currentVerticalSpeed >= 0 /*not jumping*/ && !isOnPlatform(engine.platforms)) {
+        if (currentVerticalSpeed >= 0 /*not jumping*/ && !isOnPlatform(engine.getPlatforms())) {
             currentVerticalSpeed = Math.min(MAX_FALL_SPEED, currentVerticalSpeed + VERTICAL_DECELERATION);
         }
 
@@ -230,7 +245,7 @@ public class Player {
     private boolean isPlatformBelow(LinkedList<Platform> platforms) {
         for (Platform platform :
                 platforms) {
-            if (RectUtils.isRectBelowRect(platform.rect, rect)) {
+            if (RectUtils.isRectBelowRect(platform.getRect(), rect)) {
                 return true;
             }
         }
@@ -240,7 +255,7 @@ public class Player {
     private boolean isOnPlatform(LinkedList<Platform> platforms) {
         for (Platform platform :
                 platforms) {
-            if (RectUtils.isRectOnRect(rect, platform.rect)) {
+            if (RectUtils.isRectOnRect(rect, platform.getRect())) {
                 return true;
             }
         }
@@ -261,11 +276,11 @@ public class Player {
             // falling
             int yAfterIntersection = newY;
             Platform platformWhichFellOn = null;
-            for (Platform plat : engine.platforms) {
+            for (Platform plat : engine.getPlatforms()) {
                 PlayerPlatformsIntersection intersection =
-                        RectUtils.doesPlatformIntersectWithMovementY(rect, yAfterIntersection, plat.rect);
-                if (intersection.didIntersect) {
-                    yAfterIntersection = Math.min(yAfterIntersection, intersection.newY);
+                        RectUtils.doesPlatformIntersectWithMovementY(rect, yAfterIntersection, plat.getRect());
+                if (intersection.didIntersect()) {
+                    yAfterIntersection = Math.min(yAfterIntersection, intersection.getNewY());
                     platformWhichFellOn = plat;
                 }
             }
@@ -275,7 +290,7 @@ public class Player {
                 newY = yAfterIntersection;
                 platformWhichFellOn.onPlayerFall();
                 //onFallOnPlatform(platformWhichFellOn, engine);
-                updateScore(platformWhichFellOn.platformNumber * 10, engine.gameCanvas);
+                updateScore(platformWhichFellOn.getPlatformNumber() * 10, engine.getGameCanvas());
             }
         } else {
             // jumping up

@@ -35,11 +35,11 @@ import static com.talv.icytower.firebase.AuthVerifier.isValidUsername;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private class RegistrationInfo {
-        private String email;
-        private String user;
-        private String pass;
-        private Bitmap profilePhoto;
+    private static class RegistrationInfo {
+        private final String email;
+        private final String user;
+        private final String pass;
+        private final Bitmap profilePhoto;
 
         public RegistrationInfo(String email, String user, String pass, Bitmap profilePhoto) {
             this.email = email;
@@ -84,8 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
         final EditText emailEdt = findViewById(R.id.regEmailTxt);
-        final EditText userEdt =
-                findViewById(R.id.regNameTxt);
+        final EditText userEdt = findViewById(R.id.regNameTxt);
         final EditText password1Edt = findViewById(R.id.regPass1Txt);
         final EditText password2Edt = findViewById(R.id.regPass2Txt);
 
@@ -186,7 +185,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void checkUsernameExists(RegistrationInfo regInfo) {
-        FirebaseHelper.users.child(regInfo.getUser()).runTransaction(new Transaction.Handler() {
+        FirebaseHelper.getUsers().child(regInfo.getUser()).runTransaction(new Transaction.Handler() {
             @androidx.annotation.NonNull
             @Override
             public Transaction.Result doTransaction(@androidx.annotation.NonNull MutableData mutableData) {
@@ -213,7 +212,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void createAccount(RegistrationInfo regInfo) {
-        FirebaseHelper.auth.createUserWithEmailAndPassword(regInfo.email, regInfo.pass).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+        FirebaseHelper.getAuth().createUserWithEmailAndPassword(regInfo.email, regInfo.pass).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
@@ -228,11 +227,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void createAccountFailed(RegistrationInfo regInfo) {
         // reverse checkUsernameExists
-        FirebaseHelper.users.child(regInfo.getUser()).removeValue();
+        FirebaseHelper.getUsers().child(regInfo.getUser()).removeValue();
     }
 
     private void updateAccountUsername(RegistrationInfo regInfo) {
-        FirebaseHelper.auth.getCurrentUser().updateProfile(
+        FirebaseHelper.getAuth().getCurrentUser().updateProfile(
                 new UserProfileChangeRequest.Builder().setDisplayName(regInfo.getUser()).build()
         ).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -251,7 +250,7 @@ public class RegisterActivity extends AppCompatActivity {
         createAccountFailed(regInfo);
         // reverse createAccount
         // Delete user
-        FirebaseHelper.auth.getCurrentUser().delete();
+        FirebaseHelper.getAuth().getCurrentUser().delete();
     }
 
     private void updateGameStats(RegistrationInfo regInfo) {
@@ -317,9 +316,9 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void finishRegistration(RegistrationInfo regInfo, GameStats gameStats, UserProfileInfo userProfileInfo) {
-        Engine.user = regInfo.getUser();
-        Engine.bestGameStats = gameStats;
-        Engine.userProfileInfo = userProfileInfo;
+        Engine.setUser(regInfo.getUser());
+        Engine.setBestGameStats(gameStats);
+        Engine.setUserProfileInfo(userProfileInfo);
         boolean singleplayer = getIntent().getBooleanExtra(GameActivity.SINGLEPLAYER_KEY, true);
         startActivity(new Intent(RegisterActivity.this, GameActivity.class).putExtra(GameActivity.SINGLEPLAYER_KEY, singleplayer));
         finish();

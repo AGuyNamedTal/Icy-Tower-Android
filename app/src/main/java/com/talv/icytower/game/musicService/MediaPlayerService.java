@@ -13,12 +13,12 @@ import com.talv.icytower.R;
 public class MediaPlayerService extends Service {
 
     private MediaPlayer musicPlayer;
-    IBinder mBinder = new LocalBinder();
+    private final IBinder binder = new LocalBinder();
 
 
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return binder;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class MediaPlayerService extends Service {
     public String toString() {
         return "MediaPlayerService{" +
                 "musicPlayer=" + musicPlayer +
-                ", mBinder=" + mBinder +
+                ", mBinder=" + binder +
                 "} " + super.toString();
     }
 }

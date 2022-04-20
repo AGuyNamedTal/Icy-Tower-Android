@@ -22,7 +22,7 @@ public class MultiplayerEngine extends Engine {
     private Matrix topMatrix;
     private Matrix bottomMatrix;
 
-    private Player player2;
+    private final Player player2;
 
 
     public MultiplayerEngine(int renderWidth, int renderHeight, Resources resources, GameCanvas gameCanvas, Context context, MusicServiceConnection musicServiceConnection) {
@@ -30,7 +30,7 @@ public class MultiplayerEngine extends Engine {
         pauseBtnID = PAUSE_MID_BTN;
         GameState.PLAYING.controlGroup = GUI.CONTROLS.MULTI_GAMEPLAY_CONTROLS;
         initializeMatrices();
-        player2 = new Player(soundPool, context);
+        player2 = new Player(getSoundPool(), context);
     }
 
     private void initializeMatrices() {
@@ -49,21 +49,21 @@ public class MultiplayerEngine extends Engine {
     public void reset() {
         super.reset();
         player2.resetPlayer();
-        player2.updateScore(0, gameCanvas);
+        player2.updateScore(0, getGameCanvas());
     }
 
     @Override
     public void setPlayerCharacter(Character character) {
         super.setPlayerCharacter(character);
         Character player2Char;
-        if (character == Engine.character1) {
-            player2Char = Engine.character2;
+        if (character == Engine.getCharacter1()) {
+            player2Char = Engine.getCharacter2();
         } else {
-            player2Char = Engine.character1;
+            player2Char = Engine.getCharacter1();
         }
         player2.setCharacter(player2Char);
-        RectUtils.setRectPos(player2.rect, (CAMERA_WIDTH - player2.rect.width()) / 2,
-                platforms.peekFirst().rect.top - player2.rect.height());
+        RectUtils.setRectPos(player2.getRect(), (CAMERA_WIDTH - player2.getRect().width()) / 2,
+                getPlatforms().peekFirst().getRect().top - player2.getRect().height());
     }
 
     @Override
@@ -91,29 +91,29 @@ public class MultiplayerEngine extends Engine {
 
         // add controls
         Canvas finalFrameCanvas = new Canvas(getFrameScaled());
-        if (currentGameState == GameState.PAUSED || currentGameState == GameState.LOST) {
+        if (getCurrentGameState() == GameState.PAUSED || getCurrentGameState() == GameState.LOST) {
             // reduce brightness of background game
-            finalFrameCanvas.drawRect(0, 0, getRenderWidth(), getRenderHeight(), pausePaint);
+            finalFrameCanvas.drawRect(0, 0, getRenderWidth(), getRenderHeight(), getPausePaint());
         }
 
-        gameCanvas.renderControls(finalFrameCanvas);
+        getGameCanvas().renderControls(finalFrameCanvas);
     }
 
     private void drawGame(Canvas canvas, boolean player1OnTop) {
         // draw background
-        canvas.drawBitmap(backgroundImg, 0, 0, gamePaint);
+        canvas.drawBitmap(backgroundImg, 0, 0, getGamePaint());
         // draw platforms
-        for (Platform platform : platforms) {
-            if (platform.rect.bottom >= cameraY) {
+        for (Platform platform : getPlatforms()) {
+            if (platform.getRect().bottom >= getCameraY()) {
                 platform.render(canvas, this);
             }
         }
         //draw players
         if (player1OnTop) {
             player2.render(canvas, this);
-            player.render(canvas, this);
+            getPlayer().render(canvas, this);
         } else {
-            player.render(canvas, this);
+            getPlayer().render(canvas, this);
             player2.render(canvas, this);
 
         }
@@ -128,21 +128,21 @@ public class MultiplayerEngine extends Engine {
 
     @Override
     int minPlayerY() {
-        return Math.min(player.rect.top, player2.rect.top);
+        return Math.min(getPlayer().getRect().top, player2.getRect().top);
     }
 
     @Override
     int maxPlayerY() {
-        return Math.max(player.rect.top, player2.rect.top);
+        return Math.max(getPlayer().getRect().top, player2.getRect().top);
     }
 
 
     @Override
     Player getWinningPlayer() {
-        if (player2.getScore() > player.getScore()) {
+        if (player2.getScore() > getPlayer().getScore()) {
             return player2;
         }
-        return player;
+        return getPlayer();
     }
 
     @Override

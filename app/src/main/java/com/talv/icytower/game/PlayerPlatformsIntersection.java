@@ -2,8 +2,16 @@ package com.talv.icytower.game;
 
 public class PlayerPlatformsIntersection {
 
-    public int newY;
-    public boolean didIntersect = false;
+    private final int newY;
+    private boolean didIntersect = false;
+
+    public int getNewY() {
+        return newY;
+    }
+
+    public boolean didIntersect() {
+        return didIntersect;
+    }
 
     public PlayerPlatformsIntersection(int newY, boolean didIntersect) {
         this.newY = newY;
@@ -21,4 +29,6 @@ public class PlayerPlatformsIntersection {
                 ", didIntersect=" + didIntersect +
                 '}';
     }
+
+
 }
