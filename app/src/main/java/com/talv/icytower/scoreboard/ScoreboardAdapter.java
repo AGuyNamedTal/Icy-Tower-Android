@@ -44,6 +44,9 @@ public class ScoreboardAdapter extends RecyclerView.Adapter<ScoreboardAdapter.Vi
     }
 
     private String countryCodeToEmoji(String countryCode) {
+        if (countryCode == null){
+            return "";
+        }
         if (countryCode.length() != 2) {
             return countryCode;
         }

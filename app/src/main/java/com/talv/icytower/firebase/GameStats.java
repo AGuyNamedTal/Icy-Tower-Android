@@ -5,17 +5,10 @@ import com.google.firebase.database.PropertyName;
 
 import java.util.Map;
 
-@IgnoreExtraProperties
 public class GameStats {
 
-    private static final String HIGH_SCORE_NAME = "high_score";
-    private static final String TOTAL_JUMPS_NAME = "total_jumps";
-    private static final String TIME_TAKEN_NAME = "time_taken";
-    @PropertyName(HIGH_SCORE_NAME)
     private int highscore;
-    @PropertyName(TOTAL_JUMPS_NAME)
     private int totalJumps;
-    @PropertyName(TIME_TAKEN_NAME)
     private long timeTaken;
 
     public int getHighscore() {
@@ -54,8 +47,7 @@ public class GameStats {
     }
 
     public GameStats(Map<String, Object> map) {
-
-        this(((Long) map.get(HIGH_SCORE_NAME)).intValue(), ((Long) map.get(TOTAL_JUMPS_NAME)).intValue(), (long) map.get(TIME_TAKEN_NAME));
+        this(((Long) map.get("highscore")).intValue(), ((Long) map.get("totalJumps")).intValue(), (long) map.get("timeTaken"));
     }
 
     @Override

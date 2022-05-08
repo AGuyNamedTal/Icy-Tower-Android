@@ -77,6 +77,7 @@ public class FirebaseHelper {
         users = dbRef.child(USERS_REFERENCE_PATH);
     }
 
+
     public static void setProfilePhoto(String user, byte[] bitmapBytes, OnCompleteListener onCompleteListener) {
         storageReference.child(user).putBytes(bitmapBytes).addOnCompleteListener(onCompleteListener);
     }

@@ -72,8 +72,8 @@ public class GameActivity extends AppCompatActivity {
         }
         engine.setGameState(Engine.GameState.CHOOSING_CHAR);
         gameThread = new Thread(this::gameThread);
-
         setContentView(gameCanvas);
+
     }
 
     private void registerBatteryChangeListener() {

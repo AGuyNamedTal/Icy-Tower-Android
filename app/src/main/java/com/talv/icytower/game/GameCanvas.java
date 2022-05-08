@@ -35,10 +35,8 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
     public GameCanvas(Context context) {
         super(context);
-        setClickable(true);
-        getHolder().addCallback(this);
+        super.getHolder().addCallback(this);
     }
-
 
     public void initializeGUI(Resources resources, int renderWidth, int renderHeight) {
         GUI.buildControls(controls, resources, renderWidth, renderHeight);
@@ -47,6 +45,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        setClickable(true);
         this.holder = holder;
     }
 
@@ -146,7 +145,6 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public String toString() {
         return "GameCanvas{" +
-                "controls=" + controls +
                 ", FINGERS=" + Arrays.toString(FINGERS) +
                 ", holder=" + holder +
                 ", activeControls=" + activeControls +

@@ -8,17 +8,10 @@ import com.google.firebase.database.PropertyName;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-@IgnoreExtraProperties
 public class UserProfileInfo {
 
-    private static final String CREATION_DATE_NAME = "creation_date";
-    private static final String GAMES_PLAYED_NAME = "games_played";
-    private static final String COUNTRY_CODE_NAME = "country_code";
-    @PropertyName(CREATION_DATE_NAME)
     private long creationDate;
-    @PropertyName(GAMES_PLAYED_NAME)
     private int gamesPlayed;
-    @PropertyName(COUNTRY_CODE_NAME)
     private String countryCode;
 
     public long getCreationDate() {
@@ -56,7 +49,7 @@ public class UserProfileInfo {
     }
 
     public UserProfileInfo(Map<String, Object> map) {
-        this((long) map.get(CREATION_DATE_NAME), ((Long) map.get(GAMES_PLAYED_NAME)).intValue(), (String) map.get(COUNTRY_CODE_NAME));
+        this((long) map.get("creationDate"), ((Long) map.get("gamesPlayed")).intValue(), (String) map.get("countryCode"));
     }
 
     public static UserProfileInfo createNew(Activity context) {
