@@ -464,7 +464,7 @@ public class GUI {
             @Override
             public void onTouch(Engine engine, Context context) {
                 if (engine.getCurrentGameState() == Engine.GameState.PAUSED) {
-                    engine.updateGameState(Engine.GameState.PLAYING);
+                    engine.setGameState(Engine.GameState.PLAYING);
                 }
                 engine.onResume();
             }
@@ -477,7 +477,7 @@ public class GUI {
             public void onTouch(Engine engine, Context context) {
                 engine.clearPlayerCharacter();
                 engine.reset();
-                engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
+                engine.setGameState(Engine.GameState.CHOOSING_CHAR);
                 engine.onResume();
                 engine.getMusicServiceConnection().stop();
             }

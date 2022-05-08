@@ -14,8 +14,6 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.talv.icytower.R;
 import com.talv.icytower.firebase.FirebaseHelper;
@@ -58,39 +56,55 @@ import static com.talv.icytower.game.gui.GUI.CONTROLS.YOUR_SCORE_TXT;
 import static com.talv.icytower.game.gui.GUI.CONTROLS.checkActive;
 
 public abstract class Engine implements OnClockTimeUpListener {
+
+    // frame and render sizes
     private Bitmap frameScaled;
     private Bitmap frame;
     private int renderWidth;
     private int renderHeight;
 
 
+    // characters
     private static Character character1;
     private static Character character2;
 
+    public static void loadCharacters(Resources resources) {
+        character1 = Character.loadPlayer1(resources, Engine.PLAYER_SIZE_MULTIPLE);
+        character2 = Character.loadPlayer2(resources, Engine.PLAYER_SIZE_MULTIPLE);
+    }
+
     public static final float PLAYER_SIZE_MULTIPLE = 0.7f;
 
+    // paints
     private static final Paint gamePaint;
     private static final Paint pausePaint;
 
+    // player/firebase info
     private static GameStats bestGameStats;
     private static UserProfileInfo userProfileInfo;
     private static String user;
 
 
+    // platforms
     private final int maxPlatformWidth;
     private final int minPlatformWidth;
     private final float PLAT_CAMERA_MAX_RATIO = PLAYER_SIZE_MULTIPLE * 0.55f;
     private final float PLAT_CAMERA_MIN_RATIO = PLAYER_SIZE_MULTIPLE * 0.35f;
     private final LinkedList<Platform> platforms = new LinkedList<>();
+    private final Random random;
+    public static final int PLATFORMS_BETWEEN_LEVELS = 20;
+    private static final int REGULAR_TO_DISAPPEARING_PLATFORM_RATIO = 7;
 
 
-    protected Bitmap backgroundImg;
+    protected static Bitmap backgroundImg;
 
+    // camera
     private int cameraY;
     public static final int CAMERA_WIDTH = 250;
     public static final int CAMERA_HEIGHT = 550;
 
 
+    // camera speed
     private float externalCameraSpeed;
     private float constantCameraSpeed;
     private static final float CAMERA_SPEED_DECELERATION = PLAYER_SIZE_MULTIPLE * 0.004f;
@@ -101,16 +115,78 @@ public abstract class Engine implements OnClockTimeUpListener {
 
 
     private Player player;
-    private final Random random;
 
+    // canvas and touch related
     private GameCanvas gameCanvas;
-
     private AtomicBoolean touchRestricted = new AtomicBoolean(false);
+    protected boolean processingClick = false;
 
+
+    public enum GameState {
+        PLAYING(GAMEPLAY_CONTROLS),
+        PAUSED(PAUSE_MENU_CONTROLS),
+        CHOOSING_CHAR(CHOOSE_PLAYER_CONTROLS),
+        LOST(GAME_LOST_CONTROLS);
+
+        public int controlGroup;
+
+        GameState(int controlGroup) {
+            this.controlGroup = controlGroup;
+        }
+
+    }
+
+    private GameState currentGameState = GameState.PLAYING;
+
+    public GameState getCurrentGameState() {
+        return currentGameState;
+    }
+
+
+    public void setGameState(GameState newGameState) {
+        if (currentGameState != newGameState) {
+            gameCanvas.setEnabledAndVisible(currentGameState.controlGroup, false);
+            gameCanvas.setEnabledAndVisible(newGameState.controlGroup, true);
+            currentGameState = newGameState;
+            gameCanvas.updateControlsPositions(currentGameState.controlGroup);
+            if (newGameState != GameState.PLAYING) {
+                restrictTouch(400);
+            }
+        }
+    }
+
+    // sounds
+    private SoundPool soundPool;
+    private int gameOverSound;
+    private int gameOverStreamId;
+    private final MusicServiceConnection musicServiceConnection;
+
+
+    private final Vibrator vibrator;
+    private static final VibrationEffect CLOCK_VIBRATION = VibrationEffect.createOneShot(
+            1000,
+            VibrationEffect.DEFAULT_AMPLITUDE
+    );
+
+
+    // game clock
+    private ClockControl clock;
+
+    static {
+        // initialize paints
+        gamePaint = new Paint();
+        pausePaint = new Paint();
+        pausePaint.setColor(0xFF000000);
+        pausePaint.setAlpha((int) (0.35f * 255f));
+    }
+
+
+    protected int pauseBtnID;
+
+    // Getters and setters
     public static Character getCharacter1() {
         return character1;
     }
-
 
     public static Character getCharacter2() {
         return character2;
@@ -124,16 +200,8 @@ public abstract class Engine implements OnClockTimeUpListener {
         return pausePaint;
     }
 
-    public static GameStats getBestGameStats() {
-        return bestGameStats;
-    }
-
     public static void setBestGameStats(GameStats bestGameStats) {
         Engine.bestGameStats = bestGameStats;
-    }
-
-    public static UserProfileInfo getUserProfileInfo() {
-        return userProfileInfo;
     }
 
     public static void setUserProfileInfo(UserProfileInfo userProfileInfo) {
@@ -205,70 +273,6 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
 
-    public enum GameState {
-        PLAYING(GAMEPLAY_CONTROLS),
-        PAUSED(PAUSE_MENU_CONTROLS),
-        CHOOSING_CHAR(CHOOSE_PLAYER_CONTROLS),
-        LOST(GAME_LOST_CONTROLS);
-
-        public int controlGroup;
-
-        GameState(int controlGroup) {
-            this.controlGroup = controlGroup;
-        }
-
-    }
-
-    private GameState currentGameState = GameState.PLAYING;
-
-    public GameState getCurrentGameState() {
-        return currentGameState;
-    }
-
-    public void updateGameState(GameState newGameState) {
-        if (currentGameState != newGameState) {
-            gameCanvas.setEnabledAndVisible(currentGameState.controlGroup, false);
-            gameCanvas.setEnabledAndVisible(newGameState.controlGroup, true);
-            currentGameState = newGameState;
-            gameCanvas.updateControlsPositions(currentGameState.controlGroup);
-            if (newGameState != GameState.PLAYING) {
-                restrictTouch(400);
-            }
-        }
-    }
-
-    protected boolean processingClick = false;
-
-    private int gameOverSound;
-    private int gameOverStreamId;
-
-    private SoundPool soundPool;
-
-    private ClockControl clock;
-    private Vibrator vibrator;
-    private static final VibrationEffect CLOCK_VIBRATION = VibrationEffect.createOneShot(
-            1000,
-            VibrationEffect.DEFAULT_AMPLITUDE
-    );
-
-    static {
-        gamePaint = new Paint();
-        pausePaint = new Paint();
-        pausePaint.setColor(0xFF000000);
-        pausePaint.setAlpha((int) (0.35f * 255f));
-    }
-
-    public static final int PLATFORMS_BETWEEN_LEVELS = 20;
-    private static final int REGULAR_TO_DISAPPEARING_PLATFORM_RATIO = 7;
-
-    public static void loadCharacters(Resources resources) {
-        character1 = Character.loadPlayer1(resources, Engine.PLAYER_SIZE_MULTIPLE);
-        character2 = Character.loadPlayer2(resources, Engine.PLAYER_SIZE_MULTIPLE);
-    }
-
-    protected int pauseBtnID;
-    private final MusicServiceConnection musicServiceConnection;
-
     public Engine(int renderWidth, int renderHeight, Resources resources, GameCanvas
             gameCanvas, Context context, MusicServiceConnection musicServiceConnection) {
         this.musicServiceConnection = musicServiceConnection;
@@ -279,7 +283,9 @@ public abstract class Engine implements OnClockTimeUpListener {
         minPlatformWidth = (int) (CAMERA_WIDTH * PLAT_CAMERA_MIN_RATIO);
         initializeMediaPlayerAndSounds(context);
         random = new Random();
-        backgroundImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.background), CAMERA_WIDTH, CAMERA_HEIGHT, true);
+        if (backgroundImg == null) {
+            backgroundImg = BitmapUtils.stretch(BitmapFactory.decodeResource(resources, R.drawable.background), CAMERA_WIDTH, CAMERA_HEIGHT, true);
+        }
         setFrame(Bitmap.createBitmap(CAMERA_WIDTH, CAMERA_HEIGHT, Bitmap.Config.ARGB_8888));
         this.gameCanvas = gameCanvas;
         gameCanvas.initializeGUI(resources, renderWidth, renderHeight);
@@ -293,16 +299,13 @@ public abstract class Engine implements OnClockTimeUpListener {
 
     public void restrictTouch(int ms) {
         touchRestricted.set(true);
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(ms);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    touchRestricted.set(false);
-                }
+        AsyncTask.execute(() -> {
+            try {
+                Thread.sleep(ms);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                touchRestricted.set(false);
             }
         });
     }
@@ -344,7 +347,7 @@ public abstract class Engine implements OnClockTimeUpListener {
     public void startGame(Character character) {
         reset();
         setPlayerCharacter(character);
-        updateGameState(Engine.GameState.PLAYING);
+        setGameState(Engine.GameState.PLAYING);
         onResume();
     }
 
@@ -447,7 +450,7 @@ public abstract class Engine implements OnClockTimeUpListener {
         stopGameOver();
         if (currentGameState == GameState.PLAYING) {
             musicServiceConnection.pause();
-            updateGameState(GameState.PAUSED);
+            setGameState(GameState.PAUSED);
             clock.setCountTime(false);
         }
     }
@@ -541,7 +544,7 @@ public abstract class Engine implements OnClockTimeUpListener {
     protected void checkLost(Context context) {
         if (maxPlayerY() > cameraY + CAMERA_HEIGHT) {
             // LOST!
-            updateGameState(GameState.LOST);
+            setGameState(GameState.LOST);
             musicServiceConnection.stop();
             gameOverStreamId = playSound(gameOverSound, 1);
             updateLostUI(context, getWinningPlayer());
@@ -568,13 +571,8 @@ public abstract class Engine implements OnClockTimeUpListener {
                 bestGameStats.setTimeTaken(winningPlayer.getTotalTime());
                 bestGameStats.setTotalJumps(winningPlayer.getTotalJumps());
 
-                FirebaseHelper.setBestGameStats(user, bestGameStats, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(context, "Game stats update failed - " + exception.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                FirebaseHelper.setBestGameStats(user, bestGameStats, (OnFailureListener) exception -> Toast.makeText(context, "Game stats update failed - " + exception.getMessage(),
+                        Toast.LENGTH_SHORT).show());
             } else {
                 gameCanvas.setEnabledAndVisible(NEW_HIGH_SCORE_TXT, false);
             }
@@ -583,13 +581,8 @@ public abstract class Engine implements OnClockTimeUpListener {
         if (userProfileInfo != null) {
             // feature enabled
             userProfileInfo.setGamesPlayed(userProfileInfo.getGamesPlayed() + 1);
-            FirebaseHelper.setUserProfileInfo(user, userProfileInfo, new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(context, "User profile info update failed - " + exception.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+            FirebaseHelper.setUserProfileInfo(user, userProfileInfo, (OnFailureListener) exception -> Toast.makeText(context, "User profile info update failed - " + exception.getMessage(),
+                    Toast.LENGTH_SHORT).show());
         }
     }
 

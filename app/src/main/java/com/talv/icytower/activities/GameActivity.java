@@ -70,7 +70,7 @@ public class GameActivity extends AppCompatActivity {
         } else {
             engine = new MultiplayerEngine(renderWidth, renderHeight, resources, gameCanvas, this, musicPlayerServiceConnection);
         }
-        engine.updateGameState(Engine.GameState.CHOOSING_CHAR);
+        engine.setGameState(Engine.GameState.CHOOSING_CHAR);
         gameThread = new Thread(this::gameThread);
 
         setContentView(gameCanvas);
