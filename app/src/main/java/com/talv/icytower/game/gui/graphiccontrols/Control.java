@@ -5,8 +5,6 @@ import android.graphics.Rect;
 
 public abstract class Control {
 
-
-
     protected boolean isEnabled;
     protected boolean isVisible;
     protected Rect rect;

@@ -90,21 +90,6 @@ public class Platform {
 
     private static final float TEXT_Y_PADDING = 0.03f;
 
-    public static void loadBitmaps(Resources resources, int platformHeight) {
-        Platform.platformHeight = platformHeight;
-        emptyLoadedPlatforms();
-        PlatformTypes[] platformTypes = PlatformTypes.values();
-        for (PlatformTypes platformType : platformTypes) {
-            platformImages.put(platformType, new PlatformImage(
-                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.middleResId),
-                            platformHeight, true),
-                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.leftResId),
-                            platformHeight, true),
-                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.rightResId),
-                            platformHeight, true)
-            ));
-        }
-    }
 
     public Platform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners) {
         this(type, num, x, y, width, num % NUMBER_ON_EVERY_N_PLAT == 0 && num != 0, drawCorners);
@@ -121,6 +106,21 @@ public class Platform {
         }
     }
 
+    public static void loadBitmaps(Resources resources, int platformHeight) {
+        Platform.platformHeight = platformHeight;
+        emptyLoadedPlatforms();
+        PlatformTypes[] platformTypes = PlatformTypes.values();
+        for (PlatformTypes platformType : platformTypes) {
+            platformImages.put(platformType, new PlatformImage(
+                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.middleResId),
+                            platformHeight, true),
+                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.leftResId),
+                            platformHeight, true),
+                    BitmapUtils.stretchToHeight(BitmapFactory.decodeResource(resources, platformType.rightResId),
+                            platformHeight, true)
+            ));
+        }
+    }
     private static void drawNumber(Canvas canvas, int width, int height, int num) {
         String text = String.valueOf(num);
         int verticalPadding = (int) (height * TEXT_Y_PADDING);
@@ -149,8 +149,6 @@ public class Platform {
         return Engine.getGamePaint();
     }
 
-    public void onPlayerFall() {
-    }
 
     public void render(Canvas canvas, Engine engine) {
         canvas.drawBitmap(image, rect.left, rect.top - engine.getCameraY(), getPaint());

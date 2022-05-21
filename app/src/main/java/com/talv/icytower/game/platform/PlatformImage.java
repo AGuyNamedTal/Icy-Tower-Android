@@ -39,7 +39,7 @@ public class PlatformImage {
     public Bitmap createPlatformImage(int width, boolean withCorners) {
         if (withCorners) {
             if (width < minWidth) {
-                return BitmapUtils.stretch(createPlatformImage(minWidth, withCorners), width, height, true);
+                return BitmapUtils.stretch(createPlatformImage(minWidth, true), width, height, true);
             } else {
                 Bitmap platformBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(platformBitmap);

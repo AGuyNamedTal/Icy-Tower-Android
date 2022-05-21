@@ -17,7 +17,7 @@ import com.talv.icytower.game.utils.BitmapUtils;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private static final boolean SKIP_SPLASHSCREEN = true;
+    private static final boolean SKIP_SPLASHSCREEN = false;
 
     private static final int DELAY = 5000;
     private static final int MAX_ALPHA_DELAY = DELAY / 2;
@@ -55,7 +55,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (!hasFocus || !firstTime) return;
-        firstTime = true;
+        firstTime = false;
         int imageWidth = imageView.getMeasuredWidth();
         int imageHeight = imageView.getMeasuredHeight();
         for (int i = 0; i < bitmaps.length; i++) {
@@ -106,9 +106,4 @@ public class SplashScreenActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmaps[(currentBitmapIndex = (currentBitmapIndex + 1) % bitmaps.length)]);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
 }

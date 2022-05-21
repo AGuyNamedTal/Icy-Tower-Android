@@ -118,7 +118,7 @@ public class GUI {
     }
 
 
-    private static final int LINE_SEPARATOR_COLOR = 0xFFFFFFFF;
+  //  private static final int LINE_SEPARATOR_COLOR = 0xFFFFFFFF;
 
     private static void buildGameControls(Map<Integer, Control> controls, Resources resources, int renderWidth, int renderHeight) {
         int controlSize = (int) (0.18 * renderWidth);

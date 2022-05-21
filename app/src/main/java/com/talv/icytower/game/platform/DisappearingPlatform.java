@@ -9,20 +9,16 @@ public class DisappearingPlatform extends Platform {
     private static final int DISAPPEARING_PLATFORM_LIFESPAN = 500;
 
     private final Paint paint;
-    private double lifespan;
+    private double timeLeft;
 
     private boolean disappearing = false;
 
 
-    public DisappearingPlatform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners, int lifespan) {
+    public DisappearingPlatform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners) {
         super(type, num, x, y, width, drawCorners);
-        this.lifespan = lifespan;
+        timeLeft = DISAPPEARING_PLATFORM_LIFESPAN;
         paint = new Paint();
         paint.setAlpha(STARTING_ALPHA);
-    }
-
-    public DisappearingPlatform(PlatformTypes type, int num, int x, int y, int width, boolean drawCorners) {
-        this(type, num, x, y, width, drawCorners, DISAPPEARING_PLATFORM_LIFESPAN);
     }
 
     @Override
@@ -30,19 +26,17 @@ public class DisappearingPlatform extends Platform {
         return paint;
     }
 
-    @Override
     public void onPlayerFall() {
-        super.onPlayerFall();
         disappearing = true;
     }
 
     // returns true if the platform should be removed, false otherwise
     public boolean tick(int msPassed) {
         if (disappearing) {
-            int newAlpha = Math.max(STARTING_ALPHA - (int) (STARTING_ALPHA * (msPassed / lifespan)), 0);
+            int newAlpha = Math.max(STARTING_ALPHA - (int) (STARTING_ALPHA * (msPassed / timeLeft)), 0);
             paint.setAlpha(newAlpha);
-            lifespan -= msPassed;
-            if (lifespan <= 0) {
+            timeLeft -= msPassed;
+            if (timeLeft <= 0) {
                 return true;
             }
         }
@@ -53,7 +47,7 @@ public class DisappearingPlatform extends Platform {
     public String toString() {
         return "DisappearingPlatform{" +
                 "paint=" + paint +
-                ", lifespan=" + lifespan +
+                ", lifespan=" + timeLeft +
                 ", disappearing=" + disappearing +
                 "} " + super.toString();
     }

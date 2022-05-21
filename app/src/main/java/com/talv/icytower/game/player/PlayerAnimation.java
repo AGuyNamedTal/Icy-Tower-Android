@@ -22,7 +22,7 @@ public class PlayerAnimation {
     }
 
     private int currentTime = 0;
-    private final int maxIndex;
+    private final int maxTime;
 
     public PlayerAnimation(Bitmap[] bitmapsRight, boolean createLeftReflection) {
         this(bitmapsRight, createLeftReflection, defaultSwitchIndexes(bitmapsRight.length));
@@ -40,7 +40,7 @@ public class PlayerAnimation {
             bitmapsLeft = bitmapsRight;
         }
         this.switchIndexes = switchIndexes;
-        maxIndex = switchIndexes[switchIndexes.length - 1] + 1;
+        maxTime = switchIndexes[switchIndexes.length - 1] + 1;
     }
 
     private static int[] switchIndexesConstantTime(int time, int length) {
@@ -62,8 +62,8 @@ public class PlayerAnimation {
 
     public void updateTime(int msPassed) {
         currentTime += msPassed;
-        if (currentTime >= maxIndex) {
-            currentTime = currentTime % maxIndex;
+        if (currentTime >= maxTime) {
+            currentTime = currentTime % maxTime;
         }
     }
 
@@ -95,7 +95,7 @@ public class PlayerAnimation {
                 ", bitmapsLeft=" + Arrays.toString(bitmapsLeft) +
                 ", switchIndexes=" + Arrays.toString(switchIndexes) +
                 ", currentTime=" + currentTime +
-                ", maxIndex=" + maxIndex +
+                ", maxIndex=" + maxTime +
                 '}';
     }
 

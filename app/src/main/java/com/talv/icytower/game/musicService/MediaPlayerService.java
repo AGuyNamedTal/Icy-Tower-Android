@@ -15,6 +15,12 @@ public class MediaPlayerService extends Service {
     private MediaPlayer musicPlayer;
     private final IBinder binder = new LocalBinder();
 
+    public class LocalBinder extends Binder {
+        public MediaPlayerService getInstance() {
+            return MediaPlayerService.this;
+        }
+    }
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -33,11 +39,6 @@ public class MediaPlayerService extends Service {
 
     }
 
-    public class LocalBinder extends Binder {
-        public MediaPlayerService getInstance() {
-            return MediaPlayerService.this;
-        }
-    }
 
 
     public void start() {

@@ -14,7 +14,7 @@ public class TextSizeHelper {
     }
 
     public static int getTextSizeFromWidth(String text, float width) {
-        return (int) Math.round(PAINT_TXT_SIZE * width / PAINT.measureText(text));
+        return Math.round(PAINT_TXT_SIZE / PAINT.measureText(text) * width);
     }
 
 

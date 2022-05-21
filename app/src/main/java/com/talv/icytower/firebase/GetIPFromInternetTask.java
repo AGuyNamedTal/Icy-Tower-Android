@@ -26,7 +26,6 @@ class GetIPFromInternetTask extends AsyncTask<Void, Void, String> {
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
             }
-
             return new JSONObject(stringBuffer.toString()).getString("countrycode");
         } catch (Exception ex) {
             return null;

@@ -34,7 +34,7 @@ import java.util.Locale;
 
 public class ScoreboardActivity extends AppCompatActivity implements ScoreboardAdapter.ItemClickListener {
 
-    ScoreboardAdapter adapter;
+    private ScoreboardAdapter adapter;
     private static final int SCOREBOARD_PLAYERS_COUNT = 5;
 
     @Override

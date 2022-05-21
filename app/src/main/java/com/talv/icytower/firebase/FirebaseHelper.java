@@ -27,30 +27,11 @@ import java.util.Map;
 
 public class FirebaseHelper {
     private static FirebaseAuth auth;
-    private static FirebaseDatabase database;
-    private static FirebaseStorage storage;
-    private static StorageReference storageReference;
-    private static DatabaseReference dbRef;
+    private static StorageReference photosReference;
     private static DatabaseReference users;
 
     public static FirebaseAuth getAuth() {
         return auth;
-    }
-
-    public static FirebaseDatabase getDatabase() {
-        return database;
-    }
-
-    public static FirebaseStorage getStorage() {
-        return storage;
-    }
-
-    public static StorageReference getStorageReference() {
-        return storageReference;
-    }
-
-    public static DatabaseReference getDbRef() {
-        return dbRef;
     }
 
     public static DatabaseReference getUsers() {
@@ -70,24 +51,24 @@ public class FirebaseHelper {
 
     public static void initialize() {
         auth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference().child(PROFILE_PHOTOS_REFERENCE_PATH);
-        dbRef = database.getReference();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        photosReference = storage.getReference().child(PROFILE_PHOTOS_REFERENCE_PATH);
+        DatabaseReference dbRef = database.getReference();
         users = dbRef.child(USERS_REFERENCE_PATH);
     }
 
 
     public static void setProfilePhoto(String user, byte[] bitmapBytes, OnCompleteListener onCompleteListener) {
-        storageReference.child(user).putBytes(bitmapBytes).addOnCompleteListener(onCompleteListener);
+        photosReference.child(user).putBytes(bitmapBytes).addOnCompleteListener(onCompleteListener);
     }
 
     public static void deleteProfilePhoto(String user) {
-        storageReference.child(user).delete();
+        photosReference.child(user).delete();
     }
 
     public static void getProfilePhotoBytes(String user, OnCompleteListener onCompleteListener) {
-        storageReference.child(user).getBytes(100L * 1000 * 1000 /*100 MB*/).addOnCompleteListener(onCompleteListener);
+        photosReference.child(user).getBytes(100L * 1000 * 1000 /*100 MB*/).addOnCompleteListener(onCompleteListener);
     }
 
     public static void getProfilePhotoBitmap(String user, OnProfilePhotoGetComplete onProfilePhotoGetComplete) {

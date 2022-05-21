@@ -10,6 +10,7 @@ import com.talv.icytower.R;
 import com.talv.icytower.game.GameCanvas;
 import com.talv.icytower.game.PlayerPlatformsIntersection;
 import com.talv.icytower.game.engine.Engine;
+import com.talv.icytower.game.platform.DisappearingPlatform;
 import com.talv.icytower.game.platform.Platform;
 import com.talv.icytower.game.utils.RectUtils;
 
@@ -47,10 +48,6 @@ public class Player {
 
     private int score;
 
-    public void updateScore(int newScore, GameCanvas canvas) {
-        this.score = newScore;
-        canvas.updateText(SCORE_TXT, "Score: " + newScore);
-    }
 
     public int getScore() {
         return score;
@@ -113,6 +110,27 @@ public class Player {
         initializeSounds(soundPool, context);
     }
 
+    public void resetPlayer() {
+        updateStateAndAnimation(PlayerState.STANDING, 0);
+        currentSpeed = 0;
+        externalSpeed = 0;
+        currentVerticalSpeed = 0;
+        stateUpdateTime = 0;
+        score = 0;
+        totalJumps = 0;
+        totalTime = 0;
+        currentDirection = Direction.RIGHT;
+        currentState = PlayerState.STANDING;
+    }
+
+    public void initializeSounds(SoundPool soundPool, Context context) {
+        jumpSoundID = soundPool.load(context, R.raw.jump_sound, 1);
+    }
+
+    public void updateScore(int newScore, GameCanvas canvas) {
+        this.score = newScore;
+        canvas.updateText(SCORE_TXT, "Score: " + newScore);
+    }
 
     public void setCharacter(Character character) {
         if (character == null) {
@@ -123,13 +141,7 @@ public class Player {
             RectUtils.setRectSize(rect, character.getWidth(), character.getHeight());
         }
     }
-    public boolean hasCharacter(){
-        return this.animations != null;
-    }
 
-    public void initializeSounds(SoundPool soundPool, Context context) {
-        jumpSoundID = soundPool.load(context, R.raw.jump_sound, 1);
-    }
 
     private void updateStateAndAnimation(PlayerState newState, int msPassed) {
         if (currentState == newState) {
@@ -221,18 +233,6 @@ public class Player {
         RectUtils.setRectX(rect, newX);
     }
 
-    public void resetPlayer() {
-        updateStateAndAnimation(PlayerState.STANDING, 0);
-        currentSpeed = 0;
-        externalSpeed = 0;
-        currentVerticalSpeed = 0;
-        stateUpdateTime = 0;
-        score = 0;
-        totalJumps = 0;
-        totalTime = 0;
-        currentDirection = Direction.RIGHT;
-        currentState = PlayerState.STANDING;
-    }
 
     private boolean isJumping() {
         return (currentState == PlayerState.JUMPING || currentState == PlayerState.JUMP_MOVE) && currentVerticalSpeed < 0;
@@ -242,16 +242,17 @@ public class Player {
         return (currentState == PlayerState.JUMPING || currentState == PlayerState.JUMP_MOVE) && currentVerticalSpeed > 0;
     }
 
-    private boolean isPlatformBelow(LinkedList<Platform> platforms) {
-        for (Platform platform :
-                platforms) {
-            if (RectUtils.isRectBelowRect(platform.getRect(), rect)) {
-                return true;
+    /*
+        private boolean isPlatformBelow(LinkedList<Platform> platforms) {
+            for (Platform platform :
+                    platforms) {
+                if (RectUtils.isRectBelowRect(platform.getRect(), rect)) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
-    }
-
+    */
     private boolean isOnPlatform(LinkedList<Platform> platforms) {
         for (Platform platform :
                 platforms) {
@@ -264,7 +265,6 @@ public class Player {
 
 
     private void jumpTick(Engine engine, int msPassed) {
-
         float toMove = currentVerticalSpeed * msPassed;
         // decelerate
         if (currentVerticalSpeed <= 0) {
@@ -288,14 +288,16 @@ public class Player {
                 updateStateAndAnimation(PlayerState.STANDING, msPassed);
                 currentVerticalSpeed = 0;
                 newY = yAfterIntersection;
-                platformWhichFellOn.onPlayerFall();
+                if (platformWhichFellOn instanceof DisappearingPlatform) {
+                    ((DisappearingPlatform) platformWhichFellOn).onPlayerFall();
+                }
                 //onFallOnPlatform(platformWhichFellOn, engine);
                 updateScore(platformWhichFellOn.getPlatformNumber() * 10, engine.getGameCanvas());
             }
-        } else {
+        } /*else {
             // jumping up
             // update camera
-        }
+        }*/
         RectUtils.setRectY(rect, newY);
         if (currentSpeed == 0 && System.currentTimeMillis() - stateUpdateTime >= TIME_FROM_SIDE_STAND_TO_STANDING) {
             updateStateAndAnimation(PlayerState.JUMPING, msPassed);
@@ -389,19 +391,12 @@ public class Player {
         }
 
         private void moveJumpLeft() {
-            //JUMP:
             jump(false);
-
-            //MOVE RIGHT:
             moveLeft();
         }
 
         private void moveJumpRight() {
-
-            //JUMP:
             jump(false);
-
-            //MOVE RIGHT:
             moveRight();
         }
 

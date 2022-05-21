@@ -142,14 +142,7 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
         return controls.get(controlID);
     }
 
-    @Override
-    public String toString() {
-        return "GameCanvas{" +
-                ", FINGERS=" + Arrays.toString(FINGERS) +
-                ", holder=" + holder +
-                ", activeControls=" + activeControls +
-                "} " + super.toString();
-    }
+
 
     public Map<Integer, Control> getControls() {
         return controls;
@@ -162,5 +155,14 @@ public class GameCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
     public AtomicInteger getActiveControls() {
         return activeControls;
+    }
+
+    @Override
+    public String toString() {
+        return "GameCanvas{" +
+                ", FINGERS=" + Arrays.toString(FINGERS) +
+                ", holder=" + holder +
+                ", activeControls=" + activeControls +
+                "} " + super.toString();
     }
 }

@@ -296,6 +296,32 @@ public abstract class Engine implements OnClockTimeUpListener {
         player = new Player(soundPool, context);
     }
 
+    public void reset() {
+        cameraY = 0;
+        externalCameraSpeed = 0f;
+        constantCameraSpeed = 0f;
+        clock.setCurrentTime(0);
+        clock.setTimeTillSpeedIncrease(CAMERA_SPEED_INCREASE_TIME);
+        clock.setCountTime(false);
+        stopGameOver();
+        musicServiceConnection.resetSpeed();
+        clearPlatforms();
+        player.resetPlayer();
+        player.updateScore(0, gameCanvas);
+    }
+
+    private void initializeMediaPlayerAndSounds(Context context) {
+        AudioAttributes attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
+        soundPool = new SoundPool.Builder().setAudioAttributes(attr).setMaxStreams(2).build();
+        gameOverSound = soundPool.load(context, R.raw.game_over, 1);
+    }
+
+    private void initializeClock() {
+        clock = (ClockControl) gameCanvas.getControls().get(CLOCK);
+        clock.setOnClockTimeUpListener(this);
+        clock.setTimeTillSpeedIncrease(CAMERA_SPEED_INCREASE_TIME);
+    }
 
     public void restrictTouch(int ms) {
         touchRestricted.set(true);
@@ -310,19 +336,6 @@ public abstract class Engine implements OnClockTimeUpListener {
         });
     }
 
-    public void reset() {
-        cameraY = 0;
-        externalCameraSpeed = 0f;
-        constantCameraSpeed = 0f;
-        clock.setCurrentTime(0);
-        clock.setTimeTillSpeedIncrease(CAMERA_SPEED_INCREASE_TIME);
-        clock.setCountTime(false);
-        stopGameOver();
-        musicServiceConnection.resetSpeed();
-        clearPlatforms();
-        player.resetPlayer();
-        player.updateScore(0, gameCanvas);
-    }
 
     public void stopGameOver() {
         soundPool.stop(gameOverStreamId);
@@ -351,19 +364,6 @@ public abstract class Engine implements OnClockTimeUpListener {
         onResume();
     }
 
-
-    private void initializeMediaPlayerAndSounds(Context context) {
-        AudioAttributes attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
-        soundPool = new SoundPool.Builder().setAudioAttributes(attr).setMaxStreams(2).build();
-        gameOverSound = soundPool.load(context, R.raw.game_over, 1);
-    }
-
-    private void initializeClock() {
-        clock = (ClockControl) gameCanvas.getControls().get(CLOCK);
-        clock.setOnClockTimeUpListener(this);
-        clock.setTimeTillSpeedIncrease(CAMERA_SPEED_INCREASE_TIME);
-    }
 
     public int playSound(int soundID, float rate) {
         if (GameSettings.SFX) {
@@ -505,6 +505,56 @@ public abstract class Engine implements OnClockTimeUpListener {
         generatePlatforms(removed);
     }
 
+    public void generatePlatforms(int count) {
+        int lastPlatformY = 0;
+        int lastPlatformNum = 0;
+        if (platforms.isEmpty()) {
+            Log.wtf("PLATFORMS EMPTY", "platfors.isEmpty() == true");
+        } else {
+            Platform last = platforms.getLast();
+            lastPlatformY = last.getRect().top;
+            lastPlatformNum = last.getPlatformNumber();
+        }
+        int distanceBetweenPlatforms = (int) (character1.getHeight() * 0.9f);
+        int height = Platform.getPlatformHeight();
+        for (int i = 0; i < count; i++) {
+            int y = lastPlatformY - distanceBetweenPlatforms - height;
+            lastPlatformNum++;
+            int width;
+            boolean drawCorners;
+            int x;
+            boolean fullLevel = lastPlatformNum % PLATFORMS_BETWEEN_LEVELS == 0;
+            if (lastPlatformNum != 0 && fullLevel) {
+                width = CAMERA_WIDTH;
+                drawCorners = false;
+                x = 0;
+            } else {
+                width = random.nextInt(maxPlatformWidth - minPlatformWidth) + minPlatformWidth;
+                x = random.nextInt(CAMERA_WIDTH - width);
+                drawCorners = true;
+            }
+            Platform.PlatformTypes platformLevel = Platform.getPlatformTypeByLevel()[Math.min(Platform.getPlatformTypeByLevel().length - 1, lastPlatformNum / PLATFORMS_BETWEEN_LEVELS)];
+
+            Platform newPlatform;
+            if (fullLevel || random.nextInt(REGULAR_TO_DISAPPEARING_PLATFORM_RATIO) != 0) {
+                newPlatform = new Platform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
+            } else {
+                newPlatform = new DisappearingPlatform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
+            }
+
+            platforms.add(newPlatform);
+            lastPlatformY = y;
+        }
+    }
+
+    private void clearPlatforms() {
+        Iterator<Platform> iterator = platforms.descendingIterator();
+        while (iterator.hasNext()) {
+            iterator.next().getImage().recycle();
+            iterator.remove();
+        }
+    }
+
     protected void updatePlayer(int msPassed, int activeControls) {
         int gameControls = getGameControls(activeControls);
         player.updatePlayer(msPassed, this, gameControls);
@@ -586,55 +636,6 @@ public abstract class Engine implements OnClockTimeUpListener {
         }
     }
 
-    public void generatePlatforms(int count) {
-        int lastPlatformY = 0;
-        int lastPlatformNum = 0;
-        if (platforms.isEmpty()) {
-            Log.wtf("PLATFORMS EMPTY", "platfors.isEmpty() == true");
-        } else {
-            Platform last = platforms.getLast();
-            lastPlatformY = last.getRect().top;
-            lastPlatformNum = last.getPlatformNumber();
-        }
-        int distanceBetweenPlatforms = (int) (character1.getHeight() * 0.9f);
-        int height = Platform.getPlatformHeight();
-        for (int i = 0; i < count; i++) {
-            int y = lastPlatformY - distanceBetweenPlatforms - height;
-            lastPlatformNum++;
-            int width;
-            boolean drawCorners;
-            int x;
-            boolean fullLevel = lastPlatformNum % PLATFORMS_BETWEEN_LEVELS == 0;
-            if (lastPlatformNum != 0 && fullLevel) {
-                width = CAMERA_WIDTH;
-                drawCorners = false;
-                x = 0;
-            } else {
-                width = random.nextInt(maxPlatformWidth - minPlatformWidth) + minPlatformWidth;
-                x = random.nextInt(CAMERA_WIDTH - width);
-                drawCorners = true;
-            }
-            Platform.PlatformTypes platformLevel = Platform.getPlatformTypeByLevel()[Math.min(Platform.getPlatformTypeByLevel().length - 1, lastPlatformNum / PLATFORMS_BETWEEN_LEVELS)];
-
-            Platform newPlatform;
-            if (fullLevel || random.nextInt(REGULAR_TO_DISAPPEARING_PLATFORM_RATIO) != 0) {
-                newPlatform = new Platform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
-            } else {
-                newPlatform = new DisappearingPlatform(platformLevel, lastPlatformNum, x, y, width, drawCorners);
-            }
-
-            platforms.add(newPlatform);
-            lastPlatformY = y;
-        }
-    }
-
-    private void clearPlatforms() {
-        Iterator<Platform> iterator = platforms.descendingIterator();
-        while (iterator.hasNext()) {
-            iterator.next().getImage().recycle();
-            iterator.remove();
-        }
-    }
 
     // returns whether a button was clicked and lock out following clicks
     protected boolean processClick(Context context, int activeControls) {
