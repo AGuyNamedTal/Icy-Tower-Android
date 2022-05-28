@@ -49,6 +49,7 @@ public class GameActivity extends AppCompatActivity {
     private boolean loopGame;
     private BatteryChangeReceiver batteryChangeReceiver;
     private MusicServiceConnection musicPlayerServiceConnection;
+    private BatteryNotification batteryNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void registerBatteryChangeListener() {
-        final BatteryNotification batteryNotification = new BatteryNotification(this);
+        batteryNotification = new BatteryNotification(this);
         batteryChangeReceiver = new BatteryChangeReceiver(0.3, new BatteryChangeListener() {
             @Override
             public void onBatteryLow(double battery) {
@@ -105,6 +106,9 @@ public class GameActivity extends AppCompatActivity {
         unregisterReceiver(batteryChangeReceiver);
         if (musicPlayerServiceConnection.isServiceBounded())
             unbindService(musicPlayerServiceConnection);
+        if (batteryNotification != null) {
+            batteryNotification.hideNotification();
+        }
     }
 
     private Size getRealSize() {

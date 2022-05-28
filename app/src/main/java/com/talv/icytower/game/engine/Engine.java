@@ -297,6 +297,7 @@ public abstract class Engine implements OnClockTimeUpListener {
     }
 
     public void reset() {
+
         cameraY = 0;
         externalCameraSpeed = 0f;
         constantCameraSpeed = 0f;
