@@ -29,6 +29,8 @@ public class SplashScreenActivity extends AppCompatActivity {
     private ImageView imageView;
     private SoundPool soundPool;
     private int startupSoundId;
+    private boolean firstTime = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +48,22 @@ public class SplashScreenActivity extends AppCompatActivity {
         soundPool = new SoundPool.Builder().setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()).setMaxStreams(1).build();
         startupSoundId = soundPool.load(this, R.raw.splash_screen_startup, 1);
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                soundPool.play(startupSoundId, 1, 1, 0, 0, 1);
+            }
+        });
     }
 
 
-    private boolean firstTime = true;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (!hasFocus || !firstTime) return;
         firstTime = false;
+
         int imageWidth = imageView.getMeasuredWidth();
         int imageHeight = imageView.getMeasuredHeight();
         for (int i = 0; i < bitmaps.length; i++) {
@@ -94,7 +102,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
         }).start();
-        soundPool.play(startupSoundId, 1, 1, 0, 0, 1);
     }
 
     private void endSplashScreen() {
