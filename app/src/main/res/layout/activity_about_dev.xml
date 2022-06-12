@@ -24,7 +24,6 @@
         android:layout_marginLeft="15dp"
         android:layoutDirection="rtl"
         android:layout_marginRight="15dp"
-        android:paddingBottom="100dp"
         android:text="שם: טל וינוקורוב\nתז: 325946846\nביה&quot;ס: העמית מקיף ג\nכיתה: יב'1\nמורה: אלי סיניאנסקי\nשנה: 2022"
         android:textSize="42sp" />
 
